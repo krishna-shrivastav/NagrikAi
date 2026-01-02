@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NagrikAI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+  
+
+    <h1>NagrikAI</h1>
+    <p>Digital Government Assistant</p>
+  </header>
+
+  <!-- MAIN APP -->
+  <main class="app-wrapper">
+   
+ <!-- <button id="ttsToggleBtn" class="tts-btn" onclick="toggleSpeech()">
+  ⏸
+</button> -->
+
+    <!-- CHAT SECTION -->
+    <section class="chat-container">
+
+      <div id="chatBox" class="chat-box">
+        
+        <div class="bot-msg">
+          🤖 Namaste! Main NagrikAI hoon. Aap kaunsi service chahte ho?
+        </div>
+      </div>
+      
+
+      <!-- INPUT -->
+      <!-- <div class="input-area">
+        <button id="micBtn" onclick="startVoice()">🎤</button>
+        <input
+          type="text"
+          id="userInput"
+          placeholder="Apna sawaal yahan likhiye..."
+        />
+        <button onclick="clearChat()">🗑 Clear</button>
+
+        <button onclick="sendMessage()">Send</button>
+      </div> -->
+
+<!-- <div class="input-area">
+  <button class="icon-btn" onclick="startVoice()">🎤</button>
+
+  <input
+    type="text"
+    id="userInput"
+    placeholder="Apna sawaal yahan likhiye..."
+  />
+
+  <button class="clear-btn" onclick="clearChat()">Clear</button>
+  <button class="send-btn" onclick="sendMessage()">Send</button>
+</div> -->
+<div class="chat-input-area">
+<button id="micBtn" class="chat-icon-btn" title="Voice Input">🎤</button>
+
+
+  <input
+    type="text"
+    id="userInput"
+    placeholder="Apna sawaal yahan likhiye..."
+  />
+
+  <button id="clearBtn" class="chat-clear-btn" onclick="clearChat()">Clear</button>
+  <button id="sendBtn" class="chat-send-btn" onclick="sendMessage()">Send</button>
+</div>
+
+
+
+
+    </section>
+
+    <aside class="side-panel">
+
+   
+      <div class="profile-box">
+        <h4>👤 Basic Details</h4>
+
+        <select id="state"> 
+           <option value="">Select State</option>
+          <option value="MP">Madhya Pradesh</option>
+          <option value="UP">Uttar Pradesh</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+
+        <select id="income">
+          <option value="">Annual Income</option>
+          <option value="below2">Below ₹2.5 Lakh</option>
+          <option value="2to5">₹2.5–5 Lakh</option>
+          <option value="above5">Above ₹5 Lakh</option>
+        </select>
+      </div> 
+
+     
+      <div id="progressBox" class="progress-box" style="display:none;">
+        <h4>📊 Progress Tracker</h4>
+        <ul id="progressList"></ul>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    © 2025 NagrikAI • Educational Project
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
