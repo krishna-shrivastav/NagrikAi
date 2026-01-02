@@ -173,7 +173,7 @@ async function sendMessage() {
   const income = document.getElementById("income").value;
 
   // backend call
-  const response = await fetch("http://localhost:3000/api/ai/ask", {
+  const response = await fetch("https://nagrikai.up.railway.app/api/ai/ask", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -408,3 +408,4 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
 } else {
   alert("❌ Voice input supported nahi hai is browser me.");
 }
+
