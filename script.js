@@ -22,6 +22,14 @@ const allServices = [
 ];
 
 
+// 📱 Mobile + Desktop auto scroll fix
+function scrollToBottom() {
+  if (!chatBox) return;
+
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 100);
+}
 
 let speechUtterance = null;
 let isPaused = false;
@@ -116,7 +124,8 @@ function showServiceOptions() {
 
   botDiv.innerHTML = html;
   chatBox.appendChild(botDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
+ scrollToBottom();
+
 }
 
 function showMoreServices() {
@@ -127,6 +136,7 @@ function showMoreServices() {
 function selectService(service) {
   input.value = service;
   sendMessage();
+  scrollToBottom();
 }
 
 
@@ -165,8 +175,9 @@ async function sendMessage() {
   userDiv.innerText = userText;
   chatBox.appendChild(userDiv);
   input.value = "";
+scrollToBottom();
 
-  chatBox.scrollTop = chatBox.scrollHeight;
+  
 
   // collect profile data
   const state = document.getElementById("state").value;
@@ -211,7 +222,8 @@ if (data.link) {
 
 botDiv.innerHTML = html;
 chatBox.appendChild(botDiv);
-chatBox.scrollTop = chatBox.scrollHeight;
+  scrollToBottom();
+
 saveChat();
 
 speakText(data.reply);
@@ -408,6 +420,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
 } else {
   alert("❌ Voice input supported nahi hai is browser me.");
 }
+
 
 
 
