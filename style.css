@@ -656,3 +656,11 @@ body {
 #micBtn.listening {
   background: #22c55e;
 }
+
+
+
+.chat-box {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
