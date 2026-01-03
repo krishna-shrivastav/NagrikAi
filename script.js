@@ -24,6 +24,14 @@ function saveChat() {
   }
 }
 
+
+window.onload = ()=>{
+  if(window.Android){
+    chatBox.innerHTML = Android.loadChat();
+  }
+}
+
+
 function loadChat() {
   let saved = "";
   if (isAndroid()) {
@@ -226,3 +234,14 @@ input.addEventListener("keydown", e => {
   if (e.key === "Enter") sendMessage();
 });
 
+
+// 🔥 AUTO SAVE WHEN USER LEAVES / BACKGROUND
+window.addEventListener("beforeunload", () => {
+  saveChat();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    saveChat();
+  }
+});
