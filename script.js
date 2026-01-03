@@ -35,15 +35,28 @@ let speechUtterance = null;
 let isPaused = false;
 
 
-// let recognition;
-// if ("webkitSpeechRecognition" in window) {
-//   recognition = new webkitSpeechRecognition();
-//   recognition.lang = "hi-IN"; // Hindi
-//   recognition.continuous = false;
-//   recognition.interimResults = false;
-// } else {
-//   alert("Speech Recognition not supported");
-// }
+function botSpeak(text){
+  if(window.Android){
+    Android.speak(text);
+  }
+}
+
+function saveChat(){
+  if(window.Android){
+    Android.saveChat(chatBox.innerHTML);
+  }
+}
+
+window.onload = ()=>{
+  if(window.Android){
+    chatBox.innerHTML = Android.loadChat();
+  }
+}
+
+
+
+
+
 
 
 
@@ -420,6 +433,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
 } else {
   alert("❌ Voice input supported nahi hai is browser me.");
 }
+
 
 
 
