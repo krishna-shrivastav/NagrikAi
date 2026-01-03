@@ -1,88 +1,7 @@
+
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 const micBtn = document.getElementById("micBtn");
-
-
-
-const allServices = [
-  "Income Certificate","Caste Certificate","Domicile Certificate","PAN Card",
-  "Driving Licence","Aadhaar Card","Scholarship","Pension","Ration Card",
-  "Birth Certificate","Death Certificate","Voter ID","Passport",
-  "Marriage Certificate","Disability Certificate"
-];
-
-let serviceIndex = 0;
-
-function showServiceOptions() {
-  const div = document.createElement("div");
-  div.className = "bot-msg";
-
-  let html = "<b>👇 Aap kya banwana chahte hain?</b><br><br>";
-  allServices.slice(serviceIndex, serviceIndex + 5).forEach(s => {
-    html += `<button class="option-btn" onclick="selectService('${s}')">${s}</button>`;
-  });
-
-  if (serviceIndex + 5 < allServices.length) {
-    html += `<br><button class="option-btn other-btn" onclick="showMoreServices()">Other Services</button>`;
-  }
-
-  div.innerHTML = html;
-  chatBox.appendChild(div);
-  scrollToBottom();
-}
-
-function showMoreServices() {
-  serviceIndex += 5;
-  showServiceOptions();
-}
-
-function selectService(service) {
-  input.value = service;
-  sendMessage();
-}
-
-/* ================= CHAT ================= */
-
-async function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  const user = document.createElement("div");
-  user.className = "user-msg";
-  user.innerText = text;
-  chatBox.appendChild(user);
-  input.value = "";
-  scrollToBottom();
-
-  const response = await fetch(
-    "https://nagrikai-backend-production.up.railway.app/api/ai/ask",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: text,
-        state: document.getElementById("state").value,
-        income: document.getElementById("income").value
-      })
-    }
-  );
-
-  const data = await response.json();
-
-  const bot = document.createElement("div");
-  bot.className = "bot-msg";
-
-  let html = `<b>${data.reply}</b>`;
-
-  if (data.documents) {
-    html += "<br><br><b>📄 Required Documents:</b><ul>";
-    data.documents.forEach(d => html += `<li>${d}</li>`);
-    html += "</ul>";
-  }
-
-  if (data.link) {
-    html += `<br>🔗 <a href="${data.link}" target="_blank">Official Portal</a>`;
-  }
 
 /* ================= UTILS ================= */
 
@@ -215,16 +134,93 @@ window.receiveVoiceInput = function (text) {
 
 /* ================= SERVICES ================= */
 
-//   bot.innerHTML = html;
-//   chatBox.appendChild(bot);
-//   scrollToBottom();
+const allServices = [
+  "Income Certificate","Caste Certificate","Domicile Certificate","PAN Card",
+  "Driving Licence","Aadhaar Card","Scholarship","Pension","Ration Card",
+  "Birth Certificate","Death Certificate","Voter ID","Passport",
+  "Marriage Certificate","Disability Certificate"
+];
 
-//   saveChat();
-//   speakBot(data.reply);
-// }
+let serviceIndex = 0;
 
+function showServiceOptions() {
+  const div = document.createElement("div");
+  div.className = "bot-msg";
 
-  appendBotMessage(html, data.reply);
+  let html = "<b>👇 Aap kya banwana chahte hain?</b><br><br>";
+  allServices.slice(serviceIndex, serviceIndex + 5).forEach(s => {
+    html += `<button class="option-btn" onclick="selectService('${s}')">${s}</button>`;
+  });
+
+  if (serviceIndex + 5 < allServices.length) {
+    html += `<br><button class="option-btn other-btn" onclick="showMoreServices()">Other Services</button>`;
+  }
+
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+function showMoreServices() {
+  serviceIndex += 5;
+  showServiceOptions();
+}
+
+function selectService(service) {
+  input.value = service;
+  sendMessage();
+}
+
+/* ================= CHAT ================= */
+
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  const user = document.createElement("div");
+  user.className = "user-msg";
+  user.innerText = text;
+  chatBox.appendChild(user);
+  input.value = "";
+  scrollToBottom();
+
+  const response = await fetch(
+    "https://nagrikai-backend-production.up.railway.app/api/ai/ask",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        state: document.getElementById("state").value,
+        income: document.getElementById("income").value
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  const bot = document.createElement("div");
+  bot.className = "bot-msg";
+
+  let html = `<b>${data.reply}</b>`;
+
+  if (data.documents) {
+    html += "<br><br><b>📄 Required Documents:</b><ul>";
+    data.documents.forEach(d => html += `<li>${d}</li>`);
+    html += "</ul>";
+  }
+
+  if (data.link) {
+    html += `<br>🔗 <a href="${data.link}" target="_blank">Official Portal</a>`;
+  }
+
+  bot.innerHTML = html;
+  chatBox.appendChild(bot);
+  scrollToBottom();
+
+  saveChat();
+  speakBot(data.reply);
+}
 
 /* ================= INIT ================= */
 
@@ -250,9 +246,6 @@ document.addEventListener("visibilitychange", () => {
     saveChat();
   }
 });
-
-
-
 
 
 
@@ -306,4 +299,5 @@ clearChat = function () {
   _clearChat();                  // existing clear
   showServiceOptions();          // show options again
 };
+
 
