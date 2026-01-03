@@ -1,143 +1,146 @@
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
+const micBtn = document.getElementById("micBtn");
 
-/* ---------------- SERVICE LIST ---------------- */
-const allServices = [
-  "Income Certificate",
-  "Caste Certificate",
-  "Domicile Certificate",
-  "PAN Card",
-  "Driving Licence",
-  "Aadhaar Card",
-  "Scholarship",
-  "Pension",
-  "Ration Card",
-  "Birth Certificate",
-  "Death Certificate",
-  "Voter ID",
-  "Passport",
-  "Marriage Certificate",
-  "Disability Certificate"
-];
+/* ================= UTILS ================= */
 
+function isAndroid() {
+  return typeof Android !== "undefined";
+}
 
-// 📱 Mobile + Desktop auto scroll fix
 function scrollToBottom() {
-  if (!chatBox) return;
-
   setTimeout(() => {
     chatBox.scrollTop = chatBox.scrollHeight;
   }, 100);
 }
 
-let speechUtterance = null;
-let isPaused = false;
+/* ================= CHAT SAVE ================= */
 
-
-function botSpeak(text){
-  if(window.Android){
-    Android.speak(text);
-  }
-}
-
-function saveChat(){
-  if(window.Android){
+function saveChat() {
+  if (isAndroid()) {
     Android.saveChat(chatBox.innerHTML);
+  } else {
+    localStorage.setItem("chatHistory", chatBox.innerHTML);
   }
 }
 
-window.onload = ()=>{
-  if(window.Android){
-    chatBox.innerHTML = Android.loadChat();
+function loadChat() {
+  let saved = "";
+  if (isAndroid()) {
+    saved = Android.loadChat();
+  } else {
+    saved = localStorage.getItem("chatHistory");
   }
+  if (saved) chatBox.innerHTML = saved;
 }
 
+function clearChat() {
+  if (isAndroid()) {
+    Android.clearChat();
+  } else {
+    localStorage.removeItem("chatHistory");
+  }
+  chatBox.innerHTML = "";
+  showServiceOptions();
+}
 
+/* ================= TTS (BOT SPEAK) ================= */
 
+function speakBot(text) {
+  if (isAndroid()) {
+    Android.speak(text + "। कृपया किसी अन्य जानकारी के लिए बताएं।");
+    return;
+  }
 
-
-
-
-
-function speakText(text) {
   if (!window.speechSynthesis) return;
 
-  speechSynthesis.cancel(); // purani voice band
-
-  speechUtterance = new SpeechSynthesisUtterance(text);
-  speechUtterance.lang = "hi-IN";
-  speechUtterance.rate = 0.95;
-  speechUtterance.pitch = 1;
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(
+    text + "। कृपया किसी अन्य जानकारी के लिए बताएं।"
+  );
+  utter.lang = "hi-IN";
+  utter.rate = 0.95;
 
   const voices = speechSynthesis.getVoices();
-  const hindiVoice = voices.find(v =>
-    v.lang === "hi-IN" || v.name.toLowerCase().includes("hindi")
-  );
+  const hindi = voices.find(v => v.lang === "hi-IN");
+  if (hindi) utter.voice = hindi;
 
-  if (hindiVoice) speechUtterance.voice = hindiVoice;
-
-  speechSynthesis.speak(speechUtterance);
-  isPaused = false;
-
-  updateTtsButton();
+  speechSynthesis.speak(utter);
 }
 
+/* ================= VOICE INPUT ================= */
 
+let recognition;
+let isListening = false;
 
-function toggleSpeech() {
-  if (!speechSynthesis.speaking) return;
+if (!isAndroid() && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = "hi-IN";
 
-  if (!isPaused) {
-    speechSynthesis.pause();
-    isPaused = true;
+  recognition.onstart = () => {
+    isListening = true;
+    micBtn.innerText = "⏹️";
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    micBtn.innerText = "🎤";
+  };
+
+  recognition.onerror = () => {
+    alert("🎤 Voice input error");
+  };
+
+  recognition.onresult = e => {
+    input.value = e.results[0][0].transcript;
+    sendMessage();
+  };
+}
+
+micBtn.addEventListener("click", () => {
+  if (isAndroid()) {
+    Android.startMic();
+  } else if (recognition) {
+    recognition.start();
   } else {
-    speechSynthesis.resume();
-    isPaused = false;
+    alert("Voice input supported nahi hai");
   }
+});
 
-  updateTtsButton();
-}
+// Android → JS
+window.receiveVoiceInput = function (text) {
+  input.value = text;
+  sendMessage();
+};
 
+/* ================= SERVICES ================= */
 
-function updateTtsButton() {
-  const btn = document.getElementById("ttsToggleBtn");
-  if (!btn) return;
-
-  btn.innerText = isPaused ? "▶" : "⏸";
-}
-
-
-speechSynthesis.cancel();
-isPaused = false;
-updateTtsButton();
-
-
-
+const allServices = [
+  "Income Certificate","Caste Certificate","Domicile Certificate","PAN Card",
+  "Driving Licence","Aadhaar Card","Scholarship","Pension","Ration Card",
+  "Birth Certificate","Death Certificate","Voter ID","Passport",
+  "Marriage Certificate","Disability Certificate"
+];
 
 let serviceIndex = 0;
 
-/* ---------------- SERVICE OPTIONS UI ---------------- */
-
 function showServiceOptions() {
-  const botDiv = document.createElement("div");
-  botDiv.className = "bot-msg";
+  const div = document.createElement("div");
+  div.className = "bot-msg";
 
   let html = "<b>👇 Aap kya banwana chahte hain?</b><br><br>";
-
-  const next = allServices.slice(serviceIndex, serviceIndex + 5);
-
-  next.forEach(service => {
-    html += `<button class="option-btn" onclick="selectService('${service}')">${service}</button>`;
+  allServices.slice(serviceIndex, serviceIndex + 5).forEach(s => {
+    html += `<button class="option-btn" onclick="selectService('${s}')">${s}</button>`;
   });
 
   if (serviceIndex + 5 < allServices.length) {
     html += `<br><button class="option-btn other-btn" onclick="showMoreServices()">Other Services</button>`;
   }
 
-  botDiv.innerHTML = html;
-  chatBox.appendChild(botDiv);
- scrollToBottom();
-
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  scrollToBottom();
 }
 
 function showMoreServices() {
@@ -148,293 +151,68 @@ function showMoreServices() {
 function selectService(service) {
   input.value = service;
   sendMessage();
-  scrollToBottom();
 }
 
-
-
-// save chat
-
-
-
-function saveChat() {
-  const chatBox = document.getElementById("chatBox");
-  localStorage.setItem("chatHistory", chatBox.innerHTML);
-}
-
-function loadChat() {
-  const chatBox = document.getElementById("chatBox");
-  const savedChat = localStorage.getItem("chatHistory");
-  if (savedChat) {
-    chatBox.innerHTML = savedChat;
-  }
-}
-
-function clearChat() {
-  localStorage.removeItem("chatHistory");
-  location.reload();
-}
-
-/* ---------------- CHAT SEND ---------------- */
+/* ================= CHAT ================= */
 
 async function sendMessage() {
-  const userText = input.value.trim();
-  if (!userText) return;
+  const text = input.value.trim();
+  if (!text) return;
 
-  // show user message
-  const userDiv = document.createElement("div");
-  userDiv.className = "user-msg";
-  userDiv.innerText = userText;
-  chatBox.appendChild(userDiv);
+  const user = document.createElement("div");
+  user.className = "user-msg";
+  user.innerText = text;
+  chatBox.appendChild(user);
   input.value = "";
-scrollToBottom();
+  scrollToBottom();
 
-  
-
-  // collect profile data
-  const state = document.getElementById("state").value;
-  const income = document.getElementById("income").value;
-
-  // backend call
-  const response = await fetch("https://nagrikai-backend-production.up.railway.app/api/ai/ask", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      message: userText,
-      state,
-      income
-    })
-  });
+  const response = await fetch(
+    "https://nagrikai-backend-production.up.railway.app/api/ai/ask",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        state: document.getElementById("state").value,
+        income: document.getElementById("income").value
+      })
+    }
+  );
 
   const data = await response.json();
 
-  // show bot reply
-  const botDiv = document.createElement("div");
-  botDiv.className = "bot-msg";
-let html = ` <button class="tts-btn" onclick="toggleSpeech()">⏸</button>
-  <div class="bot-text">
-    ${data.reply}
-  </div>`;
+  const bot = document.createElement("div");
+  bot.className = "bot-msg";
 
-// DOCUMENTS
-if (data.documents) {
-  html += "<br><br><b>📄 Required Documents:</b><ul>";
-  data.documents.forEach(doc => {
-    html += `<li>${doc}</li>`;
-  });
-  html += "</ul>";
-}
+  let html = `<b>${data.reply}</b>`;
 
-// OFFICIAL LINK
-if (data.link) {
-  html += `<br>🔗 <a href="${data.link}" target="_blank">
-    Official Portal
-  </a>`;
-}
+  if (data.documents) {
+    html += "<br><br><b>📄 Required Documents:</b><ul>";
+    data.documents.forEach(d => html += `<li>${d}</li>`);
+    html += "</ul>";
+  }
 
-botDiv.innerHTML = html;
-chatBox.appendChild(botDiv);
+  if (data.link) {
+    html += `<br>🔗 <a href="${data.link}" target="_blank">Official Portal</a>`;
+  }
+
+  bot.innerHTML = html;
+  chatBox.appendChild(bot);
   scrollToBottom();
 
-saveChat();
-
-speakText(data.reply);
-
-
-
-
-  // progress tracker
-  if (data.steps) {
-    const progressBox = document.getElementById("progressBox");
-    const progressList = document.getElementById("progressList");
-
-    progressBox.style.display = "block";
-    progressList.innerHTML = "";
-
-    const steps = data.steps.map(s => ({
-      text: s.text,
-      done: false
-    }));
-
-    steps.forEach(step => {
-      const li = document.createElement("li");
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      li.appendChild(cb);
-      li.append(" " + step.text);
-      progressList.appendChild(li);
-    });
-  }
-if (data.warnings) {
-  html += "<br/><b>⚠ Important Warnings:</b><ul>";
-  data.warnings.forEach(w => {
-    html += `<li>${w}</li>`;
-  });
-  html += "</ul>";
+  saveChat();
+  speakBot(data.reply);
 }
 
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-/* ---------------- ENTER KEY SUPPORT ---------------- */
-
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-
-function speakText(text) {
-  if (!window.speechSynthesis) return;
-
-  const utterance = new SpeechSynthesisUtterance(text);
-
-  // Force Hindi India
-  utterance.lang = "hi-IN";
-  utterance.rate = 0.95;
-  utterance.pitch = 1;
-
-  // Best Hindi voice select
-  const voices = speechSynthesis.getVoices();
-  const hindiVoice = voices.find(v =>
-    v.lang === "hi-IN" || v.name.toLowerCase().includes("hindi")
-  );
-
-  if (hindiVoice) {
-    utterance.voice = hindiVoice;
-  }
-
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utterance);
-}
-
-
-
-/* ---------------- INITIAL LOAD ---------------- */
+/* ================= INIT ================= */
 
 window.onload = () => {
-  loadChat();       // 🔥 Purani chat wapas
-  showServiceOptions();
+  loadChat();
+  if (!chatBox.innerHTML.trim()) {
+    showServiceOptions();
+  }
 };
 
-
-
-/* ======================================================
-   🎤 VOICE TYPING (SPEECH TO TEXT) – HINDI INDIA
-   ====================================================== */
-
-// let recognition;
-// let isListening = false;
-
-// const micBtn = document.getElementById("micBtn");
-// const userInput = document.getElementById("userInput");
-
-// if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-//   const SpeechRecognition =
-//     window.SpeechRecognition || window.webkitSpeechRecognition;
-
-//   recognition = new SpeechRecognition();
-//   recognition.lang = "hi-IN"; // 🇮🇳 Hindi (India)
-//   recognition.continuous = false;
-//   recognition.interimResults = false;
-
-//   // 🎙 Start listening
-//   micBtn.addEventListener("click", () => {
-//     if (!isListening) {
-//       recognition.start();
-//       isListening = true;
-//       micBtn.innerText = "⏺"; // recording indicator
-//       micBtn.style.background = "#dc2626";
-//     } else {
-//       recognition.stop();
-//     }
-//   });
-
-//   // 🎧 Result received
-//   recognition.onresult = event => {
-//     const transcript = event.results[0][0].transcript;
-//     userInput.value = transcript;
-//   };
-
-//   // 🛑 Stop
-//   recognition.onend = () => {
-//     isListening = false;
-//     micBtn.innerText = "🎤";
-//     micBtn.style.background = "#2563eb";
-//   };
-
-//   // ❌ Error handling
-//   recognition.onerror = event => {
-//     console.error("Speech recognition error:", event.error);
-//     isListening = false;
-//     micBtn.innerText = "🎤";
-//     micBtn.style.background = "#2563eb";
-//     alert("🎤 Voice input ka access allow karein (browser permission).");
-//   };
-// } else {
-//   micBtn.disabled = true;
-//   micBtn.title = "Voice typing supported nahi hai is browser me";
-// }
-
-
-/* ================= VOICE INPUT FIX ================= */
-
-const micBtn = document.getElementById("micBtn");
-const inputField = document.getElementById("userInput");
-
-let recognition;
-let isListening = false;
-
-// Browser support check
-if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  recognition = new SpeechRecognition();
-  recognition.lang = "hi-IN"; // ✅ Indian Hindi
-  recognition.interimResults = false;
-  recognition.continuous = false;
-
-  recognition.onstart = () => {
-    isListening = true;
-    micBtn.classList.add("listening");
-    micBtn.innerText = "⏹️";
-  };
-
-  recognition.onend = () => {
-    isListening = false;
-    micBtn.classList.remove("listening");
-    micBtn.innerText = "🎤";
-  };
-
-  recognition.onerror = (e) => {
-    console.error("Voice error:", e);
-    alert("🎤 Voice input error. Please try again.");
-    recognition.stop();
-  };
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    inputField.value = transcript;
-  };
-
-  micBtn.addEventListener("click", () => {
-    if (!isListening) {
-      recognition.start();   // ✅ MUST be on button click
-    } else {
-      recognition.stop();
-    }
-  });
-
-} else {
-  alert("❌ Voice input supported nahi hai is browser me.");
-}
-
-
-
-
-
-
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
