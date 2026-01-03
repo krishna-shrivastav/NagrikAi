@@ -2,7 +2,6 @@ const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 
 /* ---------------- SERVICE LIST ---------------- */
-
 const allServices = [
   "Income Certificate",
   "Caste Certificate",
@@ -433,6 +432,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
 } else {
   alert("❌ Voice input supported nahi hai is browser me.");
 }
+
 
 
 
