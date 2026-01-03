@@ -44,6 +44,15 @@ function clearChat() {
   showServiceOptions();
 }
 
+
+if(window.Android){
+  const user = Android.getUsername();
+  document.getElementById("welcome").innerText =
+    "Namaste " + user;
+}
+
+
+
 /* ================= TTS (BOT SPEAK) ================= */
 
 function speakBot(text) {
@@ -216,3 +225,4 @@ window.onload = () => {
 input.addEventListener("keydown", e => {
   if (e.key === "Enter") sendMessage();
 });
+
