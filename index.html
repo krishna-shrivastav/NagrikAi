@@ -1,416 +1,259 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>NagrikAI – Services</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+const chatBox = document.getElementById("chatBox");
+const input = document.getElementById("userInput");
+const micBtn = document.getElementById("micBtn");
 
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+/* ================= UTILS ================= */
 
-<header class="header">
-  <h1>NagrikAI</h1>
-  <p id="subtitle">Explore Government Services Easily</p>
-     <h3>Non-Governmental Organization - NGO</h3>
-  <div class="top-controls">
-    <!-- SEARCH -->
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search (income, aadhaar, pan, dl...)"
-      onkeyup="filterServices()"
-    />
-
-    <!-- LANGUAGE TOGGLE -->
-   <button onclick="toggleLanguage()">🌐हिंदी / English</button>
-
-  </div>
-</header>
-
-<!-- SERVICES GRID -->
-<section class="grid" id="servicesGrid">
-
-  <!-- Aadhaar -->
-  <div class="card"
-       data-keywords="aadhaar aadhar adhar uidai identity"
-       onclick="openModal(
-         'Aadhaar Card',
-         'आधार कार्ड भारत का एक विशिष्ट पहचान पत्र है। यह सरकारी योजनाओं, बैंकिंग और पहचान सत्यापन के लिए उपयोग किया जाता है।',
-         'Aadhaar Card is a unique identity document used for government schemes, banking and verification.',
-         'Identity Proof, Address Proof, Date of Birth Proof',
-         '7–14 days',
-         'https://uidai.gov.in/'
-       )">
-    <i class="fa-solid fa-id-card"></i>
-    <span>Aadhaar Card</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- PAN -->
-  <div class="card"
-       data-keywords="pan income tax card nsdl financial"
-       onclick="openModal(
-         'PAN Card',
-         'पैन कार्ड आयकर और बैंकिंग कार्यों के लिए आवश्यक है।',
-         'PAN Card is required for income tax and financial transactions.',
-         'Aadhaar Card, DOB Proof, Photograph',
-         '7–10 days',
-         'https://www.onlineservices.nsdl.com/'
-       )">
-    <i class="fa-solid fa-credit-card"></i>
-    <span>PAN Card</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Income Certificate -->
-  <div class="card"
-       data-keywords="income aay certificate income proof"
-       onclick="openModal(  
-         'Income Certificate',
-         'आय प्रमाण पत्र छात्रवृत्ति और सरकारी योजनाओं के लिए उपयोग होता है।',
-         'Income Certificate is used for scholarships and welfare schemes.',
-         'Aadhaar Card, Income Proof, Address Proof',
-         '7–15 days',
-         'https://services.india.gov.in/'
-       )">
-    <i class="fa-solid fa-file-lines"></i>
-    <span>Income Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Caste -->
-  <div class="card"
-       data-keywords="caste jati jaati sc st obc"
-       onclick="openModal(
-         'Caste Certificate',
-         'जाति प्रमाण पत्र आरक्षण और सरकारी लाभों के लिए आवश्यक है।',
-         'Caste Certificate is required for reservation and government benefits.',
-         'Aadhaar Card, Caste Proof, Address Proof',
-         '15–30 days',
-         'https://services.india.gov.in/'
-       )">
-    <i class="fa-solid fa-users"></i>
-    <span>Caste Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Domicile -->
-  <div class="card"
-       data-keywords="domicile niwas residence"
-       onclick="openModal(
-         'Domicile Certificate',
-         'निवास प्रमाण पत्र राज्य के स्थायी निवास को दर्शाता है।',
-         'Domicile Certificate proves permanent residence of a state.',
-         'Aadhaar Card, Residence Proof',
-         '10–20 days',
-         'https://services.india.gov.in/'
-       )">
-    <i class="fa-solid fa-house"></i>
-    <span>Domicile Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Driving Licence -->
-  <div class="card"
-       data-keywords="dl driving licence license parivahan"
-       onclick="openModal(
-         'Driving Licence',
-         'ड्राइविंग लाइसेंस वाहन चलाने की कानूनी अनुमति देता है।',
-         'Driving Licence allows legal driving and works as ID.',
-         'Aadhaar Card, Address Proof, Learner Licence',
-         '15–30 days',
-         'https://parivahan.gov.in/'
-       )">
-    <i class="fa-solid fa-car"></i>
-    <span>Driving Licence</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Ration -->
-  <div class="card"
-       data-keywords="ration rashan food bpl nfsa"
-       onclick="openModal(
-         'Ration Card',
-         'राशन कार्ड सब्सिडी वाले खाद्य पदार्थ प्राप्त करने के लिए उपयोग होता है।',
-         'Ration Card is used to obtain subsidized food grains.',
-         'Family Aadhaar, Income Proof',
-         '15–30 days',
-         'https://nfsa.gov.in/'
-       )">
-    <i class="fa-solid fa-bowl-rice"></i>
-    <span>Ration Card</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Scholarship -->
-  <div class="card"
-       data-keywords="scholarship nsp student fee"
-       onclick="openModal(
-         'Scholarship',
-         'छात्रवृत्ति छात्रों को आर्थिक सहायता प्रदान करती है।',
-         'Scholarship provides financial assistance to students.',
-         'Aadhaar Card, Income Certificate, Bank Passbook',
-         '30–90 days',
-         'https://scholarships.gov.in/'
-       )">
-    <i class="fa-solid fa-graduation-cap"></i>
-    <span>Scholarship</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Pension -->
-  <div class="card"
-       data-keywords="pension old age widow"
-       onclick="openModal(
-         'Pension',
-         'पेंशन वृद्ध और विधवा व्यक्तियों को मासिक सहायता देती है।',
-         'Pension provides monthly financial support.',
-         'Aadhaar Card, Bank Details',
-         '30–60 days',
-         'https://www.india.gov.in/'
-       )">
-    <i class="fa-solid fa-person-cane"></i>
-    <span>Pension</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Passport -->
-  <div class="card"
-       data-keywords="passport travel seva"
-       onclick="openModal(
-         'Passport',
-         'पासपोर्ट अंतरराष्ट्रीय यात्रा के लिए आवश्यक दस्तावेज है।',
-         'Passport is required for international travel.',
-         'Aadhaar Card, Address Proof',
-         '30–45 days',
-         'https://www.passportindia.gov.in/'
-       )">
-    <i class="fa-solid fa-passport"></i>
-    <span>Passport</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Voter -->
-  <div class="card"
-       data-keywords="voter epic election"
-       onclick="openModal(
-         'Voter ID',
-         'वोटर आईडी मतदान और पहचान के लिए आवश्यक है।',
-         'Voter ID allows citizens to vote.',
-         'Aadhaar Card, Address Proof',
-         '15–30 days',
-         'https://voters.eci.gov.in/'
-       )">
-    <i class="fa-solid fa-check-to-slot"></i>
-    <span>Voter ID</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Birth -->
-  <div class="card"
-       data-keywords="birth janam newborn"
-       onclick="openModal(
-         'Birth Certificate',
-         'जन्म प्रमाण पत्र जन्म का कानूनी प्रमाण है।',
-         'Birth Certificate is legal proof of birth.',
-         'Hospital Slip, Parent Aadhaar',
-         '5–15 days',
-         'https://crsorgi.gov.in/'
-       )">
-    <i class="fa-solid fa-baby"></i>
-    <span>Birth Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Death -->
-  <div class="card"
-       data-keywords="death mrityu"
-       onclick="openModal(
-         'Death Certificate',
-         'मृत्यु प्रमाण पत्र मृत्यु का आधिकारिक रिकॉर्ड है।',
-         'Death Certificate is official proof of death.',
-         'Hospital Slip, Aadhaar',
-         '7–15 days',
-         'https://crsorgi.gov.in/'
-       )">
-    <i class="fa-solid fa-skull"></i>
-    <span>Death Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Marriage -->
-  <div class="card"
-       data-keywords="marriage vivah shaadi"
-       onclick="openModal(
-         'Marriage Certificate',
-         'विवाह प्रमाण पत्र कानूनी विवाह का प्रमाण है।',
-         'Marriage Certificate is legal proof of marriage.',
-         'Bride & Groom Aadhaar',
-         '7–30 days',
-         'https://www.india.gov.in/'
-       )">
-    <i class="fa-solid fa-ring"></i>
-    <span>Marriage Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-
-  <!-- Disability -->
-  <div class="card"
-       data-keywords="disability divyang udid"
-       onclick="openModal(
-         'Disability Certificate',
-         'दिव्यांग प्रमाण पत्र विशेष लाभों के लिए आवश्यक है।',
-         'Disability Certificate helps access special benefits.',
-         'Aadhaar Card, Medical Certificate',
-         '30–45 days',
-         'https://www.swavlambancard.gov.in/'
-       )">
-    <i class="fa-solid fa-wheelchair"></i>
-    <span>Disability Certificate</span>
-    <div class="hover">Click to view</div>
-  </div>
-<div id="chat-toggle" onclick="openChat()">For More Info
-  💬</div>
-
-
-
-</section>
-
-<!-- MODAL -->
-<div id="modal" class="modal">
-  <div class="modal-box">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h3 id="mTitle"></h3>
-    <p id="mDesc"></p>
-    <p><b>Documents:</b> <span id="mDocs"></span></p>
-    <p><b>Processing Time:</b> <span id="mTime"></span></p>
-    <a id="mLink" target="_blank">Official Portal</a>
-  </div>
-</div>
-<div id="chat-panel">
-  <iframe src="chat.html"></iframe>
-</div>
-
-
-
-
-
-
-
-<div id="chat-fab" onclick="openChat()">💬</div>
-
-<div id="chat-overlay">
-  <div id="chat-popup">
-
-    <!-- CHAT HEADER -->
-    <div class="chat-header">
-      <span>🤖 NagrikAI Assistant</span>
-      <div class="chat-actions">
-        <button onclick="toggleFullScreen()">⛶</button>
-        <button onclick="closeChat()">✕</button>
-      </div>
-    </div>
-
-    <!-- CHAT IFRAME -->
-    <iframe src="chat.html" id="chat-iframe"></iframe>
-
-  </div>
-</div>
-
-
-
-
-
-
-
-
-<script>
-
-
-
-
-
-
-
-
-function openChat(){
-  const panel = document.getElementById("chat-panel");
-  panel.style.display = panel.style.display === "block" ? "none" : "block";
+function isAndroid() {
+  return typeof Android !== "undefined";
 }
 
-let isHindi = false;
-
-function toggleLanguage() {
-  isHindi = !isHindi;
+function scrollToBottom() {
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 100);
 }
 
-function openModal(title, hi, en, docs, time, link) {
-  document.getElementById("mTitle").innerText = title;
-  document.getElementById("mDesc").innerText = isHindi ? hi : en;
-  document.getElementById("mDocs").innerText = docs;
-  document.getElementById("mTime").innerText = time;
-  document.getElementById("mLink").href = link;
-  document.getElementById("modal").style.display = "flex";
-}
+/* ================= CHAT SAVE / LOAD ================= */
 
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
-
-function filterServices() {
-  const q = document.getElementById("searchInput").value.toLowerCase();
-  const cards = document.querySelectorAll(".card");
-
-  cards.forEach(card => {
-    const keys = card.dataset.keywords;
-    card.style.display = keys.includes(q) ? "block" : "none";
-  });
-}
-
-
-
-
-let isFullScreen = false;
-
-function openChat() {
-  document.getElementById("chat-overlay").style.display = "flex";
-}
-
-function closeChat() {
-  document.getElementById("chat-overlay").style.display = "none";
-  exitFullScreen();
-}
-
-function toggleFullScreen() {
-  const popup = document.getElementById("chat-popup");
-  isFullScreen = !isFullScreen;
-
-  if (isFullScreen) {
-    popup.classList.add("fullscreen");
+function saveChat() {
+  if (isAndroid()) {
+    Android.saveChat(chatBox.innerHTML);
   } else {
-    popup.classList.remove("fullscreen");
+    localStorage.setItem("chatHistory", chatBox.innerHTML);
   }
 }
 
-function exitFullScreen() {
-  document.getElementById("chat-popup").classList.remove("fullscreen");
-  isFullScreen = false;
+function loadChat() {
+  let saved = "";
+  if (isAndroid()) {
+    saved = Android.loadChat();
+  } else {
+    saved = localStorage.getItem("chatHistory");
+  }
+  if (saved) chatBox.innerHTML = saved;
 }
 
+function clearChat() {
+  serviceIndex = 0;
+  if (isAndroid()) {
+    Android.clearChat();
+  } else {
+    localStorage.removeItem("chatHistory");
+  }
+  chatBox.innerHTML = "";
+  showServiceOptions();
+}
 
+/* ================= USER NAME ================= */
 
+if (isAndroid()) {
+  const user = Android.getUsername();
+  const welcome = document.getElementById("welcome");
+  if (welcome) welcome.innerText = "Namaste " + user;
+}
 
-</script>
-  <footer class="app-footer">
-    © 2025 NagrikAI • Made with ❤️ by KRIsan
-  </footer>
-</body>
-</html>
+/* ================= TTS ================= */
 
+function speakBot(text) {
+  const finalText = text + "। कृपया किसी अन्य जानकारी के लिए बताएं।";
 
+  if (isAndroid()) {
+    Android.speak(finalText);
+    return;
+  }
 
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
 
+  const utter = new SpeechSynthesisUtterance(finalText);
+  utter.lang = "hi-IN";
+  utter.rate = 0.95;
 
+  const voices = speechSynthesis.getVoices();
+  const hindi = voices.find(v => v.lang === "hi-IN");
+  if (hindi) utter.voice = hindi;
+
+  speechSynthesis.speak(utter);
+}
+
+function pauseTts() {
+  if (isAndroid()) Android.pauseTts();
+  else speechSynthesis.pause();
+}
+
+function resumeTts() {
+  if (isAndroid()) Android.resumeTts();
+  else speechSynthesis.resume();
+}
+
+/* ================= VOICE INPUT ================= */
+
+let recognition;
+let isListening = false;
+
+if (!isAndroid() && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = "hi-IN";
+
+  recognition.onstart = () => {
+    isListening = true;
+    micBtn.innerText = "⏹️";
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    micBtn.innerText = "🎤";
+  };
+
+  recognition.onresult = e => {
+    input.value = e.results[0][0].transcript;
+    sendMessage();
+  };
+}
+
+micBtn.addEventListener("click", () => {
+  if (isAndroid()) {
+    Android.startMic();
+  } else if (recognition) {
+    recognition.start();
+  } else {
+    alert("Voice input supported nahi hai");
+  }
+});
+
+// Android → JS callback
+window.receiveVoiceInput = function (text) {
+  input.value = text;
+  sendMessage();
+};
+
+/* ================= SERVICES ================= */
+
+const allServices = [
+  "Income Certificate","Caste Certificate","Domicile Certificate","PAN Card",
+  "Driving Licence","Aadhaar Card","Scholarship","Pension","Ration Card",
+  "Birth Certificate","Death Certificate","Voter ID","Passport",
+  "Marriage Certificate","Disability Certificate"
+];
+
+let serviceIndex = 0;
+
+function showServiceOptions() {
+  const div = document.createElement("div");
+  div.className = "bot-msg";
+
+  let html = "<b>👇 Aap kya banwana chahte hain?</b><br><br>";
+  allServices.slice(serviceIndex, serviceIndex + 5).forEach(s => {
+    html += `<button class="option-btn" onclick="selectService('${s}')">${s}</button>`;
+  });
+
+  if (serviceIndex + 5 < allServices.length) {
+    html += `<br><button class="option-btn other-btn" onclick="showMoreServices()">Other Services</button>`;
+  }
+
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+function showMoreServices() {
+  serviceIndex += 5;
+  showServiceOptions();
+}
+
+function selectService(service) {
+  input.value = service;
+  sendMessage();
+}
+
+/* ================= CHAT ================= */
+
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  const user = document.createElement("div");
+  user.className = "user-msg";
+  user.innerText = text;
+  chatBox.appendChild(user);
+  input.value = "";
+  scrollToBottom();
+
+  const response = await fetch(
+    "https://nagrikai-backend-production.up.railway.app/api/ai/ask",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        state: document.getElementById("state").value,
+        income: document.getElementById("income").value
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  const bot = document.createElement("div");
+  bot.className = "bot-msg";
+
+  let html = `
+    <div class="tts-bar">
+      <button onclick="pauseTts()">⏸</button>
+      <button onclick="resumeTts()">▶</button>
+    </div>
+    <b>${data.reply}</b>
+  `;
+
+  if (data.documents) {
+    html += "<br><br><b>📄 Required Documents:</b><ul>";
+    data.documents.forEach(d => html += `<li>${d}</li>`);
+    html += "</ul>";
+  }
+
+  if (data.steps) {
+    const progressBox = document.getElementById("progressBox");
+    const progressList = document.getElementById("progressList");
+    if (progressBox && progressList) {
+      progressBox.style.display = "block";
+      progressList.innerHTML = "";
+      data.steps.forEach(s => {
+        const li = document.createElement("li");
+        li.innerHTML = `<input type="checkbox"> ${s.text}`;
+        progressList.appendChild(li);
+      });
+    }
+  }
+
+  if (data.link) {
+    html += `<br>🔗 <a href="${data.link}" target="_blank">Official Portal</a>`;
+  }
+
+  bot.innerHTML = html;
+  chatBox.appendChild(bot);
+  scrollToBottom();
+
+  saveChat();
+  speakBot(data.reply);
+}
+
+/* ================= INIT ================= */
+
+window.onload = () => {
+  loadChat();
+  if (!chatBox.innerHTML.trim()) {
+    showServiceOptions();
+  }
+};
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
+
+// auto save
+window.addEventListener("beforeunload", saveChat);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") saveChat();
+});
