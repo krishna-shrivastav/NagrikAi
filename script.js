@@ -298,6 +298,3 @@ clearChat = function () {
   _clearChat();                  // existing clear
   showServiceOptions();          // show options again
 };
-
-
-
