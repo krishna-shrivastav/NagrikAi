@@ -14,7 +14,7 @@ function scrollToBottom() {
   }, 100);
 }
 
-/* ================= CHAT SAVE ================= */
+/* ================= CHAT SAVE / LOAD ================= */
 
 function saveChat() {
   if (isAndroid()) {
@@ -23,14 +23,6 @@ function saveChat() {
     localStorage.setItem("chatHistory", chatBox.innerHTML);
   }
 }
-
-
-window.onload = ()=>{
-  if(window.Android){
-    chatBox.innerHTML = Android.loadChat();
-  }
-}
-
 
 function loadChat() {
   let saved = "";
@@ -43,6 +35,7 @@ function loadChat() {
 }
 
 function clearChat() {
+  serviceIndex = 0;
   if (isAndroid()) {
     Android.clearChat();
   } else {
@@ -52,29 +45,28 @@ function clearChat() {
   showServiceOptions();
 }
 
+/* ================= USER NAME ================= */
 
-if(window.Android){
+if (isAndroid()) {
   const user = Android.getUsername();
-  document.getElementById("welcome").innerText =
-    "Namaste " + user;
+  const welcome = document.getElementById("welcome");
+  if (welcome) welcome.innerText = "Namaste " + user;
 }
 
-
-
-/* ================= TTS (BOT SPEAK) ================= */
+/* ================= TTS ================= */
 
 function speakBot(text) {
+  const finalText = text + "। कृपया किसी अन्य जानकारी के लिए बताएं।";
+
   if (isAndroid()) {
-    Android.speak(text + "। कृपया किसी अन्य जानकारी के लिए बताएं।");
+    Android.speak(finalText);
     return;
   }
 
   if (!window.speechSynthesis) return;
-
   speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(
-    text + "। कृपया किसी अन्य जानकारी के लिए बताएं।"
-  );
+
+  const utter = new SpeechSynthesisUtterance(finalText);
   utter.lang = "hi-IN";
   utter.rate = 0.95;
 
@@ -83,6 +75,16 @@ function speakBot(text) {
   if (hindi) utter.voice = hindi;
 
   speechSynthesis.speak(utter);
+}
+
+function pauseTts() {
+  if (isAndroid()) Android.pauseTts();
+  else speechSynthesis.pause();
+}
+
+function resumeTts() {
+  if (isAndroid()) Android.resumeTts();
+  else speechSynthesis.resume();
 }
 
 /* ================= VOICE INPUT ================= */
@@ -105,10 +107,6 @@ if (!isAndroid() && ("SpeechRecognition" in window || "webkitSpeechRecognition" 
     micBtn.innerText = "🎤";
   };
 
-  recognition.onerror = () => {
-    alert("🎤 Voice input error");
-  };
-
   recognition.onresult = e => {
     input.value = e.results[0][0].transcript;
     sendMessage();
@@ -125,7 +123,7 @@ micBtn.addEventListener("click", () => {
   }
 });
 
-// Android → JS
+// Android → JS callback
 window.receiveVoiceInput = function (text) {
   input.value = text;
   sendMessage();
@@ -201,12 +199,32 @@ async function sendMessage() {
   const bot = document.createElement("div");
   bot.className = "bot-msg";
 
-  let html = `<b>${data.reply}</b>`;
+  let html = `
+    <div class="tts-bar">
+      <button onclick="pauseTts()">⏸</button>
+      <button onclick="resumeTts()">▶</button>
+    </div>
+    <b>${data.reply}</b>
+  `;
 
   if (data.documents) {
     html += "<br><br><b>📄 Required Documents:</b><ul>";
     data.documents.forEach(d => html += `<li>${d}</li>`);
     html += "</ul>";
+  }
+
+  if (data.steps) {
+    const progressBox = document.getElementById("progressBox");
+    const progressList = document.getElementById("progressList");
+    if (progressBox && progressList) {
+      progressBox.style.display = "block";
+      progressList.innerHTML = "";
+      data.steps.forEach(s => {
+        const li = document.createElement("li");
+        li.innerHTML = `<input type="checkbox"> ${s.text}`;
+        progressList.appendChild(li);
+      });
+    }
   }
 
   if (data.link) {
@@ -234,67 +252,8 @@ input.addEventListener("keydown", e => {
   if (e.key === "Enter") sendMessage();
 });
 
-
-// 🔥 AUTO SAVE WHEN USER LEAVES / BACKGROUND
-window.addEventListener("beforeunload", () => {
-  saveChat();
-});
-
+// auto save
+window.addEventListener("beforeunload", saveChat);
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    saveChat();
-  }
+  if (document.visibilityState === "hidden") saveChat();
 });
-
-
-
-/* ================= TTS CONTROL (ADD) ================= */
-
-// Android TTS pause
-function pauseTts() {
-  if (isAndroid()) {
-    Android.pauseTts();
-  } else if (window.speechSynthesis) {
-    speechSynthesis.pause();
-  }
-}
-
-// Android TTS resume
-function resumeTts() {
-  if (isAndroid()) {
-    Android.resumeTts();
-  } else if (window.speechSynthesis) {
-    speechSynthesis.resume();
-  }
-}
-
-/* ================= BOT UI WITH CONTROLS ================= */
-
-// override bot speak UI safely
-function appendBotMessage(htmlText, plainTextForVoice) {
-  const bot = document.createElement("div");
-  bot.className = "bot-msg";
-
-  bot.innerHTML = `
-    <div class="tts-bar">
-      <button onclick="pauseTts()">⏸</button>
-      <button onclick="resumeTts()">▶</button>
-    </div>
-    <div class="bot-text">${htmlText}</div>
-  `;
-
-  chatBox.appendChild(bot);
-  scrollToBottom();
-  saveChat();
-  speakBot(plainTextForVoice);
-}
-
-/* ================= CLEAR FIX ================= */
-
-const _clearChat = clearChat; // backup
-
-clearChat = function () {
-  serviceIndex = 0;              // 🔥 RESET SERVICES
-  _clearChat();                  // existing clear
-  showServiceOptions();          // show options again
-};
