@@ -1,5 +1,3 @@
-
-
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 const micBtn = document.getElementById("micBtn");
@@ -300,4 +298,3 @@ clearChat = function () {
   _clearChat();                  // existing clear
   showServiceOptions();          // show options again
 };
-
