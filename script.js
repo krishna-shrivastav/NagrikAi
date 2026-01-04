@@ -1,3 +1,6 @@
+
+
+
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 
@@ -432,3 +435,5 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
 } else {
   alert("❌ Voice input supported nahi hai is browser me.");
 }
+
+
