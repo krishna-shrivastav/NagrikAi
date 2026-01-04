@@ -318,4 +318,110 @@
     <iframe src="chat.html" id="chat-iframe"></iframe>
 
   </div>
-</div
+</div>
+
+
+
+<script>
+
+
+
+function openChat(){
+  const panel = document.getElementById("chat-panel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+
+let isHindi = false;
+
+function toggleLanguage() {
+  isHindi = !isHindi;
+}
+
+function openModal(title, hi, en, docs, time, link) {
+  document.getElementById("mTitle").innerText = title;
+  document.getElementById("mDesc").innerText = isHindi ? hi : en;
+  document.getElementById("mDocs").innerText = docs;
+  document.getElementById("mTime").innerText = time;
+  document.getElementById("mLink").href = link;
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+
+function filterServices() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".card");
+
+
+  cards.forEach(card => {
+    const keys = card.dataset.keywords;
+    card.style.display = keys.includes(q) ? "block" : "none";
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let isFullScreen = false;
+
+
+
+
+
+
+function openChat() {
+  document.getElementById("chat-overlay").style.display = "flex";
+}
+
+function closeChat() {
+  document.getElementById("chat-overlay").style.display = "none";
+  exitFullScreen();
+}
+
+function toggleFullScreen() {
+  const popup = document.getElementById("chat-popup");
+  isFullScreen = !isFullScreen;
+
+
+  if (isFullScreen) {
+    popup.classList.add("fullscreen");
+  } else {
+    popup.classList.remove("fullscreen");
+  }
+
+
+
+
+}
+
+function exitFullScreen() {
+  document.getElementById("chat-popup").classList.remove("fullscreen");
+  isFullScreen = false;
+}
+
+
+
+</script>
+  <footer class="app-footer">
+    © 2025 NagrikAI • Made with ❤️ by KRIsan
+  </footer>
+</body>
+</html>
