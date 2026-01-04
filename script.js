@@ -1,6 +1,3 @@
-
-
-
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 
@@ -54,9 +51,6 @@ window.onload = ()=>{
     chatBox.innerHTML = Android.loadChat();
   }
 }
-
-
-
 
 
 
@@ -328,58 +322,58 @@ window.onload = () => {
    🎤 VOICE TYPING (SPEECH TO TEXT) – HINDI INDIA
    ====================================================== */
 
-// let recognition;
-// let isListening = false;
+let recognition;
+let isListening = false;
 
-// const micBtn = document.getElementById("micBtn");
-// const userInput = document.getElementById("userInput");
+const micBtn = document.getElementById("micBtn");
+const userInput = document.getElementById("userInput");
 
-// if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-//   const SpeechRecognition =
-//     window.SpeechRecognition || window.webkitSpeechRecognition;
+if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
 
-//   recognition = new SpeechRecognition();
-//   recognition.lang = "hi-IN"; // 🇮🇳 Hindi (India)
-//   recognition.continuous = false;
-//   recognition.interimResults = false;
+  recognition = new SpeechRecognition();
+  recognition.lang = "hi-IN"; // 🇮🇳 Hindi (India)
+  recognition.continuous = false;
+  recognition.interimResults = false;
 
-//   // 🎙 Start listening
-//   micBtn.addEventListener("click", () => {
-//     if (!isListening) {
-//       recognition.start();
-//       isListening = true;
-//       micBtn.innerText = "⏺"; // recording indicator
-//       micBtn.style.background = "#dc2626";
-//     } else {
-//       recognition.stop();
-//     }
-//   });
+  // 🎙 Start listening
+  micBtn.addEventListener("click", () => {
+    if (!isListening) {
+      recognition.start();
+      isListening = true;
+      micBtn.innerText = "⏺"; // recording indicator
+      micBtn.style.background = "#dc2626";
+    } else {
+      recognition.stop();
+    }
+  });
 
-//   // 🎧 Result received
-//   recognition.onresult = event => {
-//     const transcript = event.results[0][0].transcript;
-//     userInput.value = transcript;
-//   };
+  // 🎧 Result received
+  recognition.onresult = event => {
+    const transcript = event.results[0][0].transcript;
+    userInput.value = transcript;
+  };
 
-//   // 🛑 Stop
-//   recognition.onend = () => {
-//     isListening = false;
-//     micBtn.innerText = "🎤";
-//     micBtn.style.background = "#2563eb";
-//   };
+  // 🛑 Stop
+  recognition.onend = () => {
+    isListening = false;
+    micBtn.innerText = "🎤";
+    micBtn.style.background = "#2563eb";
+  };
 
-//   // ❌ Error handling
-//   recognition.onerror = event => {
-//     console.error("Speech recognition error:", event.error);
-//     isListening = false;
-//     micBtn.innerText = "🎤";
-//     micBtn.style.background = "#2563eb";
-//     alert("🎤 Voice input ka access allow karein (browser permission).");
-//   };
-// } else {
-//   micBtn.disabled = true;
-//   micBtn.title = "Voice typing supported nahi hai is browser me";
-// }
+  // ❌ Error handling
+  recognition.onerror = event => {
+    console.error("Speech recognition error:", event.error);
+    isListening = false;
+    micBtn.innerText = "🎤";
+    micBtn.style.background = "#2563eb";
+    alert("🎤 Voice input ka access allow karein (browser permission).");
+  };
+} else {
+  micBtn.disabled = true;
+  micBtn.title = "Voice typing supported nahi hai is browser me";
+}
 
 
 /* ================= VOICE INPUT FIX ================= */
@@ -435,5 +429,6 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
 } else {
   alert("❌ Voice input supported nahi hai is browser me.");
 }
+
 
 
