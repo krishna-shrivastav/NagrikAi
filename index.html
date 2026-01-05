@@ -10,8 +10,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- ANDROID STICKY INSTALL HEADER -->
+<div id="androidInstallHeader">
+  <span>NagrikAI App</span>
+  <a
+    href="https://drive.google.com/file/d/1VxL1mPvJw42QSpM-jbpjM9jb2dN-PE0S/view?usp=sharing"
+    class="install-btn"
+  >
+    📲 Install App
+  </a>
+</div>
 
 <header class="header">
+  
   <h1>NagrikAI</h1>
   <p id="subtitle">Explore Government Services Easily</p>
      <h3>Non-Governmental Organization - NGO</h3>
@@ -419,10 +430,31 @@ function exitFullScreen() {
 
 
 
+
+(function () {
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isMobile = window.innerWidth <= 768;
+
+  if (isAndroid && isMobile) {
+    const header = document.getElementById("androidInstallHeader");
+    if (header) {
+      header.style.display = "flex";
+      document.body.classList.add("has-install-header");
+    }
+  }
+})();
+
+
+
+  
+
+  
+
 </script>
   <footer class="app-footer">
     © 2025 NagrikAI • Made with ❤️ by KRIsan
   </footer>
 </body>
 </html>
+
 
