@@ -19,7 +19,6 @@ body {
   padding: 20px;
   background: linear-gradient(135deg, #2563eb, #1e40af);
 }
-
 /* ===== MAIN WRAPPER ===== */
 .app-wrapper,
 .app-container {
@@ -720,3 +719,4 @@ body.has-install-header {
   font-size: 18px;
   cursor: pointer;
 }
+
