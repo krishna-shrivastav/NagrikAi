@@ -10,21 +10,23 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- ANDROID STICKY INSTALL HEADER -->
 <div id="androidInstallHeader">
   <span>NagrikAI App</span>
 
-  <div style="display:flex; gap:8px;">
+  <div class="install-actions">
     <a
       href="https://drive.google.com/file/d/1VxL1mPvJw42QSpM-jbpjM9jb2dN-PE0S/view?usp=sharing"
       class="install-btn"
-      onclick="markAppInstalled()"
     >
       📲 Install App
     </a>
 
+    <!-- CLOSE BUTTON -->
     <button class="close-btn" onclick="hideInstallHeader()">✕</button>
   </div>
 </div>
+
 
 
 
@@ -437,18 +439,14 @@ function exitFullScreen() {
 }
 
 
+
+
   
-
-
-
 (function () {
   const isAndroid = /Android/i.test(navigator.userAgent);
   const isMobile = window.innerWidth <= 768;
 
-  const alreadyInstalled =
-    localStorage.getItem("nagrikai_installed") === "true";
-
-  if (isAndroid && isMobile && !alreadyInstalled) {
+  if (isAndroid && isMobile) {
     const header = document.getElementById("androidInstallHeader");
     if (header) {
       header.style.display = "flex";
@@ -457,21 +455,16 @@ function exitFullScreen() {
   }
 })();
 
-function markAppInstalled() {
-  localStorage.setItem("nagrikai_installed", "true");
-  hideInstallHeader();
-}
 
+ 
 function hideInstallHeader() {
   const header = document.getElementById("androidInstallHeader");
-  if (header) header.style.display = "none";
-  document.body.classList.remove("has-install-header");
+  if (header) {
+    header.style.display = "none";
+  }
 }
 
 
-
-
-  
 
   
 
@@ -481,6 +474,7 @@ function hideInstallHeader() {
   </footer>
 </body>
 </html>
+
 
 
 
