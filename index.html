@@ -10,26 +10,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- ANDROID STICKY INSTALL HEADER -->
-<div id="androidInstallHeader">
-  <span>NagrikAI App</span>
-
-  <div class="install-actions">
-    <a
-      href="https://drive.google.com/file/d/1VxL1mPvJw42QSpM-jbpjM9jb2dN-PE0S/view?usp=sharing"
-      class="install-btn"
-    >
-      📲 Install App
-    </a>
-
-    <!-- CLOSE BUTTON -->
-    <button class="close-btn" onclick="hideInstallHeader()">✕</button>
-  </div>
-</div>
-
-
-
-
   
 <header class="header">
   
@@ -442,31 +422,6 @@ function exitFullScreen() {
 
 
   
-(function () {
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  const isMobile = window.innerWidth <= 768;
-
-  if (isAndroid && isMobile) {
-    const header = document.getElementById("androidInstallHeader");
-    if (header) {
-      header.style.display = "flex";
-      document.body.classList.add("has-install-header");
-    }
-  }
-})();
-
-
- 
-function hideInstallHeader() {
-  const header = document.getElementById("androidInstallHeader");
-  if (header) {
-    header.style.display = "none";
-  }
-}
-
-
-
-  
 
 </script>
   <footer class="app-footer">
@@ -474,6 +429,7 @@ function hideInstallHeader() {
   </footer>
 </body>
 </html>
+
 
 
 
