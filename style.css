@@ -669,11 +669,42 @@ body {
 
 
 
+
+/* INSTALL HEADER ACTIONS */
+#androidInstallHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* right side buttons */
+.install-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* close button */
+.close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  opacity: 0.8;
+}
+
+
+
 /* ===============================
    ANDROID ONLY STICKY HEADER
 ================================ */
 
-#androidInstallHeader {
+/* #androidInstallHeader {
   position: fixed;
   top: 0;
   left: 0;
@@ -681,7 +712,7 @@ body {
   height: 56px;
   background: linear-gradient(90deg, #2563eb, #1e40af);
   color: #fff;
-  display: none; /* default hidden */
+  display: none; 
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
@@ -691,7 +722,7 @@ body {
   font-weight: 600;
 }
 
-/* Install button */
+
 #androidInstallHeader .install-btn {
   background: #22c55e;
   color: #fff;
@@ -706,7 +737,7 @@ body {
   background: #16a34a;
 }
 
-/* Page content down push (so content hide na ho) */
+
 body.has-install-header {
   padding-top: 56px;
 }
@@ -718,5 +749,6 @@ body.has-install-header {
   color: white;
   font-size: 18px;
   cursor: pointer;
-}
+} */
+
 
