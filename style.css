@@ -711,3 +711,12 @@ body {
 body.has-install-header {
   padding-top: 56px;
 }
+
+
+#androidInstallHeader .close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
