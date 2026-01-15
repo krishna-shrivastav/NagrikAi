@@ -11,22 +11,19 @@
 </head>
 <body>
 
-<!-- ANDROID INSTALL HEADER -->
+<!-- ANDROID STICKY INSTALL HEADER -->
 <div id="androidInstallHeader">
-  <div class="install-left">
-    <strong>NagrikAI App</strong>
-    <small id="installCountText">0 installs</small>
-  </div>
+  <span>NagrikAI App</span>
 
-  <div class="install-right">
+  <div class="install-actions">
     <a
-      href="https://github.com/USERNAME/NagrikAI/releases/download/v1.0/app-release.apk"
+      href="https://drive.google.com/file/d/1VxL1mPvJw42QSpM-jbpjM9jb2dN-PE0S/view?usp=sharing"
       class="install-btn"
-      onclick="handleInstallClick()"
     >
-      📲 Install 
+      📲 Install App
     </a>
 
+    <!-- CLOSE BUTTON -->
     <button class="close-btn" onclick="hideInstallHeader()">✕</button>
   </div>
 </div>
@@ -446,51 +443,26 @@ function exitFullScreen() {
 
 
 
+
 (function () {
   const isAndroid = /Android/i.test(navigator.userAgent);
   const isMobile = window.innerWidth <= 768;
 
-  const alreadyInstalled =
-    localStorage.getItem("nagrikai_installed") === "true";
-
-  if (isAndroid && isMobile && !alreadyInstalled) {
+  if (isAndroid && isMobile) {
     const header = document.getElementById("androidInstallHeader");
     if (header) {
-      header.classList.add("show");
+      header.style.display = "flex";
       document.body.classList.add("has-install-header");
-      updateInstallCount();
     }
   }
 })();
 
-/* ===== INSTALL COUNT (FREE) ===== */
-
-function updateInstallCount() {
-  let count = parseInt(localStorage.getItem("nagrikai_install_count") || "0");
-  document.getElementById("installCountText").innerText =
-    count + " installs";
-}
-
-function handleInstallClick() {
-  let count = parseInt(localStorage.getItem("nagrikai_install_count") || "0");
-  count++;
-  localStorage.setItem("nagrikai_install_count", count);
-
-  // mark installed (banner hide forever)
-  localStorage.setItem("nagrikai_installed", "true");
-
-  hideInstallHeader();
-}
-
 function hideInstallHeader() {
   const header = document.getElementById("androidInstallHeader");
   if (header) {
-    header.classList.remove("show");
+    header.style.display = "none";
   }
-  document.body.classList.remove("has-install-header");
 }
-
-
 
 
   
@@ -503,6 +475,7 @@ function hideInstallHeader() {
   </footer>
 </body>
 </html>
+
 
 
 
