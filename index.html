@@ -10,6 +10,28 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- ANDROID INSTALL HEADER -->
+<div id="androidInstallHeader">
+  <div class="install-left">
+    <strong>NagrikAI App</strong>
+    <small id="installCountText">0 installs</small>
+  </div>
+
+  <div class="install-right">
+    <a
+      href="https://github.com/USERNAME/NagrikAI/releases/download/v1.0/app-release.apk"
+      class="install-btn"
+      onclick="handleInstallClick()"
+    >
+      📲 Install 
+    </a>
+
+    <button class="close-btn" onclick="hideInstallHeader()">✕</button>
+  </div>
+</div>
+
+
   
 <header class="header">
   
@@ -420,6 +442,58 @@ function exitFullScreen() {
 
 
 
+  
+
+
+
+(function () {
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isMobile = window.innerWidth <= 768;
+
+  const alreadyInstalled =
+    localStorage.getItem("nagrikai_installed") === "true";
+
+  if (isAndroid && isMobile && !alreadyInstalled) {
+    const header = document.getElementById("androidInstallHeader");
+    if (header) {
+      header.classList.add("show");
+      document.body.classList.add("has-install-header");
+      updateInstallCount();
+    }
+  }
+})();
+
+/* ===== INSTALL COUNT (FREE) ===== */
+
+function updateInstallCount() {
+  let count = parseInt(localStorage.getItem("nagrikai_install_count") || "0");
+  document.getElementById("installCountText").innerText =
+    count + " installs";
+}
+
+function handleInstallClick() {
+  let count = parseInt(localStorage.getItem("nagrikai_install_count") || "0");
+  count++;
+  localStorage.setItem("nagrikai_install_count", count);
+
+  // mark installed (banner hide forever)
+  localStorage.setItem("nagrikai_installed", "true");
+
+  hideInstallHeader();
+}
+
+function hideInstallHeader() {
+  const header = document.getElementById("androidInstallHeader");
+  if (header) {
+    header.classList.remove("show");
+  }
+  document.body.classList.remove("has-install-header");
+}
+
+
+
+
+  
 
   
 
@@ -429,6 +503,7 @@ function exitFullScreen() {
   </footer>
 </body>
 </html>
+
 
 
 
