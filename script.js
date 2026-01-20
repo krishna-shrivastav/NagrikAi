@@ -211,7 +211,7 @@ async function sendMessage() {
 
   // API CALL
   const response = await fetch(
-    "https://nagrikai-backend-production.up.railway.app/api/ai/ask",
+    "https://nagrikai-backend-production-d94b.up.railway.app/api/ai/ask",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -288,3 +288,4 @@ window.addEventListener("beforeunload", saveChat);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveChat();
 });
+
