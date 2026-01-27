@@ -1,10 +1,48 @@
-/* =========================================================
-   NAGRIKAI – FINAL SCRIPT.JS (ANDROID + WEB SAFE)
-   ========================================================= */
-
+  
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 const micBtn = document.getElementById("micBtn");
+
+// Citizen profile
+const age = document.getElementById("age");
+const category = document.getElementById("category");
+const occupation = document.getElementById("occupation");
+const disability = document.getElementById("disability");
+const minority = document.getElementById("minority");
+
+// Startup profile
+const isStartup = document.getElementById("isStartup");
+const registration = document.getElementById("registration");
+const sector = document.getElementById("sector");
+const founder = document.getElementById("founder");
+const stage = document.getElementById("stage");
+
+
+function addBotMsg(text) {
+  const div = document.createElement("div");
+  div.className = "bot-msg";
+  div.innerText = text;
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+
+function isRecommendationQuery(text) {
+  const keywords = [
+    "scheme batao",
+    "eligible",
+    "mere liye",
+    "kaun si scheme",
+    "startup scheme",
+    "govt scheme",
+    "apply kar sakta"
+  ];
+
+  return keywords.some(k => text.toLowerCase().includes(k));
+}
+
+
+
 
 /* ================= UTILS ================= */
 
@@ -46,8 +84,28 @@ function clearChat() {
     localStorage.removeItem("chatHistory");
   }
   chatBox.innerHTML = "";
-  showServiceOptions();
+    showMainOptions();
+  
+    
+
 }
+
+
+
+function clearChat() {
+  schemeIndex = 0;
+  if (isAndroid()) {
+    Android.clearChat();
+  } else {
+    localStorage.removeItem("chatHistory");
+  }
+  chatBox.innerHTML = "";
+  showMainOptions();
+
+}
+
+
+
 
 /* ================= USER NAME ================= */
 
@@ -63,7 +121,7 @@ if (isAndroid()) {
 
 function speakBot(text) {
   const finalText =
-    text + "। कृपया किसी अन्य जानकारी के लिए बताएं।";
+    text + "। कृपया किसी अन्य जानकारी के लिए बताएं। ";
 
   if (isAndroid()) {
     Android.speak(finalText);
@@ -106,7 +164,7 @@ if (
   const SR =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
-  recognition.lang = "hi-IN";
+  recognition.lang = "IN";
   recognition.interimResults = false;
 
   recognition.onstart = () => {
@@ -141,6 +199,29 @@ window.receiveVoiceInput = function (text) {
   sendMessage();
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ================= SERVICES ================= */
 
 const allServices = [
@@ -160,6 +241,63 @@ const allServices = [
   "Marriage Certificate",
   "Disability Certificate"
 ];
+
+
+const allSchemes = [
+"Beti Bachao Beti Padhao",
+"Mahila E-Haat",
+"Atal Pension Yojana",
+"Special Intensive Revision (SIR)",
+"PM Kisan Samman Nidhi",
+"PM Fasal Bima Yojana",
+"National Scholarship Portal",
+"Ujjwala Yojana",
+"Ayushman Bharat"
+  ];
+
+
+const allStartups = [
+  "Startup India",
+"PM Mudra Yojana",
+"Udyam Registration",
+"Stand-Up India"
+  ];
+
+
+
+
+
+function showMainOptions() {
+  const div = document.createElement("div");
+  div.className = "bot-msg";
+
+  div.innerHTML = `
+    <b>👇 Aap kya chahte hain?</b><br><br>
+    <button class="option-btn" onclick="selectMode('services')">🧾 Government Services</button>
+    <button class="option-btn" onclick="selectMode('schemes')">🏛️ Government Schemes</button>
+    <button class="option-btn" onclick="selectMode('startup')">🚀 Startup & Entrepreneurs</button>
+  `;
+
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+function selectMode(mode) {
+  if (mode === "services") {
+    serviceIndex = 0;
+    showServiceOptions();
+  }
+
+  if (mode === "schemes") {
+     schemeIndex = 0;
+    showSchemeOptions();
+  }
+
+  if (mode === "startup") {
+    startupIndex = 0;
+    showStartupOptions();
+  }
+}
 
 let serviceIndex = 0;
 
@@ -195,6 +333,87 @@ function selectService(service) {
   sendMessage();
 }
 
+
+
+
+let schemeIndex = 0;
+
+function showSchemeOptions() {
+  const div = document.createElement("div");
+  div.className = "bot-msg";
+
+  let html =
+    "<b>👇 Aap kya banwana chahte hain?</b><br><br>";
+
+  allSchemes
+    .slice(schemeIndex, schemeIndex + 5)
+    .forEach(scheme => {
+      html += `<button class="option-btn" onclick="selectScheme('${scheme}')">${scheme}</button>`;
+    });
+
+  if (schemeIndex + 5 < allSchemes.length) {
+    html += `<br><button class="option-btn other-btn" onclick="showMoreSchemes()">Other Schemes</button>`;
+  }
+
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+function showMoreSchemes() {
+  schemeIndex += 5;
+  showSchemeOptions();
+}
+
+function selectScheme(scheme) {
+  input.value = scheme;
+  sendMessage();
+}
+
+
+
+let startupIndex = 0;
+
+function showStartupOptions() {
+  const div = document.createElement("div");
+  div.className = "bot-msg";
+
+  let html =
+    "<b>👇 Aap kya banwana chahte hain?</b><br><br>";
+
+  allStartups
+    .slice(startupIndex, startupIndex + 5)
+    .forEach(startup => {
+      html += `<button class="option-btn" onclick="selectStartup('${startup}')">${startup}</button>`;
+    });
+
+  if (startupIndex + 5 < allStartups.length) {
+    html += `<br><button class="option-btn other-btn" onclick="showMoreStartups()">Other Startups</button>`;
+  }
+
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+function showMoreStartups() {
+  startupIndex += 5;
+  showStartupOptions();
+}
+
+function selectStartup(startup) {
+  input.value = startup;
+  sendMessage();
+}
+
+
+
+
+
+
+
+
+
 /* ================= CHAT ================= */
 
 async function sendMessage() {
@@ -209,6 +428,12 @@ async function sendMessage() {
   input.value = "";
   scrollToBottom();
 
+
+
+
+
+
+   
   // API CALL
   const response = await fetch(
     "https://nagrikai-backend-production-d94b.up.railway.app/api/ai/ask",
@@ -270,12 +495,35 @@ async function sendMessage() {
   speakBot(data.reply);
 }
 
+
+body: JSON.stringify({
+  message: text,
+  state: state.value,
+  income: income.value,
+
+  age: age.value,
+  category: category.value,
+  occupation: occupation.value,
+  disability: disability.value,
+  minority: minority.value,
+
+  isStartup: isStartup.value,
+  registration: registration.value,
+  sector: sector.value,
+  founder: founder.value,
+  stage: stage.value
+})
+
+
+
 /* ================= INIT ================= */
 
 window.onload = () => {
   loadChat();
   if (!chatBox.innerHTML.trim()) {
-    showServiceOptions();
+    showMainOptions();
+   
+  
   }
 };
 
@@ -288,4 +536,17 @@ window.addEventListener("beforeunload", saveChat);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveChat();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
