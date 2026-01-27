@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NagrikAI – Eligibility Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- MAIN CSS (tumhari wali) -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="app-header">
+  <img
+    src="nagrikailogo.png"
+    alt="NagrikAI Logo"
+    style="width:70px;margin-bottom:8px;border-radius:16px;"
+  />
+  <h1>NagrikAI</h1>
+  <p>Eligibility Checker</p>
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="app-wrapper">
+
+  <!-- ===== LEFT: FORM (SIDE PANEL STYLE) ===== -->
+  <aside class="side-panel">
+
+    <div class="profile-box">
+      <h4>👤 Your Details</h4>
+
+      <form id="userForm">
+
+        <select name="gender" required>
+          <option value="">Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+
+        <select name="category" required>
+          <option value="">Category</option>
+          <option value="General">General</option>
+          <option value="OBC">OBC</option>
+          <option value="SC">SC</option>
+          <option value="ST">ST</option>
+        </select>
+
+        <select name="occupation" required>
+          <option value="">Occupation</option>
+          <option value="farmer">Farmer</option>
+          <option value="student">Student</option>
+          <option value="business">Business</option>
+        </select>
+
+        <input
+          type="number"
+          name="income"
+          placeholder="Annual Income (₹)"
+          required
+        />
+
+        <select name="state" required>
+          <option value="">State</option>
+          <option value="MP">Madhya Pradesh</option>
+          <option value="UP">Uttar Pradesh</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+
+        <label style="font-size:13px;margin-top:6px;display:block;">
+          <input type="checkbox" name="isStartup" />
+          I am a Startup / Entrepreneur
+        </label>
+
+        <select name="stage">
+          <option value="">Startup Stage (if any)</option>
+          <option value="idea">Idea</option>
+          <option value="early">Early</option>
+          <option value="growth">Growth</option>
+        </select>
+
+       <button type="button" id="checkEligibilityBtn">
+  Check Eligibility
+</button>
+
+      </form>
+    </div>
+
+  </aside>
+
+  <!-- ===== RIGHT: RESULT (CHAT CONTAINER STYLE) ===== -->
+  <section class="chat-container">
+
+    <div class="chat-box" id="resultBox">
+      <div class="bot-msg">
+        🤖 Apni details bharo aur eligibility check karo.
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  © 2025 NagrikAI
+</footer>
+
+<!-- ================= LOGIC ================= -->
+<script type="module">
+  import { runEligibility } from "./eligibility/eligibilityController.js";
+
+  const form = document.getElementById("userForm");
+  const resultBox = document.getElementById("resultBox");
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const data = new FormData(form);
+
+    const formData = {
+      gender: data.get("gender"),
+      category: data.get("category"),
+      occupation: data.get("occupation"),
+      income: Number(data.get("income")),
+      state: data.get("state"),
+      isStartup: data.get("isStartup") ? true : false,
+      stage: data.get("stage")
+    };
+
+    const mode = formData.isStartup ? "startup" : "schemes";
+    const response = runEligibility(formData, mode);
+
+    resultBox.innerHTML = "";
+
+    const bot = document.createElement("div");
+    bot.className = "bot-msg";
+
+    if (response.results.length === 0) {
+      bot.innerText = "❌ Aapke liye koi eligible option nahi mila.";
+      resultBox.appendChild(bot);
+      return;
+    }
+
+    let html = "✅ Eligible Options:<ul>";
+    response.results.forEach(r => {
+      html += `<li>${r}</li>`;
+    });
+    html += "</ul>";
+
+    bot.innerHTML = html;
+    resultBox.appendChild(bot);
+  });
+</script>
+
+</body>
+</html>
