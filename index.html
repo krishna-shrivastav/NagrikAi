@@ -49,6 +49,13 @@
 
   </div>
 </header>
+<!-- MAIN SECTIONS NAV -->
+<div class="section-tabs">
+  <button onclick="showSection('services')">🛠 Services</button>
+  <button onclick="showSection('schemes')">📜 Schemes</button>
+  <button onclick="showSection('startup')">🚀 Startup / Entrepreneurs</button>
+</div>
+
 
 <!-- SERVICES GRID -->
 <section class="grid" id="servicesGrid">
@@ -70,21 +77,29 @@
   </div>
 
   <!-- PAN -->
-  <div class="card"
-       data-keywords="pan income tax card nsdl financial"
-       onclick="openModal(
-         'PAN Card',
-         'पैन कार्ड आयकर और बैंकिंग कार्यों के लिए आवश्यक है।',
-         'PAN Card is required for income tax and financial transactions.',
-         'Aadhaar Card, DOB Proof, Photograph',
-         '7–10 days',
-         'https://www.onlineservices.nsdl.com/'
-       )">
-    <i class="fa-solid fa-credit-card"></i>
-    <span>PAN Card</span>
-    <div class="hover">Click to view</div>
-  </div>
 
+
+<div class="card"
+     data-keywords="pan income tax card nsdl financial"
+     onclick="openModal(
+       'PAN Card (Permanent Account Number)',
+       
+       'पैन कार्ड आयकर विभाग द्वारा जारी एक महत्वपूर्ण पहचान पत्र है, जिसका उपयोग टैक्स, बैंकिंग, निवेश और सरकारी सेवाओं में किया जाता है।',
+       'PAN Card is a mandatory identity document issued by the Income Tax Department, used for taxation, banking, investments, and financial transactions.',
+          '🔹 Aadhaar Card (mandatory)\n🔹 Date of Birth Proof (Birth Certificate / 10th Marksheet)\n🔹 Passport Size Photograph\n🔹 Signature (Digital / Physical)\n🔹 Address Proof (if required)',
+       
+       '⏳ Processing Time: 7–10 Working Days',
+       
+       'https://www.incometax.gov.in/iec/foportal/'
+     )">
+  
+  <i class="fa-solid fa-credit-card"></i>
+  <span>PAN Card</span>
+  <div class="hover">Click to view</div>
+
+</div>
+
+  
   <!-- Income Certificate -->
   <div class="card"
        data-keywords="income aay certificate income proof"
@@ -299,6 +314,229 @@
 
 </section>
 
+
+<!-- ALL GOVERNMENT SCHEMES  -->
+<section class="grid hidden" id="schemesGrid">
+
+  <!-- FARMERS -->
+  <div class="card" onclick="openModal(
+    'PM Kisan Samman Nidhi',
+    'किसानों को ₹6000 सालाना सहायता।',
+    '₹6000 yearly financial support for farmers.',
+  
+    'Aadhaar, Bank Account, Land Record',
+    'Installment based',
+    'https://pmkisan.gov.in/'
+  )"><i class="fa-solid fa-tractor"></i><span>PM Kisan</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Fasal Bima Yojana',
+   ' प्रधानमंत्री फसल बीमा योजना किसानों को प्राकृतिक आपदाओं से होने वाले फसल नुकसान पर बीमा सुरक्षा देती है। अगर फसल बारिश, सूखा, बाढ़, ओलावृष्टि, कीट या बीमारी से खराब हो जाए, तो सरकार बीमा के ज़रिए मुआवज़ा देती है।👉 किसान को बहुत कम प्रीमियम देना होता है, बाकी पैसा सरकार देती है।',
+    'The Pradhan Mantri Fasal Bima Yojana provides insurance protection to farmers against crop loss caused by natural disasters. If crops are damaged due to rain, drought, floods, hailstorms, pests, or diseases, the government provides compensation through insurance. Farmers pay a very low premium, and the remaining amount is paid by the government.',
+    'Aadhaar, Land Record','bank passbook','self declaration','passport size photo',
+    'Seasonal',
+    'https://pmfby.gov.in/'
+  )"><i class="fa-solid fa-seedling"></i><span>Fasal Bima</span></div>
+
+  <div class="card" onclick="openModal(
+    'Kisan Credit Card',
+    'किसानों को सस्ता लोन।',
+    'Low-interest credit for farmers.',
+    'Aadhaar, Land Record',
+    '7–14 days',
+    'https://www.pmjay.gov.in/'
+  )"><i class="fa-solid fa-credit-card"></i><span>Kisan Credit Card</span></div>
+
+  <!-- STUDENTS -->
+  <div class="card" onclick="openModal(
+    'National Scholarship Portal',
+    'सभी छात्रवृत्तियों का पोर्टल।',
+    'Single portal for scholarships.',
+    'Aadhaar, Income Certificate',
+    '30–90 days',
+    'https://scholarships.gov.in/'
+  )"><i class="fa-solid fa-graduation-cap"></i><span>Scholarships (NSP)</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Vidya Lakshmi',
+    'शिक्षा ऋण के लिए।',
+    'Education loan support.',
+    'Admission Proof, Aadhaar',
+    '15–30 days',
+    'https://www.vidyalakshmi.co.in/'
+  )"><i class="fa-solid fa-book"></i><span>Vidya Lakshmi</span></div>
+
+  <!-- WOMEN -->
+  <div class="card" onclick="openModal(
+    'Ujjwala Yojana',
+    'महिलाओं को मुफ्त गैस।',
+    'Free LPG connection.',
+    'Aadhaar, Ration Card',
+    '15–30 days',
+    'https://pmuy.gov.in/'
+  )"><i class="fa-solid fa-fire"></i><span>Ujjwala</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Matru Vandana',
+    'गर्भवती महिलाओं को सहायता।',
+    'Financial aid for pregnant women.',
+    'Aadhaar, Bank Account',
+    'Installment based',
+    'https://pmmvy.nic.in/'
+  )"><i class="fa-solid fa-person-pregnant"></i><span>Matru Vandana</span></div>
+
+  <!-- HEALTH -->
+  <div class="card" onclick="openModal(
+    'Ayushman Bharat',
+    '₹5 लाख तक मुफ्त इलाज।',
+    'Health cover up to ₹5 lakh.',
+    'Aadhaar',
+    'Instant',
+    'https://pmjay.gov.in/'
+  )"><i class="fa-solid fa-hospital"></i><span>Ayushman Bharat</span></div>
+
+  <!-- HOUSING -->
+  <div class="card" onclick="openModal(
+    'PM Awas Yojana',
+    'घर बनाने की सहायता।',
+    'Housing assistance scheme.',
+    'Aadhaar, Income Proof',
+    'Stage based',
+    'https://pmay.gov.in/'
+  )"><i class="fa-solid fa-house"></i><span>PM Awas</span></div>
+
+  <!-- EMPLOYMENT -->
+  <div class="card" onclick="openModal(
+    'MGNREGA',
+    '100 दिन का रोजगार।',
+    '100 days guaranteed employment.',
+    'Job Card',
+    'Ongoing',
+    'https://nrega.nic.in/'
+  )"><i class="fa-solid fa-person-digging"></i><span>MGNREGA</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Kaushal Vikas',
+    'स्किल ट्रेनिंग योजना।',
+    'Skill development training.',
+    'Aadhaar',
+    '3–6 months',
+    'https://pmkvyofficial.org/'
+  )"><i class="fa-solid fa-screwdriver-wrench"></i><span>PMKVY</span></div>
+
+</section>
+ 
+
+<!-- STARTUP / ENTREPRENEURS -->
+<section class="grid hidden" id="startupGrid">
+
+  <!-- STARTUP INDIA -->
+  <div class="card" onclick="openModal(
+    'Startup India',
+    'स्टार्टअप रजिस्ट्रेशन, टैक्स छूट और DPIIT मान्यता।',
+    'Startup registration, DPIIT recognition & tax benefits.',
+    'Founders Aadhaar, PAN, Business Details',
+    '7–15 days',
+    'https://www.startupindia.gov.in/'
+  )"><i class="fa-solid fa-rocket"></i><span>Startup India</span></div>
+
+  <div class="card" onclick="openModal(
+    'DPIIT Recognition',
+    'सरकारी मान्यता और टैक्स लाभ।',
+    'Official startup recognition by DPIIT.',
+    'Incorporation Certificate',
+    '7–10 days',
+    'https://www.startupindia.gov.in/content/sih/en/startupgov/startup-recognition-page.html'
+  )"><i class="fa-solid fa-certificate"></i><span>DPIIT Recognition</span></div>
+
+  <!-- FUNDING -->
+  <div class="card" onclick="openModal(
+    'PM Mudra Yojana',
+    '₹10 लाख तक बिना गारंटी लोन।',
+    'Collateral-free business loans.',
+    'Aadhaar, Bank Details',
+    '15–30 days',
+    'https://www.mudra.org.in/'
+  )"><i class="fa-solid fa-money-bill"></i><span>Mudra Loan</span></div>
+
+  <div class="card" onclick="openModal(
+    'Stand-Up India',
+    'महिला और SC/ST उद्यमियों के लिए लोन।',
+    'Loans for women & SC/ST entrepreneurs.',
+    'Business Plan, Aadhaar',
+    '30–45 days',
+    'https://www.standupmitra.in/'
+  )"><i class="fa-solid fa-briefcase"></i><span>Stand-Up India</span></div>
+
+  <div class="card" onclick="openModal(
+    'CGTMSE',
+    'बिना गारंटी MSME लोन।',
+    'Credit guarantee for MSMEs.',
+    'Udyam Registration',
+    'Bank dependent',
+    'https://www.cgtmse.in/'
+  )"><i class="fa-solid fa-shield-halved"></i><span>CGTMSE</span></div>
+
+  <!-- MSME -->
+  <div class="card" onclick="openModal(
+    'Udyam Registration',
+    'MSME के लिए अनिवार्य रजिस्ट्रेशन।',
+    'Mandatory MSME registration.',
+    'Aadhaar, PAN',
+    'Instant',
+    'https://udyamregistration.gov.in/'
+  )"><i class="fa-solid fa-industry"></i><span>Udyam MSME</span></div>
+
+  <div class="card" onclick="openModal(
+    'MSME Subsidy',
+    'ब्याज और पूंजी सब्सिडी।',
+    'Interest & capital subsidies.',
+    'Udyam, Bank Details',
+    'Scheme based',
+    'https://msme.gov.in/'
+  )"><i class="fa-solid fa-percent"></i><span>MSME Subsidy</span></div>
+
+  <div class="card" onclick="openModal(
+    'Technology Upgradation',
+    'नई मशीनरी पर सब्सिडी।',
+    'Subsidy for modern technology.',
+    'Udyam Registration',
+    'Scheme based',
+    'https://msme.gov.in/'
+  )"><i class="fa-solid fa-microchip"></i><span>Tech Upgradation</span></div>
+
+  <!-- INNOVATION -->
+  <div class="card" onclick="openModal(
+    'Atal Innovation Mission',
+    'नवाचार और स्टार्टअप सपोर्ट।',
+    'Innovation & startup ecosystem.',
+    'Proposal Based',
+    'Program based',
+    'https://aim.gov.in/'
+  )"><i class="fa-solid fa-lightbulb"></i><span>AIM</span></div>
+
+  <div class="card" onclick="openModal(
+    'Startup Seed Fund',
+    '₹20 लाख तक सीड फंड।',
+    'Seed funding for startups.',
+    'Pitch Deck, DPIIT',
+    'Program based',
+    'https://seedfund.startupindia.gov.in/'
+  )"><i class="fa-solid fa-coins"></i><span>Seed Fund</span></div>
+
+  <div class="card" onclick="openModal(
+    'Incubation Programs',
+    'मेंटोरशिप और इंफ्रास्ट्रक्चर।',
+    'Mentorship & incubation support.',
+    'Idea / Startup Details',
+    'Program based',
+    'https://www.startupindia.gov.in/content/sih/en/incubators.html'
+  )"><i class="fa-solid fa-building"></i><span>Incubation</span></div>
+
+</section>
+
+
+  
 <!-- MODAL -->
 <div id="modal" class="modal">
   <div class="modal-box">
@@ -465,16 +703,68 @@ function hideInstallHeader() {
 }
 
 
+function showSection(section) {
+  document.getElementById("servicesGrid").style.display = "none";
+  document.getElementById("schemesGrid").style.display = "none";
+  document.getElementById("startupGrid").style.display = "none";
+
+  if(section === 'services')
+    document.getElementById("servicesGrid").style.display = "grid";
+  if(section === 'schemes')
+    document.getElementById("schemesGrid").style.display = "grid";
+  if(section === 'startup')
+    document.getElementById("startupGrid").style.display = "grid";
+}
+
+
+// fetch("schemes.json")
+//   .then(res => res.json())
+//   .then(data => renderSchemes(data.schemes));
+
+// function renderSchemes(schemes){
+//   const grid = document.getElementById("schemesGrid");
+//   if(!grid) return;
+//   grid.innerHTML = "";
+
+//   schemes.forEach(s => {
+//     const card = document.createElement("div");
+//     card.className = "card";
+//     card.setAttribute("data-keywords", `${s.title} ${s.category}`.toLowerCase());
+//     card.innerHTML = `
+//       <i class="fa-solid ${s.icon}"></i>
+//       <span>${s.title}</span>
+//       <div class="hover">Click to view</div>
+//     `;
+//     card.onclick = () => openModal(
+//       s.title,
+//       s.description_hi,
+//       s.description_en,
+//       s.documents,
+//       s.processing_time,
+//       s.link
+//     );
+//     grid.appendChild(card);
+//   });
+// }
+
+
   
 
   
 
 </script>
   <footer class="app-footer">
-    © 2025 NagrikAI • Made with ❤️ by KRIsan
-  </footer>
+    © 2026  NagrikAI 
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
