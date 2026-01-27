@@ -754,3 +754,111 @@ body {
   cursor: pointer;
   padding: 2px 6px;
 }
+
+
+
+
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.option-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 26px 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.option-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+
+.option-card .icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.option-card p {
+  font-weight: 600;
+  font-size: 15px;
+  color: #111;
+}
+
+
+.profile-section {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+ .section-tabs{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:20px;
+}
+
+.section-tabs button{
+  padding:10px 16px;
+  border:none;
+  border-radius:8px;
+  background:#1e3c72;
+  color:#fff;
+  cursor:pointer;
+}
+
+.hidden{
+  display:none;
+}
+
+
+
+.progress-box {
+  background: #fff8e1;
+  padding: 10px;
+  border-radius: 5px;
+}
+/* ===== PROGRESS TRACKER (SCROLLABLE) ===== */
+.progress-box {
+  background: #fff8e1;
+  padding: 10px;
+  border-radius: 8px;
+
+  max-height: 320px;        /* 🔥 FIXED HEIGHT */
+  overflow-y: auto;         /* 🔥 SCROLLER */
+  overflow-x: hidden;
+
+  border: 1px solid #fde68a;
+}
+
+/* Smooth scrollbar (Chrome / Edge) */
+.progress-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.progress-box::-webkit-scrollbar-thumb {
+  background: #f59e0b;
+  border-radius: 6px;
+}
+
+.progress-box::-webkit-scrollbar-track {
+  background: #fff7ed;
+}
+#progressList {
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+#progressList li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
