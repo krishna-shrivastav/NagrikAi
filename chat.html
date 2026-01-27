@@ -9,22 +9,30 @@
 
 <body>
 
-  <!-- HEADER -->
   <header class="app-header">
-  
+  <header class="app-header">
+  <!-- LOGO -->
+  <img 
+    src="nagrikailogo.png"
+    alt="NagrikAI Logo"
+    style="
+      width:72px;
+      height:72px;
+      margin-bottom:8px;
+      border-radius:18px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.3);
+    "
+  />
 
-    <h1>NagrikAI</h1>
-    <p>Digital Assistant</p>
-  </header>
+  <h1>NagrikAI</h1>
+  <p>Digital Assistant</p>
+</header>
 
-  <!-- MAIN APP -->
+
+
   <main class="app-wrapper">
    
- <!-- <button id="ttsToggleBtn" class="tts-btn" onclick="toggleSpeech()">
-  ⏸
-</button> -->
 
-    <!-- CHAT SECTION -->
     <section class="chat-container">
 
       <div id="chatBox" class="chat-box">
@@ -33,35 +41,9 @@
           🤖 Namaste! Main NagrikAI hoon. Aap kaunsi service chahte ho?
         </div>
       </div>
-      
-
-      <!-- INPUT -->
-      <!-- <div class="input-area">
-        <button id="micBtn" onclick="startVoice()">🎤</button>
-        <input
-          type="text"
-          id="userInput"
-          placeholder="Apna sawaal yahan likhiye..."
-        />
-        <button onclick="clearChat()">🗑 Clear</button>
-
-        <button onclick="sendMessage()">Send</button>
-      </div> -->
-
-<!-- <div class="input-area">
-  <button class="icon-btn" onclick="startVoice()">🎤</button>
-
-  <input
-    type="text"
-    id="userInput"
-    placeholder="Apna sawaal yahan likhiye..."
-  />
-
-  <button class="clear-btn" onclick="clearChat()">Clear</button>
-  <button class="send-btn" onclick="sendMessage()">Send</button>
-</div> -->
+    
 <div class="chat-input-area">
-<!-- <button id="micBtn" class="chat-icon-btn" title="Voice Input">🎤</button> -->
+
 <button id="micBtn" onclick="startVoice()">🎤</button>
 
 
@@ -103,6 +85,8 @@
       </div> 
 
      
+
+     
       <div id="progressBox" class="progress-box" style="display:none;">
         <h4>📊 Progress Tracker</h4>
         <ul id="progressList"></ul>
@@ -114,12 +98,26 @@
 
   <!-- FOOTER -->
   <footer class="app-footer">
-    © 2025 NagrikAI • Made with ❤️ by KRIsan
+    © 2025 NagrikAI 
   </footer>
 
   <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
