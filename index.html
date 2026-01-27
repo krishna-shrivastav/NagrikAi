@@ -55,7 +55,17 @@
   <button onclick="showSection('schemes')">📜 Schemes</button>
   <button onclick="showSection('startup')">🚀 Startup / Entrepreneurs</button>
 </div>
-
+<section id="eligibilitySection" class="hidden">
+  <iframe
+    src="userDetailsForm.html"
+    style="width:100%;height:80vh;border:none;border-radius:12px;"
+  ></iframe>
+</section>
+<div class="card" onclick="openEligibility()">
+  <i class="fa-solid fa-user-check"></i>
+  <span>Check Eligibility</span>
+</div>
+  
 
 <!-- SERVICES GRID -->
 <section class="grid" id="servicesGrid">
@@ -717,6 +727,17 @@ function showSection(section) {
 }
 
 
+
+function openEligibility() {
+  document.getElementById("eligibilitySection").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+
+
+  
+
 // fetch("schemes.json")
 //   .then(res => res.json())
 //   .then(data => renderSchemes(data.schemes));
@@ -757,6 +778,7 @@ function showSection(section) {
     © 2026  NagrikAI 
 </body>
 </html>
+
 
 
 
