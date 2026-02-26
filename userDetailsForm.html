@@ -8,172 +8,165 @@
 
   <!-- <link rel="stylesheet" href="style.css" /> -->
   <style>
-    /* ========== GLOBAL RESET ========== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", "Segoe UI", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 body {
   background: linear-gradient(135deg, #eef2ff, #f8fafc);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  transition: 0.3s;
 }
 
-/* ========== HEADER ========== */
+body.dark {
+  background: #0f172a;
+  color: white;
+}
+
 .app-header {
-  text-align: center;
-  padding: 25px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
   background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
-.app-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 1px;
+.logo-area {
+  display: flex;
+  gap: 15px;
+  align-items: center;
 }
 
-.app-header p {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-top: 5px;
+.logo {
+  width: 55px;
+  border-radius: 12px;
 }
 
-/* ========== MAIN LAYOUT ========== */
+#themeToggle {
+  background: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
 .app-wrapper {
   display: flex;
-  flex: 1;
   padding: 30px;
   gap: 25px;
 }
 
-/* ========== SIDE PANEL ========== */
 .side-panel {
-  width: 340px;
+  width: 350px;
 }
 
 .profile-box {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(14px);
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(12px);
   padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-.profile-box h4 {
-  margin-bottom: 18px;
-  font-size: 16px;
-  color: #4f46e5;
+body.dark .profile-box {
+  background: #1e293b;
 }
 
-/* ========== FORM ELEMENTS ========== */
 form select,
 form input {
   width: 100%;
   padding: 12px;
   margin-bottom: 12px;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  font-size: 14px;
-  transition: 0.3s;
+  border: 1px solid #ddd;
 }
 
-form select:focus,
-form input:focus {
-  border-color: #6366f1;
-  outline: none;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
-}
-
-form label {
-  font-size: 13px;
-  margin-bottom: 10px;
-  display: block;
-  color: #444;
-}
-
-/* ========== BUTTON ========== */
-button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 14px;
-  border: none;
+button[type="submit"] {
   background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
-  font-size: 15px;
-  font-weight: 600;
+  border: none;
+  padding: 12px;
+  border-radius: 14px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(79,70,229,0.3);
 }
 
-/* ========== CHAT CONTAINER ========== */
 .chat-container {
   flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .chat-box {
-  flex: 1;
   background: white;
   border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  padding: 20px;
+  height: 500px;
   overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-/* ========== BOT MESSAGE ========== */
+body.dark .chat-box {
+  background: #1e293b;
+}
+
 .bot-msg {
-  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-  padding: 15px 18px;
-  border-radius: 16px;
+  background: #eef2ff;
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+
+body.dark .bot-msg {
+  background: #334155;
+}
+
+.user-msg {
+  background: #4f46e5;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  margin-left: auto;
+  width: fit-content;
+}
+
+.typing {
   font-size: 14px;
-  margin-bottom: 15px;
-  animation: fadeIn 0.4s ease-in-out;
+  opacity: 0.7;
+  margin-bottom: 10px;
 }
 
-.bot-msg ul {
-  margin-top: 8px;
-  padding-left: 18px;
+.typing span {
+  animation: blink 1s infinite;
 }
 
-.bot-msg li {
-  margin-bottom: 6px;
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0% { opacity: 0 }
+  50% { opacity: 1 }
+  100% { opacity: 0 }
 }
 
-/* ========== FOOTER ========== */
 .app-footer {
   text-align: center;
   padding: 15px;
   font-size: 13px;
-  background: #f1f5f9;
-  color: #666;
+  margin-top: 30px;
 }
 
-/* ========== ANIMATION ========== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
   .app-wrapper {
     flex-direction: column;
   }
-
   .side-panel {
     width: 100%;
   }
@@ -327,4 +320,5 @@ button:hover {
 
 </body>
 </html>
+
 
