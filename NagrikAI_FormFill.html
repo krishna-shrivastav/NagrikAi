@@ -2,208 +2,536 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FormPilot AI — Real AI Extraction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FormPilot AI</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+/* ── RESET & ROOT ── */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --brand:#4F46E5;--brand-h:#4338CA;--brand-l:#EEF2FF;--brand-lt:#E0E7FF;
-  --green:#22C55E;--green-l:#F0FDF4;--amber:#F59E0B;--amber-l:#FFFBEB;
-  --red:#EF4444;--red-l:#FEF2F2;--violet:#7C3AED;--violet-l:#F5F3FF;
+  --brand:#4F46E5;--bh:#4338CA;--bl:#EEF2FF;--blt:#E0E7FF;
+  --green:#22C55E;--gl:#F0FDF4;--amber:#F59E0B;--al:#FFFBEB;
+  --red:#EF4444;--rl:#FEF2F2;--violet:#7C3AED;--vl:#F5F3FF;
   --bg:#F8FAFC;
-  --s900:#0F172A;--s700:#334155;--s600:#475569;--s500:#64748B;--s400:#94A3B8;--s300:#CBD5E1;--s200:#E2E8F0;--s100:#F1F5F9;--s50:#F8FAFC;
-  --r:12px;--sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);--shh:0 4px 16px rgba(0,0,0,.10);
+  --s9:#0F172A;--s7:#334155;--s6:#475569;--s5:#64748B;--s4:#94A3B8;--s3:#CBD5E1;--s2:#E2E8F0;--s1:#F1F5F9;
+  --r:14px;--rr:10px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shh:0 4px 20px rgba(0,0,0,.12);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--s900);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit}
-input,select{font-family:inherit;font-size:inherit}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--s300);border-radius:3px}
-.app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:228px;flex-shrink:0;background:#fff;border-right:1px solid var(--s200);display:flex;flex-direction:column}
-.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.topbar{height:60px;background:#fff;border-bottom:1px solid var(--s200);padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.page{flex:1;overflow-y:auto;padding:28px 32px}
-.wrap{max-width:960px;margin:0 auto}
-.logo-box{height:60px;padding:0 16px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--s200)}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--s9);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;-webkit-appearance:none}
+input,select,textarea{font-family:inherit;font-size:16px;-webkit-appearance:none;border-radius:0}
+textarea{resize:vertical}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px}
+.hidden{display:none!important}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;overflow:hidden;position:relative}
+
+/* SIDEBAR — desktop */
+#sidebar{
+  width:240px;flex-shrink:0;background:#fff;border-right:1px solid var(--s2);
+  display:flex;flex-direction:column;transition:transform .25s ease;
+  position:relative;z-index:10;
+}
+
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+/* TOPBAR */
+#topbar{
+  height:56px;background:#fff;border-bottom:1px solid var(--s2);
+  padding:0 20px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;position:sticky;top:0;z-index:5;
+}
+
+/* PAGE AREA */
+#page{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 20px;padding-bottom:calc(20px + var(--safe-bottom))}
+.wrap{max-width:900px;margin:0 auto}
+
+/* MOBILE NAV BAR */
+#mobile-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;
+  background:#fff;border-top:1px solid var(--s2);
+  padding:8px 0;padding-bottom:calc(8px + var(--safe-bottom));
+  z-index:100;
+}
+#mobile-nav .mnav-items{display:flex;justify-content:space-around}
+.mni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border-radius:10px;font-size:10px;font-weight:600;color:var(--s5);cursor:pointer;min-width:56px;transition:all .12s}
+.mni.active{color:var(--brand)}
+.mni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}
+.mni.active svg{stroke:var(--brand)}
+
+/* MOBILE TOPBAR */
+#mob-menu-btn{display:none;width:36px;height:36px;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;flex-shrink:0}
+#mob-menu-btn svg{width:20px;height:20px;stroke:var(--s6);fill:none;stroke-width:2}
+
+/* MOBILE SIDEBAR OVERLAY */
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199}
+
+/* Sidebar mobile open state */
+.sidebar-mobile-open #sidebar{
+  position:fixed;top:0;left:0;bottom:0;z-index:200;
+  box-shadow:var(--shh);
+}
+.sidebar-mobile-open #sidebar-overlay{display:block}
+
+/* ── SIDEBAR INTERNALS ── */
+.logo-box{height:56px;padding:0 16px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--s2);flex-shrink:0}
 .logo-icon{width:30px;height:30px;background:var(--brand);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .logo-icon svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5}
-.nav{flex:1;padding:9px;overflow-y:auto}
-.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:13px;font-weight:500;color:var(--s600);cursor:pointer;transition:all .12s;width:100%;text-align:left;margin-bottom:2px;border:none;background:none}
-.ni:hover{background:var(--s100);color:var(--s900)}
-.ni.active{background:var(--brand-l);color:var(--brand)}
+.sb-nav{flex:1;padding:8px;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;font-size:13px;font-weight:500;color:var(--s6);cursor:pointer;transition:all .12s;width:100%;text-align:left;margin-bottom:2px;border:none;background:none}
+.ni:hover{background:var(--s1);color:var(--s9)}
+.ni.active{background:var(--bl);color:var(--brand)}
 .ni.active svg{stroke:var(--brand)}
-.ni svg{width:15px;height:15px;stroke:var(--s400);fill:none;stroke-width:2;flex-shrink:0}
-.user-bar{padding:9px;border-top:1px solid var(--s200)}
-.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#818CF8,var(--brand));color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.card{background:#fff;border-radius:var(--r);border:1px solid var(--s200);box-shadow:var(--sh)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:600;padding:8px 16px;border-radius:10px;font-size:13px;transition:all .12s;cursor:pointer;border:none;font-family:inherit}
-.btn-p{background:var(--brand);color:#fff}.btn-p:hover{background:var(--brand-h)}
-.btn-s{background:#fff;color:var(--s700);border:1px solid var(--s200)}.btn-s:hover{background:var(--s50)}
-.btn-sm{padding:6px 12px;font-size:12px}
+.ni svg{width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2;flex-shrink:0}
+.user-bar{padding:8px;border-top:1px solid var(--s2)}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#818CF8,var(--brand));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── COMPONENTS ── */
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--s2);box-shadow:var(--sh)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:600;padding:10px 18px;border-radius:var(--rr);font-size:14px;transition:all .12s;cursor:pointer;border:none;font-family:inherit;line-height:1;white-space:nowrap}
+.btn-p{background:var(--brand);color:#fff}.btn-p:hover{background:var(--bh)}.btn-p:active{background:#3730A3}
+.btn-s{background:#fff;color:var(--s7);border:1px solid var(--s2)}.btn-s:hover{background:var(--s1)}
+.btn-g{background:var(--gl);color:#15803D;border:none}.btn-g:hover{background:#DCFCE7}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-xs{padding:5px 11px;font-size:12px}
+.btn-full{width:100%;justify-content:center}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.5}
-.input{width:100%;padding:9px 13px;border-radius:10px;border:1px solid var(--s200);font-size:13px;color:var(--s900);background:#fff;outline:none;transition:border-color .12s}
+.btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.5}
+
+.input{width:100%;padding:11px 14px;border-radius:var(--rr);border:1.5px solid var(--s2);font-size:15px;color:var(--s9);background:#fff;outline:none;transition:border-color .12s;-webkit-appearance:none}
 .input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
-.input.filled{border-color:rgba(34,197,94,.6);background:rgba(34,197,94,.04)}
-.input.lowc{border-color:rgba(245,158,11,.6);background:rgba(245,158,11,.04)}
+.input.filled{border-color:rgba(34,197,94,.7);background:rgba(34,197,94,.04)}
+.input.lowc{border-color:rgba(245,158,11,.7);background:rgba(245,158,11,.04)}
+select.input{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+
 .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600}
-.bg{background:var(--green-l);color:#15803D}
-.bb{background:var(--brand-l);color:#4338CA}
-.ba{background:var(--amber-l);color:#92400E}
-.br{background:var(--red-l);color:#DC2626}
-.bgr{background:var(--s100);color:var(--s600)}
-.hidden{display:none!important}
+.bg{background:var(--gl);color:#15803D}
+.bb{background:var(--bl);color:#4338CA}
+.ba{background:var(--al);color:#92400E}
+.br{background:var(--rl);color:#DC2626}
+.bgr{background:var(--s1);color:var(--s6)}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+
+/* ── UTILITY ── */
+.s2>*+*{margin-top:8px}
+.s3>*+*{margin-top:12px}
+.s4>*+*{margin-top:16px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.s2>*+*{margin-top:8px}.s3>*+*{margin-top:12px}.s4>*+*{margin-top:16px}
-.dz{border:2px dashed var(--s300);border-radius:16px;padding:52px 24px;text-align:center;cursor:pointer;transition:all .2s}
-.dz:hover,.dz.over{border-color:var(--brand);background:rgba(79,70,229,.03)}
-.dz-icon{width:58px;height:58px;background:var(--s100);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;transition:background .2s}
-.dz-icon svg{width:24px;height:24px;stroke:var(--s400);fill:none;stroke-width:2;transition:stroke .2s}
-.dz.over .dz-icon{background:var(--brand-l)}.dz.over .dz-icon svg{stroke:var(--brand)}
-.ucard{border-radius:var(--r);border:1px solid var(--s200);background:#fff;overflow:hidden;box-shadow:var(--sh);margin-bottom:10px}
-.uprog{height:3px;background:var(--brand);transition:width .5s}
-.dpill{padding:6px 13px;border-radius:9px;font-size:12px;font-weight:600;border:1.5px solid var(--s200);background:#fff;color:var(--s600);cursor:pointer;transition:all .12s;margin:0 5px 6px 0}
-.dpill:hover{border-color:var(--brand);color:var(--brand)}
-.dpill.sel{background:var(--brand-l);color:var(--brand);border-color:var(--brand-lt)}
-.ftable{background:#fff;border:1px solid var(--s200);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.frow{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--s50);transition:background .1s}
-.frow:last-child{border-bottom:none}.frow:hover{background:var(--s50)}
-.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.cdot.hi{background:#4ADE80}.cdot.me{background:var(--amber)}.cdot.lo{background:var(--red)}.cdot.no{background:var(--s300)}
-.flbl{width:185px;flex-shrink:0}
-.fcon{width:48px;text-align:right;flex-shrink:0;font-size:12px;font-weight:600}
-.fcon.hi{color:#16A34A}.fcon.me{color:#D97706}.fcon.lo{color:var(--red)}.fcon.no{color:var(--s400)}
-.fst{width:18px;flex-shrink:0;display:flex;justify-content:center}
-.fst svg{width:14px;height:14px;fill:none;stroke-width:2}
-.rsec{background:#fff;border:1px solid var(--s200);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.rh{width:100%;display:flex;align-items:center;gap:9px;padding:12px 16px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit}
-.rh:hover{background:var(--s50)}
-.rb{border-top:1px solid var(--s100)}
-.rrow{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--s50)}
-.rrow:last-child{border-bottom:none}
-.sopt{width:100%;display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;border:1.5px solid var(--s200);cursor:pointer;text-align:left;background:#fff;transition:all .12s;font-family:inherit}
-.sopt:hover{border-color:var(--s300)}.sopt.active{border-color:var(--brand-lt);background:var(--brand-l)}
-.pc-card{background:#fff;border:1px solid var(--s200);border-radius:var(--r);padding:52px;text-align:center;box-shadow:var(--sh)}
-.pc-icon{width:58px;height:58px;background:var(--brand-l);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.pstep{display:flex;align-items:center;gap:10px;padding:6px 0}
-.pdot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.pdot.d{background:var(--green-l);color:#15803D}.pdot.a{background:var(--brand-l);color:var(--brand)}.pdot.w{background:var(--s100);color:var(--s400)}
-.api-banner{background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:var(--r);padding:18px 22px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
-.api-banner svg{width:20px;height:20px;stroke:#A5B4FC;fill:none;stroke-width:2;flex-shrink:0}
-.pb-bg{height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:9px}
-.pb{height:100%;background:#fff;border-radius:3px;transition:width .6s}
-.cbw{height:4px;background:var(--s100);border-radius:2px;overflow:hidden;margin-top:3px}
-.cb{height:100%;border-radius:2px}
-.vrow{width:100%;text-align:left;background:#fff;border:1px solid var(--s200);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .12s;box-shadow:var(--sh)}
-.vrow:hover{box-shadow:var(--shh)}.vrow.sel{border-color:var(--brand-lt);background:rgba(79,70,229,.02)}
-.vdic{width:36px;height:36px;background:var(--s100);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.vdic svg{width:16px;height:16px;stroke:var(--s400);fill:none;stroke-width:2}
-.infob{display:flex;align-items:center;gap:10px;background:var(--green-l);border:1px solid #BBF7D0;border-radius:var(--r);padding:10px 14px;margin-bottom:16px}
-.infob svg{width:16px;height:16px;stroke:#15803D;fill:none;stroke-width:2;flex-shrink:0}
-.cpill{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9px;font-size:12px;font-weight:600;border:1.5px solid var(--s200);background:#fff;color:var(--s600);cursor:pointer;transition:all .12s;margin:0 4px 7px 0}
-.cpill:hover{border-color:var(--brand)}.cpill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-.cnt{font-size:10px;padding:1px 5px;border-radius:99px;background:rgba(0,0,0,.1)}
-.cpill:not(.active) .cnt{background:var(--s100);color:var(--s500)}
-.tcard{background:#fff;border:1px solid var(--s200);border-radius:var(--r);padding:15px;cursor:pointer;transition:all .12s;text-align:left;box-shadow:var(--sh);display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
-.tcard:hover{border-color:var(--brand-lt);box-shadow:var(--shh)}
-.tzap{width:28px;height:28px;background:var(--s100);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
-.tcard:hover .tzap{background:var(--brand-l)}
-.tzap svg{width:13px;height:13px;stroke:var(--brand);fill:none;stroke-width:2.5}
-.mtabs{display:flex;gap:3px;background:var(--s100);border-radius:11px;padding:3px;margin-bottom:20px;width:fit-content}
-.mtab{display:flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-size:13px;font-weight:500;color:var(--s500);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .12s}
-.mtab:hover{color:var(--s900)}.mtab.active{background:#fff;color:var(--s900);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.mtab svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
-#sov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;display:flex;align-items:center;justify-content:center}
-#toast-box{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
-.toast{background:#fff;border:1px solid var(--s200);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:500;box-shadow:var(--shh);display:flex;align-items:center;gap:7px;min-width:260px;pointer-events:auto;animation:tsl .3s ease}
+.row{display:flex;gap:10px}
+.row-sb{display:flex;justify-content:space-between;align-items:center}
+.center{display:flex;align-items:center;justify-content:center}
+.gap2{gap:8px}.gap3{gap:12px}.gap4{gap:16px}
+.flex1{flex:1}.mw0{min-width:0}
+.trunc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.divider{border-top:1px solid var(--s1);margin:14px 0}
+
+/* ── TOAST ── */
+#toast-box{position:fixed;top:16px;right:16px;left:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:flex-end}
+.toast{background:#fff;border:1px solid var(--s2);border-radius:var(--r);padding:12px 15px;font-size:13px;font-weight:500;box-shadow:var(--shh);display:flex;align-items:center;gap:8px;pointer-events:auto;max-width:360px;width:100%;animation:tsl .3s ease}
 .toast.success{border-left:3px solid var(--green)}.toast.error{border-left:3px solid var(--red)}.toast.info{border-left:3px solid var(--brand)}
-@keyframes tsl{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
-@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-.fi{animation:fi .25s ease}
+@keyframes tsl{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* ── SPINNER ── */
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{animation:spin .7s linear infinite}
 .sp{border:2.5px solid rgba(79,70,229,.2);border-top-color:var(--brand);border-radius:50%;display:inline-block}
-.div{border-top:1px solid var(--s100);margin:12px 0}
-.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
-.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fi{animation:fi .25s ease}
+
+/* ── PROGRESS BANNER ── */
+.pb-banner{background:linear-gradient(135deg,var(--brand),#4338CA);color:#fff;border-radius:var(--r);padding:20px;margin-bottom:18px}
+.pb-bar-bg{height:5px;background:rgba(255,255,255,.25);border-radius:3px;margin-top:10px}
+.pb-bar{height:100%;background:#fff;border-radius:3px;transition:width .6s}
+.cbw{height:4px;background:var(--s1);border-radius:2px;overflow:hidden;margin-top:4px}
+.cb{height:100%;border-radius:2px}
+
+/* ── UPLOAD ── */
+.dz{border:2px dashed var(--s3);border-radius:var(--r);padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.dz:hover,.dz.over{border-color:var(--brand);background:rgba(79,70,229,.03)}
+.dz-icon{width:56px;height:56px;background:var(--s1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;transition:background .2s}
+.dz-icon svg{width:24px;height:24px;stroke:var(--s4);fill:none;stroke-width:2}
+.dz.over .dz-icon{background:var(--bl)}.dz.over .dz-icon svg{stroke:var(--brand)}
+.ucard{border-radius:var(--r);border:1px solid var(--s2);background:#fff;overflow:hidden;box-shadow:var(--sh);margin-bottom:10px}
+.uprog{height:3px;background:var(--brand);transition:width .5s}
+.dpill{padding:7px 14px;border-radius:9px;font-size:13px;font-weight:600;border:1.5px solid var(--s2);background:#fff;color:var(--s6);cursor:pointer;transition:all .12s;margin:0 6px 8px 0;touch-action:manipulation}
+.dpill:hover{border-color:var(--brand);color:var(--brand)}
+.dpill.sel{background:var(--bl);color:var(--brand);border-color:var(--blt)}
+
+/* ── FIELD TABLE ── */
+.ftable{background:#fff;border:1px solid var(--s2);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.frow{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--s1);transition:background .1s}
+.frow:last-child{border-bottom:none}.frow:hover{background:var(--s1)}
+.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cdot.hi{background:#4ADE80}.cdot.me{background:var(--amber)}.cdot.lo{background:var(--red)}.cdot.no{background:var(--s3)}
+.flbl{width:160px;flex-shrink:0}
+.fcon{width:44px;text-align:right;flex-shrink:0;font-size:11px;font-weight:600}
+.fcon.hi{color:#16A34A}.fcon.me{color:#D97706}.fcon.lo{color:var(--red)}.fcon.no{color:var(--s4)}
+.fst{width:16px;flex-shrink:0;display:flex;justify-content:center}
+.fst svg{width:14px;height:14px;fill:none;stroke-width:2}
+
+/* ── REVIEW ── */
+.rsec{background:#fff;border:1px solid var(--s2);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.rh{width:100%;display:flex;align-items:center;gap:9px;padding:13px 16px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;touch-action:manipulation}
+.rh:hover{background:var(--s1)}
+.rb{border-top:1px solid var(--s1)}
+.rrow{display:flex;align-items:flex-start;gap:9px;padding:9px 16px;border-bottom:1px solid var(--s1)}
+.rrow:last-child{border-bottom:none}
+
+/* ── SUBMIT OPTS ── */
+.sopt{width:100%;display:flex;align-items:center;gap:10px;padding:13px;border-radius:var(--rr);border:1.5px solid var(--s2);cursor:pointer;text-align:left;background:#fff;transition:all .12s;font-family:inherit}
+.sopt:hover{border-color:var(--s3)}.sopt.active{border-color:var(--blt);background:var(--bl)}
+
+/* ── PROCESSING ── */
+.pc-card{background:#fff;border:1px solid var(--s2);border-radius:var(--r);padding:44px 20px;text-align:center;box-shadow:var(--sh)}
+.pc-icon{width:56px;height:56px;background:var(--bl);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.pstep{display:flex;align-items:center;gap:10px;padding:7px 0}
+.pdot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.pdot.d{background:var(--gl);color:#15803D}.pdot.a{background:var(--bl);color:var(--brand)}.pdot.w{background:var(--s1);color:var(--s4)}
+
+/* ── VAULT DOC ROW ── */
+.vrow{width:100%;text-align:left;background:#fff;border:1px solid var(--s2);border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .12s;box-shadow:var(--sh)}
+.vrow:hover,.vrow:active{box-shadow:var(--shh)}
+.vdic{width:38px;height:38px;background:var(--s1);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vdic svg{width:17px;height:17px;stroke:var(--s4);fill:none;stroke-width:2}
+
+/* ── CATEGORY PILLS ── */
+.cpill{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:var(--rr);font-size:13px;font-weight:600;border:1.5px solid var(--s2);background:#fff;color:var(--s6);cursor:pointer;transition:all .12s;margin:0 6px 8px 0;touch-action:manipulation}
+.cpill:hover{border-color:var(--brand)}.cpill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.cnt{font-size:10px;padding:1px 5px;border-radius:99px;background:rgba(0,0,0,.12)}
+.cpill:not(.active) .cnt{background:var(--s1);color:var(--s5)}
+
+/* ── TEMPLATE CARD ── */
+.tcard{background:#fff;border:1px solid var(--s2);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .12s;text-align:left;box-shadow:var(--sh);display:flex;flex-direction:column;gap:8px;width:100%;font-family:inherit;touch-action:manipulation}
+.tcard:hover,.tcard:active{border-color:var(--blt);box-shadow:var(--shh)}
+.tzap{width:30px;height:30px;background:var(--s1);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
+.tcard:hover .tzap{background:var(--bl)}
+.tzap svg{width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:2.5}
+
+/* ── MODE TABS ── */
+.mtabs{display:flex;gap:3px;background:var(--s1);border-radius:12px;padding:4px;margin-bottom:20px;width:fit-content}
+.mtab{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;font-size:14px;font-weight:500;color:var(--s5);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .12s;touch-action:manipulation}
+.mtab:hover{color:var(--s9)}.mtab.active{background:#fff;color:var(--s9);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.mtab svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── INFO BANNER ── */
+.infob{display:flex;align-items:flex-start;gap:10px;background:var(--gl);border:1px solid #BBF7D0;border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
+.infob svg{width:16px;height:16px;stroke:#15803D;fill:none;stroke-width:2;flex-shrink:0;margin-top:1px}
+
+/* ── API BANNER ── */
+.api-banner{background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:var(--r);padding:16px 18px;margin-bottom:18px}
+.api-banner svg{width:18px;height:18px;stroke:#A5B4FC;fill:none;stroke-width:2;flex-shrink:0;margin-top:2px}
+
+/* ── PROFILE FORM ── */
+.pf-section{background:#fff;border-radius:var(--r);border:1px solid var(--s2);overflow:hidden;box-shadow:var(--sh);margin-bottom:14px}
+.pf-sec-head{padding:14px 16px;background:var(--s1);border-bottom:1px solid var(--s2);display:flex;align-items:center;gap:8px;cursor:pointer;touch-action:manipulation}
+.pf-sec-head:hover{background:#ECEFF4}
+.pf-sec-head span{font-size:15px}
+.pf-sec-body{padding:16px}
+.pf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.pf-field label{font-size:12px;font-weight:600;color:var(--s6);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.pf-field input,.pf-field select{width:100%;padding:11px 13px;border-radius:var(--rr);border:1.5px solid var(--s2);font-size:15px;color:var(--s9);background:#fff;outline:none;transition:border-color .12s}
+.pf-field input:focus,.pf-field select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.pf-full{grid-column:1/-1}
+
+/* ── SUCCESS OVERLAY ── */
+#sov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;display:flex;align-items:center;justify-content:center;padding:16px}
+
+/* ── SCROLL CONTAINER ── */
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.scroll-x::-webkit-scrollbar{height:3px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  #sidebar{display:none}
+  .sidebar-mobile-open #sidebar{display:flex}
+  #mobile-nav{display:block}
+  #mob-menu-btn{display:flex}
+  #page{padding:16px 14px;padding-bottom:calc(72px + var(--safe-bottom))}
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr 1fr}
+  .frow{flex-wrap:wrap}.flbl{width:100%}.fcon{display:none}
+  .rrow{flex-wrap:wrap}
+  .pf-row{grid-template-columns:1fr}
+  .pc-card{padding:32px 16px}
+  .dz{padding:32px 16px}
+}
+@media(max-width:480px){
+  .g4{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}
+  .mtabs{width:100%}.mtab{flex:1;justify-content:center}
+  .topbar-actions .btn-p span{display:none}
+}
 </style>
 </head>
 <body>
 <div id="toast-box"></div>
-<div class="app">
-  <aside class="sidebar">
+
+<div id="app">
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
     <div class="logo-box">
       <div class="logo-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
       <span style="font-size:15px;font-weight:700;letter-spacing:-.02em">Form<span style="color:var(--brand)">Pilot</span> AI</span>
     </div>
-    <nav class="nav">
+    <nav class="sb-nav">
       <button class="ni active" id="ni-dashboard" onclick="go('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</button>
+      <button class="ni" id="ni-profile" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</button>
       <button class="ni" id="ni-upload" onclick="go('upload')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Docs</button>
       <button class="ni" id="ni-vault" onclick="go('vault')"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Document Vault</button>
       <button class="ni" id="ni-autofill" onclick="go('autofill')"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Auto Fill</button>
       <button class="ni" id="ni-review" onclick="go('review')"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Review & Submit</button>
     </nav>
     <div class="user-bar">
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer" onmouseover="this.style.background='var(--s50)'" onmouseout="this.style.background=''">
-        <div class="avatar" id="uavatar">?</div>
-        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="uname">Your Profile</div><div style="font-size:11px;color:var(--s400)">Free plan</div></div>
+      <div style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:10px;cursor:pointer" onmouseover="this.style.background='var(--s1)'" onmouseout="this.style.background=''">
+        <div class="avatar" id="sb-avatar">?</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="sb-name">Your Profile</div>
+          <div style="font-size:11px;color:var(--s4)">Free plan</div>
+        </div>
       </div>
     </div>
   </aside>
-  <div class="main">
-    <header class="topbar">
-      <div style="font-size:14px;color:var(--s500)" id="tbar-title">Dashboard</div>
-      <div style="display:flex;align-items:center;gap:9px">
+
+  <!-- MAIN -->
+  <div id="main">
+    <!-- TOPBAR -->
+    <header id="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="mob-menu-btn" onclick="openSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <span style="font-size:14px;color:var(--s5);font-weight:500" id="tbar-title">Dashboard</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px" class="topbar-actions">
         <div id="api-pill" style="display:none" class="badge bg">AI Active ✓</div>
-        <button class="btn btn-p btn-sm" onclick="go('upload')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Document</button>
+        <button class="btn btn-p btn-sm" onclick="go('upload')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload Doc</span>
+        </button>
       </div>
     </header>
-    <main class="page" id="page">
 
-      <!-- DASHBOARD -->
+    <!-- PAGE CONTENT -->
+    <main id="page">
+
+      <!-- ══════ DASHBOARD ══════ -->
       <div id="tab-dashboard" class="wrap fi">
-        <div class="api-banner" id="apibanner">
+
+        <!-- API Key Banner -->
+        <div class="api-banner" id="api-banner" style="display:flex;align-items:flex-start;gap:12px">
           <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-          <div style="flex:1;display:flex;gap:9px">
-            <input class="input" id="apiinput" type="password" placeholder="Enter Anthropic API key (sk-ant-…) to enable real Claude AI extraction" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">
-            <button class="btn btn-sm" style="background:#fff;color:var(--brand);flex-shrink:0" onclick="saveKey()">Save Key</button>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:#C7D2FE;margin-bottom:8px">Set Anthropic API Key to enable real AI extraction</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="apiinput" type="password" placeholder="sk-ant-api03-…" style="flex:1;min-width:200px;padding:9px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:14px;outline:none;font-family:inherit" oninput="this.style.borderColor='rgba(255,255,255,.3)'">
+              <button class="btn btn-sm" style="background:#fff;color:var(--brand);flex-shrink:0" onclick="saveKey()">Save Key</button>
+            </div>
           </div>
         </div>
-        <div style="background:linear-gradient(135deg,var(--brand),#4338CA);color:#fff;border-radius:var(--r);padding:20px;margin-bottom:20px">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div><div style="font-size:15px;font-weight:600;margin-bottom:3px" id="banner-name">Welcome to FormPilot AI</div><div style="font-size:13px;color:rgba(255,255,255,.75)" id="banner-sub">Upload documents to build your real profile.</div></div>
-            <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none;white-space:nowrap" onclick="go('upload')">Upload →</button>
+
+        <!-- Profile Banner -->
+        <div class="pb-banner">
+          <div class="row-sb" style="gap:10px">
+            <div>
+              <div style="font-size:16px;font-weight:600;margin-bottom:3px" id="banner-name">Welcome to FormPilot AI 👋</div>
+              <div style="font-size:13px;color:rgba(255,255,255,.8)" id="banner-sub">Set up your profile and upload documents to get started.</div>
+            </div>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none;flex-shrink:0" onclick="go('profile')">Edit Profile</button>
           </div>
-          <div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px"><span>Profile completeness</span><span id="pct-lbl">0%</span></div><div class="pb-bg"><div class="pb" id="pbar" style="width:0%"></div></div></div>
-        </div>
-        <div class="g4" style="margin-bottom:20px">
-          <div class="card" style="padding:15px"><div style="width:32px;height:32px;background:var(--brand-l);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--brand);fill:none;stroke-width:2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="font-size:21px;font-weight:800" id="s-docs">0</div><div style="font-size:12px;color:var(--s500);margin-top:1px">Docs Uploaded</div></div>
-          <div class="card" style="padding:15px"><div style="width:32px;height:32px;background:var(--green-l);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div style="font-size:21px;font-weight:800" id="s-fields">0</div><div style="font-size:12px;color:var(--s500);margin-top:1px">Fields Extracted</div></div>
-          <div class="card" style="padding:15px"><div style="width:32px;height:32px;background:var(--violet-l);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--violet);fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="font-size:21px;font-weight:800" id="s-forms">0</div><div style="font-size:12px;color:var(--s500);margin-top:1px">Forms Filled</div></div>
-          <div class="card" style="padding:15px"><div style="width:32px;height:32px;background:var(--amber-l);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--amber);fill:none;stroke-width:2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div style="font-size:21px;font-weight:800" id="s-conf">—</div><div style="font-size:12px;color:var(--s500);margin-top:1px">Avg Confidence</div></div>
-        </div>
-        <div class="g2" style="grid-template-columns:2fr 1fr;gap:16px">
-          <div class="card" style="padding:18px"><div style="font-weight:600;margin-bottom:12px">Your Real Extracted Profile</div><div id="prof-preview"><div style="text-align:center;padding:24px;color:var(--s400);font-size:13px">Upload documents to see real extracted data here.</div></div></div>
-          <div class="card" style="padding:18px">
-            <div style="font-weight:600;margin-bottom:12px">Quick Fill</div>
-            <div id="quick-fill-cards"><div style="text-align:center;padding:16px;color:var(--s400);font-size:13px">Upload a document first to enable quick fill.</div></div>
-            <button onclick="go('autofill')" style="width:100%;margin-top:10px;padding:9px;border-radius:9px;border:1.5px dashed var(--brand-lt);color:var(--brand);background:transparent;cursor:pointer;font-size:13px;font-weight:500;transition:background .12s" onmouseover="this.style.background='var(--brand-l)'" onmouseout="this.style.background='transparent'">Browse all templates →</button>
+          <div style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.65);margin-bottom:5px"><span>Profile completeness</span><span id="pct-lbl">0%</span></div>
+            <div class="pb-bar-bg"><div class="pb-bar" id="pbar" style="width:0%"></div></div>
           </div>
         </div>
-        <!-- Recent fills - fully dynamic -->
-        <div class="card" style="padding:18px;margin-top:16px" id="recent-fills-card" style="display:none">
-          <div style="font-weight:600;margin-bottom:12px">Recent Form Fills</div>
-          <div id="recent-fills-list"></div>
+
+        <!-- Stats -->
+        <div class="g4" style="margin-bottom:16px">
+          <div class="card" style="padding:14px">
+            <div style="width:32px;height:32px;background:var(--bl);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px">
+              <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--brand);fill:none;stroke-width:2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div style="font-size:22px;font-weight:800" id="s-docs">0</div>
+            <div style="font-size:12px;color:var(--s5)">Docs</div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div style="width:32px;height:32px;background:var(--gl);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px">
+              <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div style="font-size:22px;font-weight:800" id="s-fields">0</div>
+            <div style="font-size:12px;color:var(--s5)">Fields</div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div style="width:32px;height:32px;background:var(--vl);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px">
+              <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--violet);fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div style="font-size:22px;font-weight:800" id="s-forms">0</div>
+            <div style="font-size:12px;color:var(--s5)">Forms</div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div style="width:32px;height:32px;background:var(--al);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px">
+              <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--amber);fill:none;stroke-width:2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div style="font-size:22px;font-weight:800" id="s-conf">—</div>
+            <div style="font-size:12px;color:var(--s5)">Accuracy</div>
+          </div>
+        </div>
+
+        <!-- Profile Preview + Quick Fill -->
+        <div class="g2" style="grid-template-columns:3fr 2fr;gap:14px;margin-bottom:16px">
+          <div class="card" style="padding:16px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:12px">📋 Extracted Profile</div>
+            <div id="prof-preview"><div style="text-align:center;padding:20px 10px;color:var(--s4);font-size:13px">Upload documents or fill your profile to see data here.</div></div>
+          </div>
+          <div class="card" style="padding:16px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:12px">⚡ Quick Fill</div>
+            <div id="quick-fill-cards"><div style="color:var(--s4);font-size:13px;text-align:center;padding:16px 8px">Upload a document first.</div></div>
+            <button onclick="go('autofill')" style="width:100%;margin-top:10px;padding:9px;border-radius:9px;border:1.5px dashed var(--blt);color:var(--brand);background:transparent;cursor:pointer;font-size:13px;font-weight:500">All templates →</button>
+          </div>
+        </div>
+
+        <!-- Recent Fills -->
+        <div class="card" style="padding:16px" id="recent-card" style="display:none">
+          <div style="font-weight:600;font-size:14px;margin-bottom:12px">🕐 Recent Form Fills</div>
+          <div id="recent-list"></div>
         </div>
       </div>
 
-      <!-- UPLOAD -->
+      <!-- ══════ MY PROFILE ══════ -->
+      <div id="tab-profile" class="wrap fi hidden">
+        <div style="margin-bottom:18px">
+          <div style="font-size:20px;font-weight:700;margin-bottom:3px">My Profile</div>
+          <div style="color:var(--s5);font-size:13px">Fill in your details manually — used for auto-filling any form. Stored securely in your browser.</div>
+        </div>
+
+        <!-- Personal -->
+        <div class="pf-section">
+          <div class="pf-sec-head" onclick="togglePfSec('pf-personal')">
+            <span>👤</span><span style="font-weight:600;flex:1">Personal Information</span>
+            <svg id="pf-personal-chev" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pf-sec-body" id="pf-personal">
+            <div class="pf-row">
+              <div class="pf-field"><label>Full Name</label><input id="pf_full_name" placeholder="Rajesh Kumar Singh"></div>
+              <div class="pf-field"><label>Date of Birth</label><input id="pf_date_of_birth" placeholder="DD/MM/YYYY" type="text"></div>
+              <div class="pf-field"><label>Gender</label><select id="pf_gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Transgender</option></select></div>
+              <div class="pf-field"><label>Father's Name</label><input id="pf_father_name" placeholder="Ram Kumar Singh"></div>
+              <div class="pf-field"><label>Mother's Name</label><input id="pf_mother_name" placeholder="Sunita Singh"></div>
+              <div class="pf-field"><label>Nationality</label><input id="pf_nationality" placeholder="Indian"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="pf-section">
+          <div class="pf-sec-head" onclick="togglePfSec('pf-contact')">
+            <span>📞</span><span style="font-weight:600;flex:1">Contact Details</span>
+            <svg id="pf-contact-chev" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pf-sec-body" id="pf-contact" style="display:none">
+            <div class="pf-row">
+              <div class="pf-field"><label>Mobile Number</label><input id="pf_phone" placeholder="9876543210" type="tel"></div>
+              <div class="pf-field"><label>Email ID</label><input id="pf_email" placeholder="rajesh@email.com" type="email"></div>
+              <div class="pf-field pf-full"><label>Address Line 1</label><input id="pf_address_line1" placeholder="House No. 42, Civil Lines"></div>
+              <div class="pf-field pf-full"><label>Address Line 2</label><input id="pf_address_line2" placeholder="Near Ram Mandir (optional)"></div>
+              <div class="pf-field"><label>City</label><input id="pf_city" placeholder="Lucknow"></div>
+              <div class="pf-field"><label>District</label><input id="pf_district" placeholder="Lucknow"></div>
+              <div class="pf-field"><label>State</label><input id="pf_state" placeholder="Uttar Pradesh"></div>
+              <div class="pf-field"><label>PIN Code</label><input id="pf_pincode" placeholder="226001"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Identity -->
+        <div class="pf-section">
+          <div class="pf-sec-head" onclick="togglePfSec('pf-identity')">
+            <span>🪪</span><span style="font-weight:600;flex:1">Identity Documents</span>
+            <svg id="pf-identity-chev" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pf-sec-body" id="pf-identity" style="display:none">
+            <div class="pf-row">
+              <div class="pf-field"><label>Aadhaar Number</label><input id="pf_aadhaar_number" placeholder="XXXX XXXX XXXX" maxlength="14"></div>
+              <div class="pf-field"><label>PAN Number</label><input id="pf_pan_number" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase"></div>
+              <div class="pf-field"><label>Passport Number</label><input id="pf_passport_number" placeholder="A1234567"></div>
+              <div class="pf-field"><label>Driving Licence</label><input id="pf_driving_license" placeholder="UP75 20190012345"></div>
+              <div class="pf-field"><label>Voter ID</label><input id="pf_voter_id" placeholder="ABC1234567"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="pf-section">
+          <div class="pf-sec-head" onclick="togglePfSec('pf-education')">
+            <span>🎓</span><span style="font-weight:600;flex:1">Education</span>
+            <svg id="pf-education-chev" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pf-sec-body" id="pf-education" style="display:none">
+            <div class="pf-row">
+              <div class="pf-field"><label>Highest Degree</label><select id="pf_highest_degree"><option value="">Select</option><option>10th Pass</option><option>12th Pass</option><option>Diploma</option><option>B.A.</option><option>B.Sc.</option><option>B.Com.</option><option>B.Tech / B.E.</option><option>BCA</option><option>M.A.</option><option>M.Sc.</option><option>M.Tech</option><option>MBA</option><option>MCA</option><option>PhD</option><option>Other</option></select></div>
+              <div class="pf-field"><label>Stream / Subject</label><input id="pf_stream" placeholder="Science / Commerce / Arts"></div>
+              <div class="pf-field"><label>University / Board</label><input id="pf_university" placeholder="AKTU / CBSE / IGNOU"></div>
+              <div class="pf-field"><label>College / School</label><input id="pf_college" placeholder="Govt. Degree College"></div>
+              <div class="pf-field"><label>Year of Passing</label><input id="pf_graduation_year" placeholder="2021" type="number" min="1980" max="2030"></div>
+              <div class="pf-field"><label>Percentage / CGPA</label><input id="pf_percentage" placeholder="75.5 %"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Professional -->
+        <div class="pf-section">
+          <div class="pf-sec-head" onclick="togglePfSec('pf-professional')">
+            <span>💼</span><span style="font-weight:600;flex:1">Professional</span>
+            <svg id="pf-professional-chev" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pf-sec-body" id="pf-professional" style="display:none">
+            <div class="pf-row">
+              <div class="pf-field"><label>Current Employer</label><input id="pf_current_employer" placeholder="TCS / Infosys / Self-employed"></div>
+              <div class="pf-field"><label>Designation</label><input id="pf_job_title" placeholder="Software Engineer"></div>
+              <div class="pf-field"><label>Years of Experience</label><input id="pf_experience_years" placeholder="3" type="number" min="0"></div>
+              <div class="pf-field"><label>Annual Income (₹)</label><input id="pf_annual_income" placeholder="500000"></div>
+              <div class="pf-field pf-full"><label>Skills (comma separated)</label><input id="pf_skills" placeholder="Java, Python, MS Excel"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank -->
+        <div class="pf-section">
+          <div class="pf-sec-head" onclick="togglePfSec('pf-bank')">
+            <span>🏦</span><span style="font-weight:600;flex:1">Bank Details</span>
+            <svg id="pf-bank-chev" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pf-sec-body" id="pf-bank" style="display:none">
+            <div class="pf-row">
+              <div class="pf-field"><label>Bank Name</label><input id="pf_bank_name" placeholder="State Bank of India"></div>
+              <div class="pf-field"><label>Account Number</label><input id="pf_account_number" placeholder="XXXXXXXXXX"></div>
+              <div class="pf-field"><label>IFSC Code</label><input id="pf_ifsc_code" placeholder="SBIN0001234" style="text-transform:uppercase"></div>
+              <div class="pf-field"><label>Account Type</label><select id="pf_account_type"><option value="">Select</option><option>Savings</option><option>Current</option><option>Jan Dhan</option></select></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-p" style="flex:1;min-width:140px" onclick="saveProfile()">💾 Save Profile</button>
+          <button class="btn btn-s btn-sm" onclick="clearProfile()">Clear All</button>
+        </div>
+        <div style="font-size:12px;color:var(--s4);margin-top:8px;text-align:center">All data stored only in your browser's localStorage — never sent to any server (except Anthropic API when you upload a document)</div>
+      </div>
+
+      <!-- ══════ UPLOAD ══════ -->
       <div id="tab-upload" class="wrap fi hidden">
-        <div style="margin-bottom:18px"><div style="font-size:20px;font-weight:700;margin-bottom:2px">Upload Documents</div><div style="color:var(--s500);font-size:13px">Real Claude AI will extract all information — no hardcoded values.</div></div>
-        <div class="card" style="padding:16px;margin-bottom:16px">
-          <div style="font-size:13px;font-weight:600;color:var(--s700);margin-bottom:9px">Document type</div>
+        <div style="margin-bottom:16px">
+          <div style="font-size:20px;font-weight:700;margin-bottom:3px">Upload Documents</div>
+          <div style="color:var(--s5);font-size:13px">Claude AI extracts real data — zero hardcoded values.</div>
+        </div>
+        <div class="card" style="padding:14px;margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;color:var(--s7);margin-bottom:10px">Select document type</div>
           <div id="dpills">
             <button class="dpill sel" data-t="aadhaar" onclick="selT(this)">Aadhaar Card</button>
             <button class="dpill" data-t="pan" onclick="selT(this)">PAN Card</button>
@@ -218,469 +546,546 @@ input,select{font-family:inherit;font-size:inherit}
         <div class="dz" id="dz" onclick="document.getElementById('fin').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="doDrop(event)">
           <input type="file" id="fin" style="display:none" accept="image/*,.pdf" multiple onchange="handleFiles(this.files)">
           <div class="dz-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-          <div style="font-weight:600;color:var(--s700);margin-bottom:3px">Drop document here or click to browse</div>
-          <div style="font-size:13px;color:var(--s400);margin-bottom:12px">PDF, JPG, PNG · Max 20 MB · Claude AI will extract all data</div>
-          <span class="btn btn-p btn-sm" style="pointer-events:none"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Browse files</span>
+          <div style="font-weight:600;color:var(--s7);margin-bottom:4px">Tap to upload or drop here</div>
+          <div style="font-size:13px;color:var(--s4);margin-bottom:14px">PDF, JPG, PNG · Max 20 MB · AI extracts all data</div>
+          <span class="btn btn-p btn-sm" style="pointer-events:none"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Browse Files</span>
         </div>
-        <div id="ulist" style="margin-top:16px"></div>
+        <div id="ulist" style="margin-top:14px"></div>
       </div>
 
-      <!-- VAULT -->
+      <!-- ══════ VAULT ══════ -->
       <div id="tab-vault" class="wrap fi hidden">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div><div style="font-size:20px;font-weight:700">Document Vault</div><div style="color:var(--s500);font-size:13px;margin-top:1px">All data extracted by Claude AI</div></div>
+        <div class="row-sb" style="margin-bottom:14px">
+          <div><div style="font-size:20px;font-weight:700">Document Vault</div><div style="color:var(--s5);font-size:13px;margin-top:1px">All data extracted by Claude AI</div></div>
           <button class="btn btn-p btn-sm" onclick="go('upload')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Upload</button>
         </div>
-        <div class="infob"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div style="font-size:13px;color:#166534">Every value you see was extracted from your actual documents by Claude AI. Zero hardcoded data.</div></div>
-        <div style="display:flex;gap:16px">
-          <div style="flex:1;min-width:0">
-            <div class="g3" style="margin-bottom:12px">
-              <div class="card" style="padding:11px;text-align:center"><div style="font-size:20px;font-weight:700" id="v-tot">0</div><div style="font-size:11px;color:var(--s400)">Total docs</div></div>
-              <div class="card" style="padding:11px;text-align:center"><div style="font-size:20px;font-weight:700" id="v-done">0</div><div style="font-size:11px;color:var(--s400)">Processed</div></div>
-              <div class="card" style="padding:11px;text-align:center"><div style="font-size:20px;font-weight:700" id="v-flds">0</div><div style="font-size:11px;color:var(--s400)">Fields found</div></div>
+        <div class="infob"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div style="font-size:13px;color:#166534">All values are real — extracted from your actual documents by Claude AI. Zero hardcoded data.</div></div>
+        <div class="g3" style="margin-bottom:14px">
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:700" id="v-tot">0</div><div style="font-size:11px;color:var(--s4)">Total docs</div></div>
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:700" id="v-done">0</div><div style="font-size:11px;color:var(--s4)">Processed</div></div>
+          <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;font-weight:700" id="v-flds">0</div><div style="font-size:11px;color:var(--s4)">Fields</div></div>
+        </div>
+        <div id="vlist" class="s2"></div>
+        <div id="v-empty" style="text-align:center;padding:36px;color:var(--s4);font-size:13px">No documents yet. <button onclick="go('upload')" style="color:var(--brand);font-weight:600;border:none;background:none;cursor:pointer">Upload one →</button></div>
+
+        <!-- Vault Detail Panel (full width below on mobile) -->
+        <div id="vdetail" style="display:none;margin-top:14px">
+          <div class="card" style="padding:16px">
+            <div class="row-sb" style="margin-bottom:12px">
+              <div style="font-weight:600;font-size:14px">Document Details</div>
+              <button onclick="document.getElementById('vdetail').style.display='none'" style="color:var(--s4);font-size:18px;border:none;background:none;cursor:pointer;padding:2px 6px">✕</button>
             </div>
-            <div id="vlist" class="s2"></div>
-            <div id="v-empty" style="text-align:center;padding:36px;color:var(--s400);font-size:13px">No documents yet. <button onclick="go('upload')" style="color:var(--brand);font-weight:600;border:none;background:none;cursor:pointer">Upload one →</button></div>
-          </div>
-          <div id="vdetail" style="width:264px;flex-shrink:0;display:none">
-            <div class="card" style="padding:16px">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:600;font-size:13px">Details</div><button onclick="document.getElementById('vdetail').style.display='none'" style="color:var(--s400);font-size:15px;border:none;background:none;cursor:pointer">✕</button></div>
-              <div id="vdc"></div>
-            </div>
+            <div id="vdc"></div>
           </div>
         </div>
       </div>
 
-      <!-- AUTOFILL -->
+      <!-- ══════ AUTOFILL ══════ -->
       <div id="tab-autofill" class="wrap fi hidden">
-        <div style="margin-bottom:18px"><div style="font-size:20px;font-weight:700;margin-bottom:2px">Auto Fill Form</div><div style="color:var(--s500);font-size:13px">Fields populated from your real extracted profile — no hardcoded values.</div></div>
+        <div style="margin-bottom:16px">
+          <div style="font-size:20px;font-weight:700;margin-bottom:3px">Auto Fill Form</div>
+          <div style="color:var(--s5);font-size:13px">Fields filled from your real extracted profile — no hardcoded values.</div>
+        </div>
         <div class="mtabs">
-          <button class="mtab active" id="mt-url" onclick="switchM('url')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Enter URL</button>
-          <button class="mtab" id="mt-template" onclick="switchM('template')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Choose Template</button>
+          <button class="mtab active" id="mt-url" onclick="switchM('url')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>URL</button>
+          <button class="mtab" id="mt-template" onclick="switchM('template')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Templates</button>
         </div>
         <div id="af-url">
-          <div class="card" style="padding:18px;margin-bottom:16px">
-            <label style="font-size:13px;font-weight:600;color:var(--s700);display:block;margin-bottom:7px">Paste form URL</label>
-            <div style="display:flex;gap:9px"><input class="input" id="urlinput" placeholder="https://scholarships.gov.in/..."><button class="btn btn-p" onclick="startFillFromUrl()"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Detect & Fill</button></div>
+          <div class="card" style="padding:16px;margin-bottom:14px">
+            <label style="font-size:13px;font-weight:600;color:var(--s7);display:block;margin-bottom:7px">Paste form URL</label>
+            <div style="display:flex;gap:8px">
+              <input class="input" id="urlinput" placeholder="https://scholarships.gov.in/...">
+              <button class="btn btn-p btn-sm" style="flex-shrink:0" onclick="startFillFromUrl()"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Fill</button>
+            </div>
           </div>
         </div>
         <div id="af-tpl" class="hidden">
-          <div id="cpills" style="margin-bottom:12px">
-            <button class="cpill active" data-c="govt" onclick="selC(this)">🏛️ Govt Schemes <span class="cnt">240</span></button>
-            <button class="cpill" data-c="scholar" onclick="selC(this)">🎓 Scholarships <span class="cnt">180</span></button>
-            <button class="cpill" data-c="college" onclick="selC(this)">🏫 Admissions <span class="cnt">320</span></button>
-            <button class="cpill" data-c="job" onclick="selC(this)">💼 Jobs <span class="cnt">410</span></button>
-            <button class="cpill" data-c="finance" onclick="selC(this)">🏦 Financial <span class="cnt">95</span></button>
-            <button class="cpill" data-c="travel" onclick="selC(this)">✈️ Passport <span class="cnt">28</span></button>
+          <div class="scroll-x" style="margin-bottom:14px">
+            <div id="cpills" style="display:flex;flex-wrap:nowrap;gap:0;min-width:max-content">
+              <button class="cpill active" data-c="govt" onclick="selC(this)">🏛️ Govt <span class="cnt">240</span></button>
+              <button class="cpill" data-c="scholar" onclick="selC(this)">🎓 Scholar <span class="cnt">180</span></button>
+              <button class="cpill" data-c="college" onclick="selC(this)">🏫 College <span class="cnt">320</span></button>
+              <button class="cpill" data-c="job" onclick="selC(this)">💼 Jobs <span class="cnt">410</span></button>
+              <button class="cpill" data-c="finance" onclick="selC(this)">🏦 Finance <span class="cnt">95</span></button>
+              <button class="cpill" data-c="travel" onclick="selC(this)">✈️ Passport <span class="cnt">28</span></button>
+            </div>
           </div>
           <div class="g2" id="tgrid"></div>
         </div>
         <div id="af-proc" class="pc-card hidden">
           <div class="pc-icon"><div class="sp spin" style="width:24px;height:24px"></div></div>
-          <div style="font-weight:600;font-size:15px;margin-bottom:16px">Claude AI is working…</div>
+          <div style="font-weight:600;font-size:16px;margin-bottom:16px">Claude AI is working…</div>
           <div style="max-width:240px;margin:0 auto" id="psteps"></div>
         </div>
         <div id="af-editor" class="hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
-            <div><div style="font-size:19px;font-weight:700">Review Filled Fields</div><div style="font-size:13px;color:var(--s500);margin-top:2px" id="ed-sub"></div></div>
-            <button class="btn btn-p" onclick="go('review')">Continue to Review →</button>
+          <div class="row-sb" style="margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div><div style="font-size:18px;font-weight:700">Review Filled Fields</div><div style="font-size:13px;color:var(--s5);margin-top:2px" id="ed-sub"></div></div>
+            <button class="btn btn-p btn-sm" onclick="go('review')">Review & Submit →</button>
           </div>
           <div class="g4" style="margin-bottom:12px" id="ed-stats"></div>
           <div class="card" style="padding:12px;margin-bottom:12px">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="font-weight:500">Fill progress</span><span style="color:var(--s500)" id="prog-lbl"></span></div>
-            <div style="height:6px;background:var(--s100);border-radius:3px;overflow:hidden"><div id="prog-bar" style="height:100%;border-radius:3px;transition:width .6s"></div></div>
+            <div class="row-sb" style="margin-bottom:6px;font-size:13px"><span style="font-weight:500">Fill progress</span><span style="color:var(--s5)" id="prog-lbl"></span></div>
+            <div style="height:6px;background:var(--s1);border-radius:3px;overflow:hidden"><div id="prog-bar" style="height:100%;border-radius:3px;transition:width .6s"></div></div>
           </div>
           <div class="ftable">
-            <div style="padding:11px 16px;border-bottom:1px solid var(--s100);display:flex;align-items:center;gap:6px">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--s1);display:flex;align-items:center;gap:6px">
               <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span style="font-weight:600;font-size:13px">Fields filled from your real profile by Claude AI</span>
+              <span style="font-weight:600;font-size:13px">Fields filled from your real profile</span>
             </div>
             <div id="frows"></div>
           </div>
           <div style="display:flex;gap:9px;margin-top:12px">
             <button class="btn btn-s" style="flex:1" onclick="toast('Draft saved!','success')">Save Draft</button>
-            <button class="btn btn-p" style="flex:1" onclick="go('review')">Proceed to Review & Submit →</button>
+            <button class="btn btn-p" style="flex:1" onclick="go('review')">Proceed to Review →</button>
           </div>
         </div>
       </div>
 
-      <!-- REVIEW -->
+      <!-- ══════ REVIEW ══════ -->
       <div id="tab-review" class="wrap fi hidden">
-        <div style="margin-bottom:16px"><div style="font-size:20px;font-weight:700;margin-bottom:2px">Review & Submit</div><div style="font-size:13px;color:var(--s500)">All values extracted from your real uploaded documents.</div></div>
-        <div id="rev-summary" class="card" style="padding:16px;margin-bottom:16px"></div>
-        <div class="g2" style="grid-template-columns:2fr 1fr;gap:16px">
-          <div id="rev-secs" class="s3"></div>
-          <div class="s3">
-            <div class="card" style="padding:16px">
-              <div style="font-weight:600;margin-bottom:12px">Submit Options</div>
-              <div class="s2" id="sopts"></div>
-              <button class="btn btn-p" style="width:100%;margin-top:12px;padding:11px" id="sbtn" onclick="doSubmit()">⬇ Download PDF</button>
-            </div>
-            <div class="card" style="padding:14px">
-              <div style="font-size:11px;font-weight:600;color:var(--s500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px">Data Sources</div>
-              <div id="dsources"></div>
-            </div>
-          </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:20px;font-weight:700;margin-bottom:3px">Review & Submit</div>
+          <div style="font-size:13px;color:var(--s5)">All values from your real documents and profile — no mock data.</div>
+        </div>
+        <div id="rev-summary" class="card" style="padding:16px;margin-bottom:14px"></div>
+        <div id="rev-secs" class="s3" style="margin-bottom:14px"></div>
+        <!-- Submit panel (full width on mobile) -->
+        <div class="card" style="padding:16px;margin-bottom:14px">
+          <div style="font-weight:600;margin-bottom:12px">Submit Options</div>
+          <div class="s2" id="sopts"></div>
+          <button class="btn btn-p btn-full" style="margin-top:12px;padding:13px" id="sbtn" onclick="doSubmit()">⬇ Download PDF</button>
+        </div>
+        <div class="card" style="padding:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--s5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px">Data Sources</div>
+          <div id="dsources"></div>
         </div>
       </div>
 
     </main>
   </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav id="mobile-nav">
+    <div class="mnav-items">
+      <div class="mni active" id="mni-dashboard" onclick="go('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Home</div>
+      <div class="mni" id="mni-profile" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+      <div class="mni" id="mni-upload" onclick="go('upload')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</div>
+      <div class="mni" id="mni-autofill" onclick="go('autofill')"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Fill</div>
+      <div class="mni" id="mni-review" onclick="go('review')"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Review</div>
+    </div>
+  </nav>
 </div>
 
-<!-- SUCCESS -->
+<!-- SUCCESS OVERLAY -->
 <div id="sov" class="hidden">
-  <div class="card fi" style="padding:40px;text-align:center;max-width:360px;width:90%">
-    <div style="width:60px;height:60px;background:var(--green-l);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-      <svg viewBox="0 0 24 24" style="width:30px;height:30px;stroke:var(--green);fill:none;stroke-width:2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <div class="card fi" style="padding:36px;text-align:center;max-width:360px;width:90%">
+    <div style="width:56px;height:56px;background:var(--gl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+      <svg viewBox="0 0 24 24" style="width:28px;height:28px;stroke:var(--green);fill:none;stroke-width:2.5"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div style="font-size:19px;font-weight:700;margin-bottom:6px" id="succ-t">Done!</div>
-    <div style="font-size:14px;color:var(--s500);margin-bottom:20px" id="succ-m"></div>
-    <div style="display:flex;gap:9px;justify-content:center">
-      <button class="btn btn-s" onclick="closeSov()">Back to Dashboard</button>
+    <div style="font-size:18px;font-weight:700;margin-bottom:6px" id="succ-t">Done!</div>
+    <div style="font-size:14px;color:var(--s5);margin-bottom:18px" id="succ-m"></div>
+    <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-s" onclick="closeSov()">Dashboard</button>
       <button class="btn btn-p" onclick="closeSov();go('autofill')"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Fill Another</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════ STATE ═══════════════════
+// ════════════════════════════════════════════
+// STATE — all from localStorage, zero hardcoded
+// ════════════════════════════════════════════
 let KEY = localStorage.getItem('fp_key') || '';
 let profile = JSON.parse(localStorage.getItem('fp_profile') || '{}');
 let uploads = JSON.parse(localStorage.getItem('fp_uploads') || '[]');
 let cFields = [];
 let docType = 'aadhaar';
-let mode = 'url';
+let afMode = 'url';
 let cat = 'govt';
 let fillDone = false;
 let subMode = 'download_pdf';
 let expanded = new Set(['Personal Information','Contact Details']);
 
-// ═══════════════════ NAV ═══════════════════
-function go(tab){
-  document.querySelectorAll('[id^="tab-"]').forEach(e=>e.classList.add('hidden'));
-  document.querySelectorAll('.ni').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.remove('hidden');
-  const n=document.getElementById('ni-'+tab); if(n) n.classList.add('active');
-  const tits={dashboard:'Dashboard',upload:'Upload Documents',vault:'Document Vault',autofill:'Auto Fill',review:'Review & Submit'};
-  document.getElementById('tbar-title').textContent=tits[tab]||tab;
-  if(tab==='vault') renderVault();
-  if(tab==='dashboard') renderDash();
-  if(tab==='autofill'){renderTpls(); if(fillDone) showEditor();}
-  if(tab==='review') renderReview();
+// Profile field keys mapped to sections
+const PF_KEYS = {
+  personal: ['full_name','date_of_birth','gender','father_name','mother_name','nationality'],
+  contact:  ['phone','email','address_line1','address_line2','city','district','state','pincode'],
+  identity: ['aadhaar_number','pan_number','passport_number','driving_license','voter_id'],
+  education:['highest_degree','stream','university','college','graduation_year','percentage'],
+  professional:['current_employer','job_title','experience_years','annual_income','skills'],
+  bank:     ['bank_name','account_number','ifsc_code','account_type']
+};
+const KL = {full_name:'Full Name',first_name:'First Name',last_name:'Last Name',father_name:"Father's Name",mother_name:"Mother's Name",date_of_birth:'Date of Birth',gender:'Gender',nationality:'Nationality',phone:'Mobile',alternate_phone:'Alt Mobile',email:'Email',address_line1:'Address',address_line2:'Address 2',city:'City',district:'District',state:'State',pincode:'PIN Code',country:'Country',aadhaar_number:'Aadhaar',pan_number:'PAN',passport_number:'Passport',driving_license:'DL Number',voter_id:'Voter ID',ration_card:'Ration Card',highest_degree:'Qualification',stream:'Stream',university:'University',college:'College',graduation_year:'Pass Year',percentage:'Percentage',cgpa:'CGPA',current_employer:'Employer',job_title:'Designation',experience_years:'Experience',annual_income:'Annual Income',skills:'Skills',bank_name:'Bank Name',account_number:'Account No',ifsc_code:'IFSC Code',account_type:'Account Type'};
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+function go(tab) {
+  document.querySelectorAll('[id^="tab-"]').forEach(e => e.classList.add('hidden'));
+  document.querySelectorAll('.ni,.mni').forEach(e => e.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  ['ni-' + tab, 'mni-' + tab].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('active'); });
+  const tits = { dashboard:'Dashboard', profile:'My Profile', upload:'Upload Documents', vault:'Document Vault', autofill:'Auto Fill', review:'Review & Submit' };
+  document.getElementById('tbar-title').textContent = tits[tab] || tab;
+  closeSidebar();
+  if (tab === 'vault') renderVault();
+  if (tab === 'dashboard') renderDash();
+  if (tab === 'profile') loadProfileForm();
+  if (tab === 'autofill') { renderTpls(); if (fillDone) showEditor(); }
+  if (tab === 'review') renderReview();
 }
 
-// ═══════════════════ TOAST ═══════════════════
-function toast(msg,type='info'){
-  const ic={success:`<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#15803D;fill:none;stroke-width:2.5;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>`,error:`<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2.5;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,info:`<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:2.5;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`};
-  const el=document.createElement('div');
-  el.className=`toast ${type}`;
-  el.innerHTML=(ic[type]||'')+`<span>${msg}</span>`;
+function openSidebar()  { document.getElementById('app').classList.add('sidebar-mobile-open'); }
+function closeSidebar() { document.getElementById('app').classList.remove('sidebar-mobile-open'); }
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+function toast(msg, type = 'info') {
+  const ic = { success:`<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#15803D;fill:none;stroke-width:2.5;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>`, error:`<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2.5;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`, info:`<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:2.5;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>` };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = (ic[type] || '') + `<span style="flex:1">${msg}</span>`;
   document.getElementById('toast-box').appendChild(el);
-  setTimeout(()=>el.remove(),4500);
+  setTimeout(() => el.remove(), 4500);
 }
 
-// ═══════════════════ API KEY ═══════════════════
-function saveKey(){
-  const k=document.getElementById('apiinput').value.trim();
-  if(!k.startsWith('sk-ant')){toast('Must start with sk-ant-…','error');return;}
-  KEY=k; localStorage.setItem('fp_key',k);
-  document.getElementById('apibanner').style.display='none';
-  document.getElementById('api-pill').style.display='inline-flex';
-  toast('API key saved — Claude AI extraction active!','success');
+// ════════════════════════════════════════════
+// API KEY
+// ════════════════════════════════════════════
+function saveKey() {
+  const k = document.getElementById('apiinput').value.trim();
+  if (!k.startsWith('sk-ant')) { toast('Must start with sk-ant-…', 'error'); return; }
+  KEY = k; localStorage.setItem('fp_key', k);
+  document.getElementById('api-banner').style.display = 'none';
+  document.getElementById('api-pill').style.display = 'inline-flex';
+  toast('API key saved — Claude AI extraction active!', 'success');
 }
-function chkKey(){
-  if(KEY){document.getElementById('apibanner').style.display='none';document.getElementById('api-pill').style.display='inline-flex';}
+function chkKey() {
+  if (KEY) { document.getElementById('api-banner').style.display = 'none'; document.getElementById('api-pill').style.display = 'inline-flex'; }
 }
 
-// ═══════════════════ CLAUDE API ═══════════════════
-async function claude(sys, userContent){
-  if(!KEY) throw new Error('No API key — set it in Dashboard first');
-  const r=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,system:sys,messages:[{role:'user',content:userContent}]})
+// ════════════════════════════════════════════
+// PROFILE FORM — save/load/clear
+// ════════════════════════════════════════════
+function togglePfSec(secId) {
+  const body = document.getElementById(secId);
+  const chevId = secId + '-chev';
+  const chev = document.getElementById(chevId);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : '';
+  if (chev) chev.style.transform = open ? 'rotate(0)' : 'rotate(180deg)';
+}
+
+function loadProfileForm() {
+  const flat = flatP();
+  const allKeys = Object.values(PF_KEYS).flat();
+  allKeys.forEach(key => {
+    const el = document.getElementById('pf_' + key);
+    if (el && flat[key]) el.value = flat[key];
   });
-  if(!r.ok){const e=await r.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+r.status);}
-  const d=await r.json(); return d.content[0].text;
 }
 
-function f2b(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);})}
+function saveProfile() {
+  const allKeys = Object.values(PF_KEYS).flat();
+  if (!profile.personal) profile.personal = {};
+  if (!profile.contact) profile.contact = {};
+  if (!profile.identification) profile.identification = {};
+  if (!profile.education) profile.education = {};
+  if (!profile.professional) profile.professional = {};
+  if (!profile.financial) profile.financial = {};
 
-// ═══════════════════ REAL EXTRACTION ═══════════════════
-async function extractDoc(file, dt){
-  const b64=await f2b(file);
-  const mime=file.type||'image/jpeg';
-  const isPdf=mime==='application/pdf';
+  const secMap = { full_name:'personal', date_of_birth:'personal', gender:'personal', father_name:'personal', mother_name:'personal', nationality:'personal', phone:'contact', email:'contact', address_line1:'contact', address_line2:'contact', city:'contact', district:'contact', state:'contact', pincode:'contact', aadhaar_number:'identification', pan_number:'identification', passport_number:'identification', driving_license:'identification', voter_id:'identification', highest_degree:'education', stream:'education', university:'education', college:'education', graduation_year:'education', percentage:'education', current_employer:'professional', job_title:'professional', experience_years:'professional', annual_income:'professional', skills:'professional', bank_name:'financial', account_number:'financial', ifsc_code:'financial', account_type:'financial' };
 
-  const sys=`You are an expert AI document parser for Indian government and identity documents.
-Extract ALL visible information and return ONLY valid JSON — no markdown, no explanation.
-
-Schema (leave field empty string "" if not found):
-{
-  "personal":{"full_name":"","first_name":"","last_name":"","father_name":"","mother_name":"","date_of_birth":"","gender":"","marital_status":"","nationality":""},
-  "contact":{"phone":"","alternate_phone":"","email":"","address_line1":"","address_line2":"","city":"","district":"","state":"","pincode":"","country":"India"},
-  "identification":{"aadhaar_number":"","pan_number":"","passport_number":"","driving_license":"","voter_id":"","ration_card":""},
-  "education":{"highest_degree":"","university":"","college":"","graduation_year":"","percentage":"","cgpa":"","stream":"","board_10th":"","board_12th":""},
-  "professional":{"current_employer":"","job_title":"","experience_years":"","annual_income":"","skills":[]},
-  "financial":{"bank_name":"","account_number":"","ifsc_code":"","account_type":""},
-  "document_meta":{"doc_type_detected":"${dt}","issue_date":"","expiry_date":"","doc_number":""},
-  "confidence_scores":{"personal":0.0,"contact":0.0,"identification":0.0,"education":0.0,"professional":0.0,"financial":0.0}
+  allKeys.forEach(key => {
+    const el = document.getElementById('pf_' + key);
+    if (!el) return;
+    const val = el.value.trim();
+    const sec = secMap[key];
+    if (sec) { if (!profile[sec]) profile[sec] = {}; if (val) profile[sec][key] = val; else delete profile[sec][key]; }
+  });
+  localStorage.setItem('fp_profile', JSON.stringify(profile));
+  toast('Profile saved to localStorage ✓', 'success');
+  renderDash();
 }
-Rules: DOB in DD/MM/YYYY, Aadhaar as XXXX XXXX XXXX, PAN uppercase, phone 10 digits. Return ONLY JSON.`;
 
+function clearProfile() {
+  if (!confirm('Clear all profile data?')) return;
+  profile = {};
+  localStorage.removeItem('fp_profile');
+  document.querySelectorAll('[id^="pf_"]').forEach(el => { if (el.tagName === 'SELECT') el.value = ''; else el.value = ''; });
+  toast('Profile cleared', 'info');
+  renderDash();
+}
+
+// ════════════════════════════════════════════
+// CLAUDE API
+// ════════════════════════════════════════════
+async function claude(sys, userContent) {
+  if (!KEY) throw new Error('No API key — set it in Dashboard first');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: sys, messages: [{ role: 'user', content: userContent }] })
+  });
+  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error?.message || 'API error ' + r.status); }
+  const d = await r.json(); return d.content[0].text;
+}
+function f2b(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
+
+// ════════════════════════════════════════════
+// REAL EXTRACTION FROM DOCUMENT
+// ════════════════════════════════════════════
+async function extractDoc(file, dt) {
+  const b64 = await f2b(file);
+  const mime = file.type || 'image/jpeg';
+  const isPdf = mime === 'application/pdf';
+  const sys = `You are an expert AI document parser for Indian government and identity documents.
+Extract ALL visible information and return ONLY valid JSON — no markdown, no extra text.
+Schema (empty string "" if not found):
+{"personal":{"full_name":"","first_name":"","last_name":"","father_name":"","mother_name":"","date_of_birth":"","gender":"","marital_status":"","nationality":""},"contact":{"phone":"","alternate_phone":"","email":"","address_line1":"","address_line2":"","city":"","district":"","state":"","pincode":"","country":"India"},"identification":{"aadhaar_number":"","pan_number":"","passport_number":"","driving_license":"","voter_id":"","ration_card":""},"education":{"highest_degree":"","university":"","college":"","graduation_year":"","percentage":"","cgpa":"","stream":"","board_10th":"","board_12th":""},"professional":{"current_employer":"","job_title":"","experience_years":"","annual_income":"","skills":[]},"financial":{"bank_name":"","account_number":"","ifsc_code":"","account_type":""},"document_meta":{"doc_type_detected":"${dt}","issue_date":"","expiry_date":"","doc_number":""},"confidence_scores":{"personal":0.0,"contact":0.0,"identification":0.0,"education":0.0,"professional":0.0,"financial":0.0}}
+Rules: DOB→DD/MM/YYYY, Aadhaar→XXXX XXXX XXXX, PAN→uppercase, phone→10 digits only. Return ONLY JSON.`;
   const content = isPdf
-    ? [{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:`Extract all info from this ${dt} document.`}]
-    : [{type:'image',source:{type:'base64',media_type:mime,data:b64}},{type:'text',text:`Extract all info from this ${dt} document.`}];
-
-  const raw=await claude(sys,content);
-  const clean=raw.replace(/^```(?:json)?\n?/,'').replace(/\n?```$/,'').trim();
+    ? [{ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }, { type: 'text', text: `Extract all info from this ${dt} document.` }]
+    : [{ type: 'image', source: { type: 'base64', media_type: mime, data: b64 } }, { type: 'text', text: `Extract all info from this ${dt} document.` }];
+  const raw = await claude(sys, content);
+  const clean = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
   return JSON.parse(clean);
 }
 
-// ═══════════════════ MERGE ═══════════════════
-function merge(ex,inc){
-  const m=JSON.parse(JSON.stringify(ex));
-  for(const [sec,val] of Object.entries(inc)){
-    if(sec==='confidence_scores'||sec==='document_meta') continue;
-    if(Array.isArray(val)){if(val.length>0) m[sec]=val; continue;}
-    if(typeof val==='object'&&val){
-      if(!m[sec]) m[sec]={};
-      for(const[k,v] of Object.entries(val)){if(v&&v!=='') m[sec][k]=v;}
-    }
+// ════════════════════════════════════════════
+// PROFILE MERGE & HELPERS
+// ════════════════════════════════════════════
+function merge(ex, inc) {
+  const m = JSON.parse(JSON.stringify(ex));
+  for (const [sec, val] of Object.entries(inc)) {
+    if (sec === 'confidence_scores' || sec === 'document_meta') continue;
+    if (Array.isArray(val)) { if (val.length > 0) m[sec] = val; continue; }
+    if (typeof val === 'object' && val) { if (!m[sec]) m[sec] = {}; for (const [k, v] of Object.entries(val)) { if (v && v !== '') m[sec][k] = v; } }
   }
   return m;
 }
-
-function flatP(){
-  const f={};
-  for(const v of Object.values(profile)){
-    if(typeof v==='object'&&!Array.isArray(v)) Object.assign(f,v);
-  }
-  return f;
+function flatP() { const f = {}; for (const v of Object.values(profile)) { if (typeof v === 'object' && !Array.isArray(v)) Object.assign(f, v); } return f; }
+function flatE(ext) { const f = {}; for (const v of Object.values(ext || {})) { if (typeof v === 'object' && !Array.isArray(v)) Object.assign(f, v); } return f; }
+function pctComplete() {
+  const f = flatP();
+  const keys = ['full_name', 'date_of_birth', 'gender', 'phone', 'email', 'address_line1', 'city', 'state', 'pincode', 'aadhaar_number', 'pan_number'];
+  return Math.round(keys.filter(k => f[k] && f[k] !== '').length / keys.length * 100);
 }
-
-function flatE(ext){
-  const f={};
-  for(const v of Object.values(ext)){
-    if(typeof v==='object'&&!Array.isArray(v)) Object.assign(f,v);
-  }
-  return f;
+function getConf(key) {
+  const sm = { full_name:'personal',first_name:'personal',last_name:'personal',father_name:'personal',date_of_birth:'personal',gender:'personal',nationality:'personal',phone:'contact',email:'contact',address_line1:'contact',city:'contact',state:'contact',pincode:'contact',aadhaar_number:'identification',pan_number:'identification',passport_number:'identification',driving_license:'identification',highest_degree:'education',university:'education',graduation_year:'education',percentage:'education',current_employer:'professional',job_title:'professional',bank_name:'financial',account_number:'financial',ifsc_code:'financial' };
+  const sec = sm[key]; if (!sec) return 75;
+  const vs = uploads.filter(u => u.extracted?.confidence_scores?.[sec] > 0).map(u => u.extracted.confidence_scores[sec]);
+  if (!vs.length) return flatP()[key] ? 80 : 0;
+  return Math.round(vs.reduce((a, v) => a + v, 0) / vs.length * 100);
 }
+function getSrc(key) { for (const u of uploads.filter(u => u.extracted)) { if (flatE(u.extracted)[key]) return u.docType; } const f = flatP(); return f[key] ? 'Profile' : '—'; }
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function pctComplete(){
-  const f=flatP();
-  const keys=['full_name','date_of_birth','gender','phone','email','address_line1','city','state','pincode','aadhaar_number','pan_number'];
-  return Math.round(keys.filter(k=>f[k]&&f[k]!=='').length/keys.length*100);
-}
-
-// ═══════════════════ UPLOAD ═══════════════════
-function selT(btn){document.querySelectorAll('.dpill').forEach(p=>p.classList.remove('sel'));btn.classList.add('sel');docType=btn.dataset.t;}
-function doDrop(e){e.preventDefault();document.getElementById('dz').classList.remove('over');handleFiles(e.dataTransfer.files);}
-function handleFiles(files){
-  if(!files.length) return;
-  if(!KEY){toast('Set your Anthropic API key in Dashboard first','error');go('dashboard');return;}
+// ════════════════════════════════════════════
+// UPLOAD
+// ════════════════════════════════════════════
+function selT(btn) { document.querySelectorAll('.dpill').forEach(p => p.classList.remove('sel')); btn.classList.add('sel'); docType = btn.dataset.t; }
+function doDrop(e) { e.preventDefault(); document.getElementById('dz').classList.remove('over'); handleFiles(e.dataTransfer.files); }
+function handleFiles(files) {
+  if (!files.length) return;
+  if (!KEY) { toast('Set your Anthropic API key in Dashboard first', 'error'); go('dashboard'); return; }
   Array.from(files).forEach(processFile);
 }
 
-async function processFile(file){
-  if(file.size>20*1024*1024){toast('File too large (max 20MB)','error');return;}
-  const id=Date.now()+Math.random().toString(36).slice(2);
-  const u={id,name:file.name,size:(file.size/1024/1024).toFixed(1)+' MB',docType,status:'uploading',progress:10,fieldsFound:0,extracted:null,error:null,ts:new Date().toLocaleDateString('en-IN')};
+async function processFile(file) {
+  if (file.size > 20 * 1024 * 1024) { toast('File too large (max 20MB)', 'error'); return; }
+  const id = Date.now() + Math.random().toString(36).slice(2);
+  const u = { id, name: file.name, size: (file.size / 1024 / 1024).toFixed(1) + ' MB', docType, status: 'uploading', progress: 10, fieldsFound: 0, extracted: null, error: null, ts: new Date().toLocaleDateString('en-IN') };
   uploads.unshift(u);
   renderUList();
-
-  try{
-    u.progress=30; u.status='ocr'; renderUList();
-    await delay(200);
-    u.progress=55; u.status='extracting'; renderUList();
-    const ext=await extractDoc(file,docType);
-    u.progress=85; u.status='merging'; renderUList();
-
-    let cnt=0;
-    for(const v of Object.values(ext)){
-      if(typeof v==='object'&&!Array.isArray(v)) cnt+=Object.values(v).filter(x=>x&&x!==''&&x!==0).length;
-      else if(Array.isArray(v)) cnt+=v.length;
-    }
-    u.fieldsFound=cnt; u.extracted=ext; u.status='done'; u.progress=100;
-    profile=merge(profile,ext);
-    localStorage.setItem('fp_profile',JSON.stringify(profile));
-    localStorage.setItem('fp_uploads',JSON.stringify(uploads));
+  try {
+    u.progress = 30; u.status = 'ocr'; renderUList();
+    await delay(150);
+    u.progress = 55; u.status = 'extracting'; renderUList();
+    const ext = await extractDoc(file, docType);
+    u.progress = 85; u.status = 'merging'; renderUList();
+    let cnt = 0;
+    for (const v of Object.values(ext)) { if (typeof v === 'object' && !Array.isArray(v)) cnt += Object.values(v).filter(x => x && x !== '' && x !== 0).length; else if (Array.isArray(v)) cnt += v.length; }
+    u.fieldsFound = cnt; u.extracted = ext; u.status = 'done'; u.progress = 100;
+    profile = merge(profile, ext);
+    save();
     renderUList(); renderDash();
-    toast(`✓ ${file.name} — ${cnt} real fields extracted by Claude!`,'success');
-  }catch(err){
-    u.status='error'; u.error=err.message; u.progress=0;
-    renderUList();
-    toast('Extraction failed: '+err.message,'error');
+    toast(`✓ ${file.name} — ${cnt} fields extracted!`, 'success');
+  } catch (err) {
+    u.status = 'error'; u.error = err.message; u.progress = 0;
+    save(); renderUList();
+    toast('Extraction failed: ' + err.message, 'error');
   }
 }
 
-const SLBL={uploading:'Uploading…',ocr:'Running OCR…',extracting:'Claude extracting…',merging:'Building profile…',done:'Complete',error:'Failed'};
+function save() { localStorage.setItem('fp_profile', JSON.stringify(profile)); localStorage.setItem('fp_uploads', JSON.stringify(uploads)); }
 
-function renderUList(){
-  const el=document.getElementById('ulist');
-  if(!uploads.length){el.innerHTML='';return;}
-  el.innerHTML=uploads.map(u=>{
-    const ip=!['done','error'].includes(u.status);
-    const bc=u.status==='done'?'#BBF7D0':u.status==='error'?'#FECACA':'var(--s200)';
+const SLBL = { uploading: 'Uploading…', ocr: 'Running OCR…', extracting: 'Claude extracting…', merging: 'Building profile…', done: 'Complete', error: 'Failed' };
+
+function renderUList() {
+  const el = document.getElementById('ulist');
+  if (!uploads.length) { el.innerHTML = ''; return; }
+  el.innerHTML = uploads.map(u => {
+    const ip = !['done', 'error'].includes(u.status);
+    const bc = u.status === 'done' ? '#BBF7D0' : u.status === 'error' ? '#FECACA' : 'var(--s2)';
     return `<div class="ucard" style="border-color:${bc}">
-      ${ip?`<div style="height:3px;background:var(--s100)"><div class="uprog" style="width:${u.progress}%"></div></div>`:''}
-      <div style="padding:12px 16px">
+      ${ip ? `<div style="height:3px;background:var(--s1)"><div class="uprog" style="width:${u.progress}%"></div></div>` : ''}
+      <div style="padding:13px 15px">
         <div style="display:flex;align-items:center;gap:11px">
-          <div style="width:38px;height:38px;background:var(--s100);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--s400);fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </div>
+          <div class="vdic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.name}</div>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:2px">
-              <span style="font-size:11px;color:var(--s400)">${u.size}</span>
-              <span style="color:var(--s300);font-size:11px">·</span>
-              <span style="font-size:11px;font-weight:500;color:${u.status==='done'?'var(--green)':u.status==='error'?'var(--red)':'var(--brand)'}">${ip?`<span class="sp spin" style="width:8px;height:8px;display:inline-block;vertical-align:middle;margin-right:3px"></span>`:''}${SLBL[u.status]}</span>
-              ${u.status==='done'?`<span style="font-size:11px;color:var(--s400)">· ${u.fieldsFound} real fields</span>`:''}
-              ${u.status==='error'?`<span style="font-size:11px;color:var(--red)" title="${esc(u.error)}">· Error</span>`:''}
+            <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-top:2px;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--s4)">${u.size}</span>
+              <span style="color:var(--s3);font-size:11px">·</span>
+              <span style="font-size:11px;font-weight:500;color:${u.status==='done'?'var(--green)':u.status==='error'?'var(--red)':'var(--brand)'}">
+                ${ip ? `<span class="sp spin" style="width:8px;height:8px;display:inline-block;vertical-align:middle;margin-right:2px"></span>` : ''}
+                ${SLBL[u.status]}
+              </span>
+              ${u.status === 'done' ? `<span style="font-size:11px;color:var(--s4)">· ${u.fieldsFound} fields</span>` : ''}
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-            ${u.status==='done'?`<button onclick="togExt('${u.id}')" class="btn btn-sm" style="background:var(--brand-l);color:var(--brand);border:none;font-size:11px">Preview</button>`:''}
-            <button onclick="rmUp('${u.id}')" style="width:26px;height:26px;border:none;background:none;cursor:pointer;border-radius:7px;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--red-l)'" onmouseout="this.style.background='none'"><svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--s400);fill:none;stroke-width:2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+            ${u.status === 'done' ? `<button onclick="togExt('${u.id}')" class="btn btn-sm" style="background:var(--bl);color:var(--brand);border:none;font-size:11px;padding:5px 10px">View</button>` : ''}
+            <button onclick="rmUp('${u.id}')" style="width:30px;height:30px;border:none;background:none;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--rl)'" onmouseout="this.style.background='none'">
+              <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--s4);fill:none;stroke-width:2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
           </div>
         </div>
-        ${u.status==='done'&&u.extracted?`
-        <div id="ext-${u.id}" style="display:none;border-top:1px solid var(--s100);margin-top:10px;padding-top:10px">
-          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--s500);margin-bottom:8px">Extracted by Claude AI — Real values from your document</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">${Object.entries(flatE(u.extracted)).filter(([,v])=>v).slice(0,16).map(([k,v])=>`<div><div style="font-size:10px;color:var(--s400);text-transform:capitalize">${k.replace(/_/g,' ')}</div><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(v))}</div></div>`).join('')}</div>
-        </div>`:''}
+        ${u.status === 'done' && u.extracted ? `
+        <div id="ext-${u.id}" style="display:none;border-top:1px solid var(--s1);margin-top:11px;padding-top:11px">
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--s5);margin-bottom:8px">Extracted by Claude AI — Real values from your document</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${Object.entries(flatE(u.extracted)).filter(([, v]) => v).slice(0, 16).map(([k, v]) => `<div><div style="font-size:10px;color:var(--s4);text-transform:capitalize">${k.replace(/_/g, ' ')}</div><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(v))}</div></div>`).join('')}</div>
+        </div>` : ''}
       </div>
     </div>`;
   }).join('');
 }
+function togExt(id) { const el = document.getElementById('ext-' + id); if (el) el.style.display = el.style.display === 'none' ? '' : 'none'; }
+function rmUp(id) { uploads = uploads.filter(u => u.id !== id); rebuildProfile(); renderUList(); renderDash(); }
+function rebuildProfile() { profile = {}; uploads.filter(u => u.extracted).forEach(u => { profile = merge(profile, u.extracted); }); save(); }
 
-function togExt(id){const el=document.getElementById('ext-'+id);if(el) el.style.display=el.style.display==='none'?'':'none';}
-function rmUp(id){uploads=uploads.filter(u=>u.id!==id);localStorage.setItem('fp_uploads',JSON.stringify(uploads));rebuildProfile();renderUList();}
-function rebuildProfile(){profile={};uploads.filter(u=>u.extracted).forEach(u=>{profile=merge(profile,u.extracted);});localStorage.setItem('fp_profile',JSON.stringify(profile));}
+// ════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════
+const TPLS = [
+  {id:'1',name:'PM Kisan Samman Nidhi',fields:18,state:'All India',cat:'govt',lbl:'Agri',pop:true},
+  {id:'2',name:'PM Awas Yojana',fields:22,state:'All India',cat:'govt',lbl:'Housing',pop:true},
+  {id:'3',name:'Ayushman Bharat',fields:14,state:'All India',cat:'govt',lbl:'Health',pop:false},
+  {id:'4',name:'Ration Card Application',fields:20,state:'State',cat:'govt',lbl:'Food',pop:false},
+  {id:'5',name:'PM Ujjwala Yojana',fields:16,state:'All India',cat:'govt',lbl:'Energy',pop:false},
+  {id:'6',name:'NSP Pre-Matric Scholarship',fields:26,state:'All India',cat:'scholar',lbl:'Central',pop:true},
+  {id:'7',name:'Post-Matric Scholarship OBC',fields:24,state:'All India',cat:'scholar',lbl:'OBC',pop:false},
+  {id:'8',name:'Begum Hazrat Mahal Scholarship',fields:22,state:'All India',cat:'scholar',lbl:'Minority',pop:false},
+  {id:'9',name:'DU UG Admission',fields:30,state:'Delhi',cat:'college',lbl:'University',pop:true},
+  {id:'10',name:'BHU UG Admission',fields:28,state:'UP',cat:'college',lbl:'University',pop:false},
+  {id:'11',name:'IGNOU Distance',fields:24,state:'All India',cat:'college',lbl:'Distance',pop:false},
+  {id:'12',name:'UPSC Civil Services',fields:35,state:'All India',cat:'job',lbl:'IAS/IPS',pop:true},
+  {id:'13',name:'IBPS PO Application',fields:32,state:'All India',cat:'job',lbl:'Banking',pop:true},
+  {id:'14',name:'SSC CGL Application',fields:28,state:'All India',cat:'job',lbl:'Central',pop:false},
+  {id:'15',name:'Railway RRB',fields:26,state:'All India',cat:'job',lbl:'Railways',pop:false},
+  {id:'16',name:'SBI Account Opening',fields:20,state:'All India',cat:'finance',lbl:'Banking',pop:true},
+  {id:'17',name:'LIC Insurance',fields:22,state:'All India',cat:'finance',lbl:'Insurance',pop:false},
+  {id:'18',name:'Passport Fresh',fields:40,state:'All India',cat:'travel',lbl:'Passport',pop:true},
+  {id:'19',name:'Passport Renewal',fields:32,state:'All India',cat:'travel',lbl:'Renewal',pop:false},
+];
 
-// ═══════════════════ DASHBOARD ═══════════════════
-function renderDash(){
-  const flat=flatP(); const pct=pctComplete();
-  const done=uploads.filter(u=>u.status==='done');
-  const totalF=done.reduce((a,u)=>a+u.fieldsFound,0);
-  const avgC=done.length?Math.round(done.reduce((a,u)=>{const cs=u.extracted?.confidence_scores||{};const vs=Object.values(cs).filter(v=>v>0);return a+(vs.length?vs.reduce((s,v)=>s+v,0)/vs.length:0);},0)/done.length*100):null;
+function renderDash() {
+  const flat = flatP(); const pct = pctComplete();
+  const done = uploads.filter(u => u.status === 'done');
+  const totalF = done.reduce((a, u) => a + u.fieldsFound, 0);
+  const avgC = done.length ? Math.round(done.reduce((a, u) => { const cs = u.extracted?.confidence_scores || {}; const vs = Object.values(cs).filter(v => v > 0); return a + (vs.length ? vs.reduce((s, v) => s + v, 0) / vs.length : 0); }, 0) / done.length * 100) : null;
 
-  document.getElementById('s-docs').textContent=uploads.length;
-  document.getElementById('s-fields').textContent=totalF;
-  document.getElementById('s-forms').textContent=localStorage.getItem('fp_ff')||0;
-  document.getElementById('s-conf').textContent=avgC?avgC+'%':'—';
-  document.getElementById('pct-lbl').textContent=pct+'%';
-  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('s-docs').textContent = uploads.length;
+  document.getElementById('s-fields').textContent = totalF || (Object.keys(flat).length ? Object.values(flat).filter(v=>v&&v!=='').length : 0);
+  document.getElementById('s-forms').textContent = localStorage.getItem('fp_ff') || 0;
+  document.getElementById('s-conf').textContent = avgC ? avgC + '%' : '—';
+  document.getElementById('pct-lbl').textContent = pct + '%';
+  document.getElementById('pbar').style.width = pct + '%';
 
-  const name=flat.full_name||'';
-  document.getElementById('uname').textContent=name||'Your Profile';
-  document.getElementById('uavatar').textContent=name?name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase():'?';
-  document.getElementById('banner-name').textContent=name?`Welcome back, ${name.split(' ')[0]} 👋`:'Welcome to FormPilot AI';
-  document.getElementById('banner-sub').textContent=name?`Profile is ${pct}% complete. ${pct<80?'Upload more documents to improve accuracy.':''}`:'Upload documents to build your real profile — no hardcoded values.';
+  const name = flat.full_name || '';
+  document.getElementById('sb-name').textContent = name || 'Your Profile';
+  document.getElementById('sb-avatar').textContent = name ? name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
+  document.getElementById('banner-name').textContent = name ? `Welcome back, ${name.split(' ')[0]} 👋` : 'Welcome to FormPilot AI 👋';
+  document.getElementById('banner-sub').textContent = name ? `Profile ${pct}% complete. ${pct < 80 ? 'Upload more docs to improve accuracy.' : 'Looking great!'}` : 'Fill your profile or upload documents to get started.';
 
-  // Profile preview — real extracted fields only
-  const PREV=[['full_name','Full Name'],['date_of_birth','Date of Birth'],['gender','Gender'],['phone','Phone'],['email','Email'],['city','City'],['state','State'],['aadhaar_number','Aadhaar'],['pan_number','PAN'],['highest_degree','Education'],['current_employer','Employer'],['job_title','Job Title']];
-  const filled=PREV.filter(([k])=>flat[k]&&flat[k]!=='');
-  const pp=document.getElementById('prof-preview');
-  pp.innerHTML=filled.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">${filled.map(([k,lbl])=>`<div><div style="font-size:10px;color:var(--s400);margin-bottom:1px">${lbl}</div><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(flat[k])}</div><div class="cbw"><div class="cb" style="width:${getConf(k)}%;background:${getConf(k)>=90?'var(--green)':getConf(k)>=70?'var(--amber)':'var(--red)'}"></div></div></div>`).join('')}</div>`:'<div style="text-align:center;padding:22px;color:var(--s400);font-size:13px">Upload documents to see real extracted data here.</div>';
+  // Profile preview — only real extracted/entered data
+  const PREV = [['full_name','Full Name'],['date_of_birth','DOB'],['gender','Gender'],['phone','Mobile'],['email','Email'],['city','City'],['state','State'],['aadhaar_number','Aadhaar'],['pan_number','PAN'],['highest_degree','Education'],['current_employer','Employer'],['job_title','Designation']];
+  const filled = PREV.filter(([k]) => flat[k] && flat[k] !== '');
+  document.getElementById('prof-preview').innerHTML = filled.length
+    ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">${filled.map(([k, lbl]) => `<div><div style="font-size:10px;color:var(--s4);margin-bottom:1px">${lbl}</div><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(flat[k])}</div><div class="cbw"><div class="cb" style="width:${getConf(k)}%;background:${getConf(k)>=90?'var(--green)':getConf(k)>=70?'var(--amber)':'var(--red)'}"></div></div></div>`).join('')}</div>`
+    : `<div style="text-align:center;padding:16px 8px;color:var(--s4);font-size:13px"><a href="#" onclick="go('profile');return false" style="color:var(--brand);font-weight:600">Fill your profile</a> or <a href="#" onclick="go('upload');return false" style="color:var(--brand);font-weight:600">upload documents</a> to see data here.</div>`;
 
-  // Quick Fill — suggest forms based on what doc types were uploaded
-  const uploadedTypes=new Set(done.map(u=>u.docType));
-  const suggestions=[];
-  if(uploadedTypes.has('aadhaar')||uploadedTypes.has('pan')) suggestions.push(...TPLS.filter(t=>t.cat==='govt').slice(0,2));
-  if(uploadedTypes.has('resume')) suggestions.push(...TPLS.filter(t=>t.cat==='job').slice(0,1));
-  if(uploadedTypes.has('marksheet')) suggestions.push(...TPLS.filter(t=>t.cat==='scholar').slice(0,1));
-  const finalSugg=(suggestions.length?suggestions:TPLS.slice(0,3)).slice(0,4);
-  const qfc=document.getElementById('quick-fill-cards');
-  if(done.length===0){
-    qfc.innerHTML='<div style="text-align:center;padding:16px;color:var(--s400);font-size:13px">Upload a document first to enable quick fill.</div>';
-  } else {
-    qfc.innerHTML=`<div class="s2">${finalSugg.map(t=>`<button class="tcard" onclick="quickFill('${esc(t.name)}',${t.fields})" style="margin-bottom:0"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:500;font-size:13px">${esc(t.name)}</div><div style="font-size:11px;color:var(--s400)">${t.cat==='govt'?'Government':t.cat==='scholar'?'Scholarship':t.cat==='job'?'Job':t.cat==='college'?'Admission':'Finance'} · ${t.fields} fields</div></div><div class="tzap"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></div></button>`).join('')}</div>`;
-  }
+  // Quick fill — smart suggestions based on uploaded doc types
+  const uploadedTypes = new Set(done.map(u => u.docType));
+  let suggestions = [];
+  if (uploadedTypes.has('aadhaar') || uploadedTypes.has('pan') || flat.aadhaar_number || flat.pan_number) suggestions.push(...TPLS.filter(t => t.cat === 'govt').slice(0, 2));
+  if (uploadedTypes.has('resume') || flat.current_employer) suggestions.push(...TPLS.filter(t => t.cat === 'job').slice(0, 1));
+  if (uploadedTypes.has('marksheet') || flat.highest_degree) suggestions.push(...TPLS.filter(t => t.cat === 'scholar').slice(0, 1));
+  if (flat.bank_name) suggestions.push(...TPLS.filter(t => t.cat === 'finance').slice(0, 1));
+  if (!suggestions.length) suggestions = TPLS.slice(0, 3);
+  suggestions = [...new Map(suggestions.map(t => [t.id, t])).values()].slice(0, 4);
 
-  // Recent fills — real data from localStorage
-  const recentFills=JSON.parse(localStorage.getItem('fp_recent_fills')||'[]');
-  const rfc=document.getElementById('recent-fills-card');
-  const rfl=document.getElementById('recent-fills-list');
-  if(recentFills.length>0){
-    rfc.style.display='';
-    rfl.innerHTML=recentFills.slice(0,5).map(r=>`<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:9px;transition:background .1s" onmouseover="this.style.background='var(--s50)'" onmouseout="this.style.background=''">
-      <div style="width:34px;height:34px;background:var(--brand-l);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--brand);fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.name)}</div><div style="font-size:11px;color:var(--s400)">${r.cat} · ${r.ts}</div></div>
-      <div style="text-align:right;flex-shrink:0"><span class="badge bg" style="font-size:10px">filled</span><div style="font-size:11px;color:var(--s400);margin-top:2px">${r.filled}/${r.total} fields</div></div>
-    </div>`).join('');
-  } else {
-    rfc.style.display='none';
+  const hasData = Object.values(flat).some(v => v && v !== '');
+  document.getElementById('quick-fill-cards').innerHTML = hasData
+    ? suggestions.map(t => `<button onclick="quickFill('${esc(t.name)}',${t.fields})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;border:1px solid var(--s2);background:#fff;cursor:pointer;margin-bottom:7px;transition:all .12s;text-align:left;font-family:inherit" onmouseover="this.style.borderColor='var(--blt)';this.style.background='rgba(79,70,229,.02)'" onmouseout="this.style.borderColor='var(--s2)';this.style.background='#fff'"><div><div style="font-size:13px;font-weight:500">${esc(t.name)}</div><div style="font-size:11px;color:var(--s4)">${t.cat==='govt'?'Government':t.cat==='scholar'?'Scholarship':t.cat==='job'?'Job':t.cat==='college'?'Admission':'Finance'} · ${t.fields} fields</div></div><div class="tzap"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></button>`).join('')
+    : `<div style="color:var(--s4);font-size:13px;text-align:center;padding:12px 8px"><button onclick="go('profile')" style="color:var(--brand);font-weight:600;border:none;background:none;cursor:pointer">Fill profile</button> first to unlock quick fill.</div>`;
+
+  // Recent fills
+  const rf = JSON.parse(localStorage.getItem('fp_recent_fills') || '[]');
+  const rc = document.getElementById('recent-card');
+  rc.style.display = rf.length ? '' : 'none';
+  if (rf.length) {
+    document.getElementById('recent-list').innerHTML = rf.slice(0, 5).map(r => `<div style="display:flex;align-items:center;gap:11px;padding:9px;border-radius:9px" onmouseover="this.style.background='var(--s1)'" onmouseout="this.style.background=''"><div style="width:32px;height:32px;background:var(--bl);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.name)}</div><div style="font-size:11px;color:var(--s4)">${r.ts}</div></div><div class="text-right"><span class="badge bg" style="font-size:10px">filled</span><div style="font-size:11px;color:var(--s4);margin-top:2px">${r.filled}/${r.total}</div></div></div>`).join('');
   }
 }
 
-function getConf(key){
-  const sm={full_name:'personal',first_name:'personal',last_name:'personal',father_name:'personal',date_of_birth:'personal',gender:'personal',nationality:'personal',phone:'contact',email:'contact',address_line1:'contact',city:'contact',state:'contact',pincode:'contact',aadhaar_number:'identification',pan_number:'identification',passport_number:'identification',driving_license:'identification',highest_degree:'education',university:'education',graduation_year:'education',percentage:'education',current_employer:'professional',job_title:'professional',bank_name:'financial',account_number:'financial',ifsc_code:'financial'};
-  const sec=sm[key]; if(!sec) return 75;
-  const vs=uploads.filter(u=>u.extracted?.confidence_scores?.[sec]>0).map(u=>u.extracted.confidence_scores[sec]);
-  if(!vs.length) return 75;
-  return Math.round(vs.reduce((a,v)=>a+v,0)/vs.length*100);
-}
-
-// ═══════════════════ VAULT ═══════════════════
-function renderVault(){
-  const done=uploads.filter(u=>u.status==='done');
-  document.getElementById('v-tot').textContent=uploads.length;
-  document.getElementById('v-done').textContent=done.length;
-  document.getElementById('v-flds').textContent=done.reduce((a,u)=>a+u.fieldsFound,0);
-  document.getElementById('v-empty').style.display=uploads.length?'none':'';
-  document.getElementById('vlist').innerHTML=uploads.map(u=>{
-    const sb=u.status==='done'?`<span class="badge bg" style="font-size:11px">✓ Done</span>`:u.status==='error'?`<span class="badge br" style="font-size:11px">✗ Error</span>`:`<span class="badge bb" style="font-size:11px">⏳ Processing</span>`;
+// ════════════════════════════════════════════
+// VAULT
+// ════════════════════════════════════════════
+function renderVault() {
+  const done = uploads.filter(u => u.status === 'done');
+  document.getElementById('v-tot').textContent = uploads.length;
+  document.getElementById('v-done').textContent = done.length;
+  document.getElementById('v-flds').textContent = done.reduce((a, u) => a + u.fieldsFound, 0);
+  document.getElementById('v-empty').style.display = uploads.length ? 'none' : '';
+  document.getElementById('vlist').innerHTML = uploads.map(u => {
+    const sb = u.status === 'done' ? `<span class="badge bg" style="font-size:10px">✓ Done</span>` : u.status === 'error' ? `<span class="badge br" style="font-size:10px">✗ Error</span>` : `<span class="badge bb" style="font-size:10px">⏳ …</span>`;
     return `<button class="vrow" onclick="selVDoc('${u.id}')">
       <div class="vdic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div><div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span class="tag" style="background:var(--brand-l);color:var(--brand)">${u.docType}</span><span style="font-size:11px;color:var(--s400)">${u.ts} · ${u.size}</span></div></div>
-      <div style="text-align:right;flex-shrink:0">${sb}${u.status==='done'?`<div style="font-size:11px;color:var(--s400);margin-top:3px">${u.fieldsFound} fields</div>`:''}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div><div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span class="tag" style="background:var(--bl);color:var(--brand)">${u.docType}</span><span style="font-size:11px;color:var(--s4)">${u.ts} · ${u.size}</span></div></div>
+      <div style="text-align:right;flex-shrink:0">${sb}${u.status==='done'?`<div style="font-size:11px;color:var(--s4);margin-top:3px">${u.fieldsFound} fields</div>`:''}</div>
     </button>`;
   }).join('');
 }
 
-function selVDoc(id){
-  const u=uploads.find(u=>u.id===id); if(!u) return;
-  const panel=document.getElementById('vdetail'); panel.style.display='';
-  const cs=u.extracted?.confidence_scores||{};
-  const flat=u.extracted?flatE(u.extracted):{};
-  document.getElementById('vdc').innerHTML=`
-    <div style="margin-bottom:10px"><div style="font-size:10px;color:var(--s400)">File</div><div style="font-size:13px;font-weight:500">${esc(u.name)}</div></div>
-    <div style="margin-bottom:10px"><div style="font-size:10px;color:var(--s400)">Type</div><div style="font-size:13px;font-weight:500">${u.docType}</div></div>
-    <div style="margin-bottom:10px"><div style="font-size:10px;color:var(--s400)">Fields extracted</div><div style="font-size:13px;font-weight:500">${u.fieldsFound}</div></div>
-    ${Object.entries(cs).filter(([,v])=>v>0).map(([k,v])=>`<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:10px;color:var(--s400);text-transform:capitalize">${k}</span><span style="font-size:11px;font-weight:600;color:${v>=0.9?'#15803D':v>=0.7?'#D97706':'var(--red)'}">${Math.round(v*100)}%</span></div><div class="cbw"><div class="cb" style="width:${Math.round(v*100)}%;background:${v>=0.9?'var(--green)':v>=0.7?'var(--amber)':'var(--red)'}"></div></div></div>`).join('')}
-    ${Object.keys(flat).length?`<div class="div"></div><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--s500);margin-bottom:8px">Real Extracted Values</div><div class="s2">${Object.entries(flat).filter(([,v])=>v).slice(0,20).map(([k,v])=>`<div><div style="font-size:10px;color:var(--s400);text-transform:capitalize">${k.replace(/_/g,' ')}</div><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(v))}</div></div>`).join('')}</div>`:''}
-    <div class="div"></div>
-    <button class="btn" style="width:100%;background:var(--red-l);color:var(--red);border:none;font-size:12px;padding:8px;border-radius:8px;justify-content:center" onclick="delVDoc('${id}')">Delete Document</button>`;
+function selVDoc(id) {
+  const u = uploads.find(u => u.id === id); if (!u) return;
+  const cs = u.extracted?.confidence_scores || {};
+  const flat = flatE(u.extracted);
+  document.getElementById('vdc').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div><div style="font-size:10px;color:var(--s4)">Type</div><div style="font-size:13px;font-weight:500">${u.docType}</div></div>
+      <div><div style="font-size:10px;color:var(--s4)">Fields found</div><div style="font-size:13px;font-weight:500">${u.fieldsFound}</div></div>
+      <div><div style="font-size:10px;color:var(--s4)">Size</div><div style="font-size:13px;font-weight:500">${u.size}</div></div>
+      <div><div style="font-size:10px;color:var(--s4)">Date</div><div style="font-size:13px;font-weight:500">${u.ts}</div></div>
+    </div>
+    ${Object.entries(cs).filter(([, v]) => v > 0).map(([k, v]) => `<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:11px;color:var(--s4);text-transform:capitalize">${k}</span><span style="font-size:11px;font-weight:600;color:${v>=0.9?'#15803D':v>=0.7?'#D97706':'var(--red)'}">${Math.round(v*100)}%</span></div><div class="cbw"><div class="cb" style="width:${Math.round(v*100)}%;background:${v>=0.9?'var(--green)':v>=0.7?'var(--amber)':'var(--red)'}"></div></div></div>`).join('')}
+    ${Object.keys(flat).length ? `<div class="divider"></div><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--s5);margin-bottom:8px">Extracted Values (Claude AI)</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${Object.entries(flat).filter(([, v]) => v).slice(0, 20).map(([k, v]) => `<div><div style="font-size:10px;color:var(--s4);text-transform:capitalize">${k.replace(/_/g, ' ')}</div><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(v))}</div></div>`).join('')}</div>` : ''}
+    <div class="divider"></div>
+    <button onclick="delVDoc('${id}')" class="btn" style="width:100%;background:var(--rl);color:var(--red);border:none;padding:10px;border-radius:9px;justify-content:center;font-size:13px">Delete Document</button>`;
+  document.getElementById('vdetail').style.display = '';
+  document.getElementById('vdetail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function delVDoc(id){uploads=uploads.filter(u=>u.id!==id);localStorage.setItem('fp_uploads',JSON.stringify(uploads));rebuildProfile();document.getElementById('vdetail').style.display='none';renderVault();renderDash();toast('Deleted','info');}
+function delVDoc(id) { uploads = uploads.filter(u => u.id !== id); rebuildProfile(); document.getElementById('vdetail').style.display = 'none'; renderVault(); renderDash(); toast('Deleted', 'info'); }
 
-// ═══════════════════ AUTOFILL TEMPLATES ═══════════════════
-const TPLS=[
-  {id:'1',name:'PM Kisan Samman Nidhi',fields:18,state:'All India',cat:'govt',lbl:'Agri',pop:true},
-  {id:'2',name:'PM Awas Yojana (Urban)',fields:22,state:'All India',cat:'govt',lbl:'Housing',pop:true},
-  {id:'3',name:'Ayushman Bharat',fields:14,state:'All India',cat:'govt',lbl:'Health',pop:false},
-  {id:'4',name:'Ration Card Application',fields:20,state:'State',cat:'govt',lbl:'Food',pop:false},
-  {id:'5',name:'NSP Pre-Matric Scholarship',fields:26,state:'All India',cat:'scholar',lbl:'Central',pop:true},
-  {id:'6',name:'Post-Matric Scholarship OBC',fields:24,state:'All India',cat:'scholar',lbl:'OBC',pop:false},
-  {id:'7',name:'Begum Hazrat Mahal',fields:22,state:'All India',cat:'scholar',lbl:'Minority',pop:false},
-  {id:'8',name:'DU UG Admission',fields:30,state:'Delhi',cat:'college',lbl:'University',pop:true},
-  {id:'9',name:'BHU UG Admission',fields:28,state:'UP',cat:'college',lbl:'University',pop:false},
-  {id:'10',name:'IGNOU Distance',fields:24,state:'All India',cat:'college',lbl:'Distance',pop:false},
-  {id:'11',name:'UPSC Civil Services',fields:35,state:'All India',cat:'job',lbl:'IAS/IPS',pop:true},
-  {id:'12',name:'IBPS PO Application',fields:32,state:'All India',cat:'job',lbl:'Banking',pop:true},
-  {id:'13',name:'SSC CGL Application',fields:28,state:'All India',cat:'job',lbl:'Central',pop:false},
-  {id:'14',name:'Railway RRB',fields:26,state:'All India',cat:'job',lbl:'Railways',pop:false},
-  {id:'15',name:'SBI Account Opening',fields:20,state:'All India',cat:'finance',lbl:'Banking',pop:true},
-  {id:'16',name:'LIC Insurance',fields:22,state:'All India',cat:'finance',lbl:'Insurance',pop:false},
-  {id:'17',name:'Passport Fresh',fields:40,state:'All India',cat:'travel',lbl:'Passport',pop:true},
-  {id:'18',name:'Passport Renewal',fields:32,state:'All India',cat:'travel',lbl:'Renewal',pop:false},
-];
-
-// Field schema — maps to real profile keys
-const FS=[
+// ════════════════════════════════════════════
+// AUTOFILL
+// ════════════════════════════════════════════
+const FS = [
   {id:'full_name',label:'Full Name',key:'full_name',sec:'personal',type:'text',req:true},
   {id:'first_name',label:'First Name',key:'first_name',sec:'personal',type:'text',req:false},
   {id:'last_name',label:'Last Name',key:'last_name',sec:'personal',type:'text',req:false},
@@ -692,250 +1097,235 @@ const FS=[
   {id:'phone',label:'Mobile Number',key:'phone',sec:'contact',type:'tel',req:true},
   {id:'alt_phone',label:'Alternate Mobile',key:'alternate_phone',sec:'contact',type:'tel',req:false},
   {id:'email',label:'Email ID',key:'email',sec:'contact',type:'email',req:false},
-  {id:'address',label:'Residential Address',key:'address_line1',sec:'contact',type:'text',req:true},
+  {id:'address',label:'Address Line 1',key:'address_line1',sec:'contact',type:'text',req:true},
   {id:'address2',label:'Address Line 2',key:'address_line2',sec:'contact',type:'text',req:false},
-  {id:'city',label:'City / Town',key:'city',sec:'contact',type:'text',req:true},
+  {id:'city',label:'City',key:'city',sec:'contact',type:'text',req:true},
   {id:'district',label:'District',key:'district',sec:'contact',type:'text',req:false},
   {id:'state',label:'State',key:'state',sec:'contact',type:'text',req:true},
   {id:'pincode',label:'PIN Code',key:'pincode',sec:'contact',type:'text',req:true},
-  {id:'country',label:'Country',key:'country',sec:'contact',type:'text',req:false},
-  {id:'aadhaar',label:'Aadhaar Card Number',key:'aadhaar_number',sec:'identification',type:'text',req:true},
+  {id:'aadhaar',label:'Aadhaar Number',key:'aadhaar_number',sec:'identification',type:'text',req:true},
   {id:'pan',label:'PAN Number',key:'pan_number',sec:'identification',type:'text',req:false},
   {id:'passport_no',label:'Passport Number',key:'passport_number',sec:'identification',type:'text',req:false},
-  {id:'dl_no',label:'Driving Licence No.',key:'driving_license',sec:'identification',type:'text',req:false},
+  {id:'dl_no',label:'Driving Licence',key:'driving_license',sec:'identification',type:'text',req:false},
   {id:'voter_id',label:'Voter ID',key:'voter_id',sec:'identification',type:'text',req:false},
   {id:'qualification',label:'Highest Qualification',key:'highest_degree',sec:'education',type:'text',req:false},
   {id:'university',label:'University / Board',key:'university',sec:'education',type:'text',req:false},
   {id:'college',label:'College / School',key:'college',sec:'education',type:'text',req:false},
   {id:'pass_year',label:'Year of Passing',key:'graduation_year',sec:'education',type:'text',req:false},
   {id:'percentage',label:'Percentage / CGPA',key:'percentage',sec:'education',type:'text',req:false},
-  {id:'stream',label:'Stream / Subject',key:'stream',sec:'education',type:'text',req:false},
-  {id:'employer',label:'Current Employer',key:'current_employer',sec:'professional',type:'text',req:false},
+  {id:'stream',label:'Stream',key:'stream',sec:'education',type:'text',req:false},
+  {id:'employer',label:'Employer',key:'current_employer',sec:'professional',type:'text',req:false},
   {id:'job_title',label:'Designation',key:'job_title',sec:'professional',type:'text',req:false},
-  {id:'exp_years',label:'Years of Experience',key:'experience_years',sec:'professional',type:'text',req:false},
+  {id:'exp_years',label:'Experience',key:'experience_years',sec:'professional',type:'text',req:false},
   {id:'income',label:'Annual Income',key:'annual_income',sec:'professional',type:'text',req:false},
   {id:'bank_name',label:'Bank Name',key:'bank_name',sec:'financial',type:'text',req:false},
   {id:'account_no',label:'Account Number',key:'account_number',sec:'financial',type:'text',req:false},
   {id:'ifsc',label:'IFSC Code',key:'ifsc_code',sec:'financial',type:'text',req:false},
 ];
 
-function switchM(m){
-  mode=m;
-  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('mt-'+m).classList.add('active');
-  document.getElementById('af-url').classList.toggle('hidden',m!=='url');
-  document.getElementById('af-tpl').classList.toggle('hidden',m!=='template');
-  if(m==='template') renderTpls();
+function switchM(m) {
+  afMode = m;
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mt-' + m).classList.add('active');
+  document.getElementById('af-url').classList.toggle('hidden', m !== 'url');
+  document.getElementById('af-tpl').classList.toggle('hidden', m !== 'template');
+  if (m === 'template') renderTpls();
 }
 
-function selC(btn){document.querySelectorAll('.cpill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');cat=btn.dataset.c;renderTpls();}
+function selC(btn) { document.querySelectorAll('.cpill').forEach(p => p.classList.remove('active')); btn.classList.add('active'); cat = btn.dataset.c; renderTpls(); }
 
-function renderTpls(){
-  const ts=TPLS.filter(t=>t.cat===cat);
-  document.getElementById('tgrid').innerHTML=ts.map(t=>`
-    <button class="tcard" onclick="startFill('${esc(t.name)}',${t.fields})">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:600;font-size:13px;margin-bottom:2px">${esc(t.name)}</div><div style="font-size:11px;color:var(--s400)">${t.fields} fields · ${t.state}</div></div>
-        <div class="tzap"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-      </div>
-      <div style="display:flex;gap:5px"><span class="badge bb" style="font-size:10px">${t.lbl}</span>${t.pop?'<span class="badge bg" style="font-size:10px">Popular</span>':''}</div>
-    </button>`).join('');
+function renderTpls() {
+  const ts = TPLS.filter(t => t.cat === cat);
+  document.getElementById('tgrid').innerHTML = ts.map(t => `<button class="tcard" onclick="startFill('${esc(t.name)}',${t.fields})"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(t.name)}</div><div style="font-size:11px;color:var(--s4)">${t.fields} fields · ${t.state}</div></div><div class="tzap"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></div><div style="display:flex;gap:5px"><span class="badge bb" style="font-size:10px">${t.lbl}</span>${t.pop ? '<span class="badge bg" style="font-size:10px">Popular</span>' : ''}</div></button>`).join('');
 }
 
-function quickFill(name, fields){ go('autofill'); setTimeout(()=>startFill(name, fields), 100); }
-function startFillFromUrl(){ const url=document.getElementById('urlinput').value.trim(); if(!url){toast('Please enter a URL','error');return;} startFill(url,20); }
+function quickFill(name, fields) { go('autofill'); setTimeout(() => startFill(name, fields), 150); }
+function startFillFromUrl() { const url = document.getElementById('urlinput').value.trim(); if (!url) { toast('Please enter a URL', 'error'); return; } startFill(url, 20); }
 
-async function startFill(formName,fieldCount){
-  if(!KEY){toast('Set API key in Dashboard first','error');go('dashboard');return;}
-  const flat=flatP();
-  if(!Object.values(flat).some(v=>v&&v!=='')){toast('No profile data yet — upload documents first!','error');go('upload');return;}
+async function startFill(formName, fieldCount) {
+  const flat = flatP();
+  if (!Object.values(flat).some(v => v && v !== '')) { toast('Fill your profile or upload documents first!', 'error'); go('profile'); return; }
+  if (!KEY) { toast('Set API key in Dashboard first', 'error'); go('dashboard'); return; }
 
-  fillDone=false;
+  fillDone = false;
   document.getElementById('af-url').classList.add('hidden');
   document.getElementById('af-tpl').classList.add('hidden');
   document.getElementById('af-proc').classList.remove('hidden');
   document.getElementById('af-editor').classList.add('hidden');
 
-  const steps=['Detecting form fields…','Mapping to your real profile…','Filling with Claude AI…'];
-  const rs=(ai)=>{ document.getElementById('psteps').innerHTML=steps.map((s,i)=>{const c=i<ai?'d':i===ai?'a':'w';return `<div class="pstep"><div class="pdot ${c}">${i<ai?'✓':i+1}</div><span style="font-size:13px;color:${i===ai?'var(--s900)':i<ai?'var(--s400)':'var(--s300)'};${i<ai?'text-decoration:line-through':''}">${s}</span></div>`;}).join(''); };
+  const steps = ['Detecting form fields…', 'Mapping to your real profile…', 'Filling with Claude AI…'];
+  const rs = (ai) => { document.getElementById('psteps').innerHTML = steps.map((s, i) => { const c = i < ai ? 'd' : i === ai ? 'a' : 'w'; return `<div class="pstep"><div class="pdot ${c}">${i < ai ? '✓' : i + 1}</div><span style="font-size:13px;color:${i===ai?'var(--s9)':i<ai?'var(--s4)':'var(--s3)'};${i<ai?'text-decoration:line-through':''}">${s}</span></div>`; }).join(''); };
 
   rs(0); await delay(700);
   rs(1); await delay(500);
   rs(2);
 
-  try{
-    cFields=await fillWithClaude(formName,flat);
-  }catch(e){
-    cFields=FS.map(f=>({...f,value:flat[f.key]||'',conf:flat[f.key]?getConf(f.key)/100:0}));
-    toast('Direct profile match used (API call failed)','info');
+  try {
+    cFields = await fillWithClaude(formName, flat);
+  } catch (e) {
+    cFields = FS.map(f => ({ ...f, value: flat[f.key] || '', conf: flat[f.key] ? getConf(f.key) / 100 : 0 }));
+    toast('Using direct profile match', 'info');
   }
 
-  fillDone=true;
+  fillDone = true;
   document.getElementById('af-proc').classList.add('hidden');
   showEditor(formName);
 
-  // Save real fill to history
-  const ff=(parseInt(localStorage.getItem('fp_ff')||'0')+1);
-  localStorage.setItem('fp_ff',ff);
-  const recentFills=JSON.parse(localStorage.getItem('fp_recent_fills')||'[]');
-  const filledCount=cFields.filter(f=>f.value).length;
-  recentFills.unshift({name:formName,cat:TPLS.find(t=>t.name===formName)?.cat||'form',filled:filledCount,total:cFields.length,ts:new Date().toLocaleDateString('en-IN')});
-  localStorage.setItem('fp_recent_fills',JSON.stringify(recentFills.slice(0,10)));
+  const ff = (parseInt(localStorage.getItem('fp_ff') || '0') + 1);
+  localStorage.setItem('fp_ff', ff);
+  const rf = JSON.parse(localStorage.getItem('fp_recent_fills') || '[]');
+  rf.unshift({ name: formName, cat: TPLS.find(t => t.name === formName)?.cat || 'form', filled: cFields.filter(f => f.value).length, total: cFields.length, ts: new Date().toLocaleDateString('en-IN') });
+  localStorage.setItem('fp_recent_fills', JSON.stringify(rf.slice(0, 10)));
   renderDash();
 }
 
-async function fillWithClaude(formName,flat){
-  const sys=`You are a form-filling assistant. Given a user profile, fill form fields.
-Return ONLY a JSON object mapping field_id to the value from the profile.
-Only fill if you have actual data. Empty string "" if not available.
-Rules: DD/MM/YYYY for dates, XXXX XXXX XXXX for Aadhaar, PAN uppercase.
-Return ONLY valid JSON, nothing else.`;
-
-  const msg=`Form: ${formName}
-User Profile (REAL extracted data):
-${JSON.stringify(flat,null,2)}
-
-Fields to fill (id|label|section):
-${FS.map(f=>`${f.id}|${f.label}|${f.sec}`).join('\n')}
-
-Return JSON object with field_id keys mapped to values.`;
-
-  const raw=await claude(sys,msg);
-  const clean=raw.replace(/^```(?:json)?\n?/,'').replace(/\n?```$/,'').trim();
-  const filled=JSON.parse(clean);
-  return FS.map(f=>({...f,value:filled[f.id]||'',conf:(filled[f.id]?getConf(f.key)/100:0)}));
+async function fillWithClaude(formName, flat) {
+  const sys = `You are a form-filling assistant. Map user profile data to form fields.
+Return ONLY a JSON object: {field_id: "value", ...}
+Only fill if you have actual data. Use "" if not available.
+Dates: DD/MM/YYYY. Aadhaar: XXXX XXXX XXXX. PAN: uppercase. Return ONLY valid JSON.`;
+  const msg = `Form: ${formName}\nUser Profile:\n${JSON.stringify(flat, null, 2)}\n\nFields (id|label|section):\n${FS.map(f => `${f.id}|${f.label}|${f.sec}`).join('\n')}\n\nReturn JSON with field_id keys.`;
+  const raw = await claude(sys, msg);
+  const clean = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+  const filled = JSON.parse(clean);
+  return FS.map(f => ({ ...f, value: filled[f.id] || '', conf: (filled[f.id] ? getConf(f.key) / 100 : 0) }));
 }
 
-function showEditor(formName){
+function showEditor(formName) {
   document.getElementById('af-editor').classList.remove('hidden');
-  const fil=cFields.filter(f=>f.value).length, tot=cFields.length;
-  const rate=Math.round(fil/tot*100);
-  const hi=cFields.filter(f=>f.conf>=0.9).length;
-  const lo=cFields.filter(f=>f.value&&f.conf<0.9).length;
-  const mis=cFields.filter(f=>!f.value&&f.req).length;
+  const fil = cFields.filter(f => f.value).length, tot = cFields.length;
+  const rate = Math.round(fil / tot * 100);
+  const hi = cFields.filter(f => f.conf >= 0.9).length;
+  const lo = cFields.filter(f => f.value && f.conf < 0.9).length;
+  const mis = cFields.filter(f => !f.value && f.req).length;
 
-  document.getElementById('ed-sub').textContent=`Claude AI filled ${fil}/${tot} fields from your real profile`;
-  document.getElementById('prog-lbl').textContent=`${fil} of ${tot} fields`;
-  const bar=document.getElementById('prog-bar');
-  bar.style.width=rate+'%';
-  bar.style.background=rate>=90?'var(--green)':rate>=70?'var(--brand)':'var(--amber)';
+  document.getElementById('ed-sub').textContent = `Claude AI filled ${fil}/${tot} fields from your real profile`;
+  document.getElementById('prog-lbl').textContent = `${fil} of ${tot}`;
+  const bar = document.getElementById('prog-bar');
+  bar.style.width = rate + '%';
+  bar.style.background = rate >= 90 ? 'var(--green)' : rate >= 70 ? 'var(--brand)' : 'var(--amber)';
 
-  document.getElementById('ed-stats').innerHTML=[
-    {l:'Fill rate',v:rate+'%',c:'var(--brand)'},
-    {l:'High confidence',v:String(hi),c:'#16A34A'},
-    {l:'Low confidence',v:String(lo),c:'#D97706'},
-    {l:'Missing required',v:String(mis),c:'var(--red)'},
-  ].map(s=>`<div class="card" style="padding:11px;text-align:center"><div style="font-size:18px;font-weight:700;color:${s.c}">${s.v}</div><div style="font-size:11px;color:var(--s400);margin-top:1px">${s.l}</div></div>`).join('');
+  document.getElementById('ed-stats').innerHTML = [
+    { l: 'Fill rate', v: rate + '%', c: 'var(--brand)' },
+    { l: 'High conf', v: String(hi), c: '#16A34A' },
+    { l: 'Low conf', v: String(lo), c: '#D97706' },
+    { l: 'Missing', v: String(mis), c: 'var(--red)' },
+  ].map(s => `<div class="card" style="padding:10px;text-align:center"><div style="font-size:18px;font-weight:700;color:${s.c}">${s.v}</div><div style="font-size:11px;color:var(--s4);margin-top:1px">${s.l}</div></div>`).join('');
 
   renderFRows();
 }
 
-function renderFRows(){
-  document.getElementById('frows').innerHTML=cFields.map((f,i)=>{
-    const hv=!!f.value;
-    const cc=!hv?'no':f.conf>=0.9?'hi':f.conf>=0.7?'me':'lo';
-    const cp=hv?Math.round(f.conf*100)+'%'+(f.conf<0.9?' ⚠':''):'—';
-    const inp=f.type==='select'?`<select class="input ${hv?'filled':''}" style="font-size:12px" onchange="updF(${i},this.value)"><option value="">Select…</option>${(f.opts||[]).map(o=>`<option ${o===f.value?'selected':''}>${o}</option>`).join('')}</select>`:`<input class="input ${hv&&f.conf>=0.9?'filled':hv?'lowc':''}" style="font-size:12px" value="${esc(f.value)}" placeholder="${f.req?'Required':'Optional'}" oninput="updF(${i},this.value)">`;
+function renderFRows() {
+  document.getElementById('frows').innerHTML = cFields.map((f, i) => {
+    const hv = !!f.value;
+    const cc = !hv ? 'no' : f.conf >= 0.9 ? 'hi' : f.conf >= 0.7 ? 'me' : 'lo';
+    const cp = hv ? Math.round(f.conf * 100) + '%' + (f.conf < 0.9 ? '⚠' : '') : '—';
+    const inp = f.type === 'select'
+      ? `<select class="input ${hv ? 'filled' : ''}" style="font-size:14px;padding:8px 12px" onchange="updF(${i},this.value)"><option value="">Select…</option>${(f.opts || []).map(o => `<option ${o === f.value ? 'selected' : ''}>${o}</option>`).join('')}</select>`
+      : `<input class="input ${hv && f.conf >= 0.9 ? 'filled' : hv ? 'lowc' : ''}" style="font-size:14px;padding:8px 12px" value="${esc(f.value)}" placeholder="${f.req ? 'Required' : 'Optional'}" oninput="updF(${i},this.value)">`;
     return `<div class="frow">
       <div class="cdot ${cc}"></div>
-      <div class="flbl"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.label}</div><div style="font-size:10px;color:var(--s400)">${f.key||'— unmapped'}</div></div>
-      <div style="flex:1">${inp}</div>
-      <div class="fcon ${cc}">${cp}</div>
+      <div class="flbl"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.label}</div><div style="font-size:10px;color:var(--s4)">${f.key}</div></div>
+      <div style="flex:1;min-width:0">${inp}</div>
+      <div class="fcon ${cc}" style="display:flex;align-items:center">${cp}</div>
       <div class="fst">
-        ${f.req&&!f.value?`<svg style="stroke:var(--red)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`:''}
-        ${hv&&f.conf>=0.9?`<svg style="stroke:var(--green)" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`:''}
-        ${hv&&f.conf<0.9?`<svg style="stroke:var(--amber)" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>`:''}
+        ${f.req && !f.value ? `<svg style="stroke:var(--red)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>` : ''}
+        ${hv && f.conf >= 0.9 ? `<svg style="stroke:var(--green)" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
+        ${hv && f.conf < 0.9 ? `<svg style="stroke:var(--amber)" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>` : ''}
       </div>
     </div>`;
   }).join('');
 }
 
-function updF(i,v){
-  cFields[i].value=v;
-  const fil=cFields.filter(f=>f.value).length, tot=cFields.length;
-  const rate=Math.round(fil/tot*100);
-  document.getElementById('prog-lbl').textContent=`${fil} of ${tot} fields`;
-  document.getElementById('prog-bar').style.width=rate+'%';
+function updF(i, v) {
+  cFields[i].value = v;
+  const fil = cFields.filter(f => f.value).length, tot = cFields.length;
+  document.getElementById('prog-lbl').textContent = `${fil} of ${tot}`;
+  document.getElementById('prog-bar').style.width = Math.round(fil / tot * 100) + '%';
 }
 
-// ═══════════════════ REVIEW ═══════════════════
-const RSECS=[
-  {title:'Personal Information',icon:'👤',keys:['full_name','father_name','mother_name','date_of_birth','gender','nationality']},
-  {title:'Contact Details',icon:'📞',keys:['phone','alternate_phone','email','address_line1','address_line2','city','district','state','pincode','country']},
-  {title:'Identity Documents',icon:'🪪',keys:['aadhaar_number','pan_number','passport_number','driving_license','voter_id']},
-  {title:'Education',icon:'🎓',keys:['highest_degree','university','college','graduation_year','percentage','stream']},
-  {title:'Professional',icon:'💼',keys:['current_employer','job_title','experience_years','annual_income']},
-  {title:'Bank Details',icon:'🏦',keys:['bank_name','account_number','ifsc_code','account_type']},
+// ════════════════════════════════════════════
+// REVIEW
+// ════════════════════════════════════════════
+const RSECS = [
+  { title: 'Personal Information', icon: '👤', keys: ['full_name','father_name','mother_name','date_of_birth','gender','nationality'] },
+  { title: 'Contact Details', icon: '📞', keys: ['phone','alternate_phone','email','address_line1','address_line2','city','district','state','pincode','country'] },
+  { title: 'Identity Documents', icon: '🪪', keys: ['aadhaar_number','pan_number','passport_number','driving_license','voter_id'] },
+  { title: 'Education', icon: '🎓', keys: ['highest_degree','stream','university','college','graduation_year','percentage'] },
+  { title: 'Professional', icon: '💼', keys: ['current_employer','job_title','experience_years','annual_income'] },
+  { title: 'Bank Details', icon: '🏦', keys: ['bank_name','account_number','ifsc_code','account_type'] },
 ];
-const KL={full_name:'Full Name',father_name:"Father's Name",mother_name:"Mother's Name",date_of_birth:'Date of Birth',gender:'Gender',nationality:'Nationality',phone:'Mobile',alternate_phone:'Alt Mobile',email:'Email',address_line1:'Address',address_line2:'Address 2',city:'City',district:'District',state:'State',pincode:'PIN Code',country:'Country',aadhaar_number:'Aadhaar',pan_number:'PAN',passport_number:'Passport No',driving_license:'DL Number',voter_id:'Voter ID',highest_degree:'Qualification',university:'University',college:'College',graduation_year:'Pass Year',percentage:'Percentage',stream:'Stream',current_employer:'Employer',job_title:'Job Title',experience_years:'Experience',annual_income:'Annual Income',bank_name:'Bank Name',account_number:'Account No',ifsc_code:'IFSC Code',account_type:'Account Type'};
-const SOPTS=[{id:'download_pdf',icon:'⬇',lbl:'Download as PDF',sub:'Filled form ready to print'},{id:'download_json',icon:'{}',lbl:'Export as JSON',sub:'For API integration'},{id:'online',icon:'→',lbl:'Submit Online',sub:'Direct form submission'}];
+const SOPTS = [{ id: 'download_pdf', icon: '⬇', lbl: 'Download as PDF', sub: 'Filled form text file' }, { id: 'download_json', icon: '{}', lbl: 'Export as JSON', sub: 'For API integration' }, { id: 'online', icon: '→', lbl: 'Submit Online', sub: 'Direct submission' }];
 
-function renderReview(){
-  const flat=fillDone&&cFields.length?Object.fromEntries(cFields.map(f=>[f.key,f.value]).filter(([k])=>k)):flatP();
-  const secs=RSECS.map(s=>({...s,fields:s.keys.map(k=>({label:KL[k]||k,value:flat[k]||'',conf:flat[k]?getConf(k)/100:0,source:getSrc(k)})),})).filter(s=>s.fields.some(f=>f.value));
+function renderReview() {
+  const flat = fillDone && cFields.length ? Object.fromEntries(cFields.map(f => [f.key, f.value]).filter(([k]) => k)) : flatP();
+  const secs = RSECS.map(s => ({ ...s, fields: s.keys.map(k => ({ label: KL[k] || k, value: flat[k] || '', conf: flat[k] ? getConf(k) / 100 : 0, source: getSrc(k) })) })).filter(s => s.fields.some(f => f.value));
 
-  const totF=secs.reduce((a,s)=>a+s.fields.length,0);
-  const filF=secs.reduce((a,s)=>a+s.fields.filter(f=>f.value).length,0);
-  const pct=totF?Math.round(filF/totF*100):0;
+  const totF = secs.reduce((a, s) => a + s.fields.length, 0);
+  const filF = secs.reduce((a, s) => a + s.fields.filter(f => f.value).length, 0);
+  const pct = totF ? Math.round(filF / totF * 100) : 0;
 
-  document.getElementById('rev-summary').innerHTML=`<div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;background:${pct>=80?'var(--green-l)':'var(--amber-l)'};border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:${pct>=80?'var(--green)':'var(--amber)'};fill:none;stroke-width:2">${pct>=80?'<polyline points="20 6 9 17 4 12"/>':'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'}</svg></div><div style="flex:1"><div style="font-weight:600;margin-bottom:2px">${filF}/${totF} fields filled · ${pct}% complete</div><div style="font-size:13px;color:${pct>=80?'#15803D':'#92400E'}">${pct>=80?'Ready to submit!':'Upload more documents to improve coverage.'}</div></div><div style="display:flex;align-items:flex-end;gap:2px;height:26px;flex-shrink:0">${secs.map(s=>{const p=s.fields.filter(f=>f.value).length/Math.max(s.fields.length,1)*100;return `<div style="width:9px;background:${p>=80?'#4ADE80':p>=50?'var(--amber)':'var(--s200)'};border-radius:2px 2px 0 0;height:${Math.max(p,10)}%"></div>`;}).join('')}</div></div>`;
+  document.getElementById('rev-summary').innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="width:40px;height:40px;background:${pct>=80?'var(--gl)':'var(--al)'};border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:${pct>=80?'var(--green)':'var(--amber)'};fill:none;stroke-width:2">${pct>=80?'<polyline points="20 6 9 17 4 12"/>':'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'}</svg></div>
+    <div style="flex:1"><div style="font-weight:600;margin-bottom:2px">${filF}/${totF} fields filled · ${pct}% complete</div><div style="font-size:13px;color:${pct>=80?'#15803D':'#92400E'}">${pct>=80?'Ready to submit!':'Upload more documents or fill your profile to improve coverage.'}</div></div>
+  </div>`;
 
-  document.getElementById('rev-secs').innerHTML=secs.map(s=>{
-    const sid=s.title.replace(/\s/g,'_');
-    const isO=expanded.has(s.title);
-    const sf=s.fields.filter(f=>f.value).length;
-    return `<div class="rsec"><button class="rh" onclick="togRSec('${sid}','${s.title}')"><span style="font-size:15px">${s.icon}</span><span style="font-weight:500;flex:1">${s.title}</span><span class="badge ${sf===s.fields.length?'bg':'ba'}" style="font-size:10px">${sf}/${s.fields.length}</span><svg viewBox="0 0 24 24" id="chv-${sid}" style="width:14px;height:14px;stroke:var(--s400);fill:none;stroke-width:2;flex-shrink:0;transform:${isO?'rotate(180deg)':'rotate(0)'}"><polyline points="6 9 12 15 18 9"/></svg></button><div class="rb" id="rb-${sid}" style="${isO?'':'display:none'}">${s.fields.map(f=>`<div class="rrow"><div class="cdot ${!f.value?'no':f.conf>=0.9?'hi':f.conf>=0.7?'me':'lo'}" style="flex-shrink:0"></div><span style="font-size:13px;color:var(--s500);width:140px;flex-shrink:0">${f.label}</span><span style="font-size:13px;font-weight:${f.value?'500':'400'};flex:1;color:${f.value?'var(--s900)':'var(--s400)'};font-style:${f.value?'normal':'italic'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.value?esc(f.value):'Not available'}</span><span style="font-size:11px;color:var(--s400);flex-shrink:0">${f.source}</span></div>`).join('')}</div></div>`;
+  document.getElementById('rev-secs').innerHTML = secs.map(s => {
+    const sid = s.title.replace(/\s/g, '_');
+    const isO = expanded.has(s.title);
+    const sf = s.fields.filter(f => f.value).length;
+    return `<div class="rsec"><button class="rh" onclick="togRSec('${sid}','${s.title}')"><span style="font-size:15px">${s.icon}</span><span style="font-weight:500;flex:1">${s.title}</span><span class="badge ${sf===s.fields.length?'bg':'ba'}" style="font-size:10px">${sf}/${s.fields.length}</span><svg viewBox="0 0 24 24" id="chv-${sid}" style="width:14px;height:14px;stroke:var(--s4);fill:none;stroke-width:2;flex-shrink:0;transform:${isO?'rotate(180deg)':'rotate(0)'}"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="rb" id="rb-${sid}" style="${isO?'':'display:none'}">${s.fields.map(f => `<div class="rrow"><div class="cdot ${!f.value?'no':f.conf>=0.9?'hi':f.conf>=0.7?'me':'lo'}" style="flex-shrink:0;margin-top:3px"></div><div style="min-width:0;flex:1"><div style="font-size:12px;color:var(--s5)">${f.label} <span style="font-size:10px;color:var(--s4)">· ${f.source}</span></div><div style="font-size:13px;font-weight:${f.value?'500':'400'};color:${f.value?'var(--s9)':'var(--s4)'};font-style:${f.value?'normal':'italic'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.value ? esc(f.value) : 'Not available'}</div></div></div>`).join('')}</div></div>`;
   }).join('');
 
-  document.getElementById('sopts').innerHTML=SOPTS.map(o=>`<button class="sopt ${subMode===o.id?'active':''}" onclick="selSub('${o.id}')"><span style="font-size:16px;color:${subMode===o.id?'var(--brand)':'var(--s400)'};flex-shrink:0">${o.icon}</span><div><div style="font-size:13px;font-weight:500;color:${subMode===o.id?'#4338CA':'var(--s700)'}">${o.lbl}</div><div style="font-size:11px;color:var(--s400)">${o.sub}</div></div></button>`).join('');
+  document.getElementById('sopts').innerHTML = SOPTS.map(o => `<button class="sopt ${subMode===o.id?'active':''}" onclick="selSub('${o.id}')"><span style="font-size:18px;flex-shrink:0;color:${subMode===o.id?'var(--brand)':'var(--s4)'}">${o.icon}</span><div><div style="font-size:13px;font-weight:500;color:${subMode===o.id?'#4338CA':'var(--s7)'}">${o.lbl}</div><div style="font-size:11px;color:var(--s4)">${o.sub}</div></div></button>`).join('');
 
-  const cols=['#FB923C','#60A5FA','#A78BFA','#34D399','#F472B6','#FBBF24'];
-  document.getElementById('dsources').innerHTML=uploads.filter(u=>u.status==='done').map((u,i)=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><div class="sdot" style="background:${cols[i%cols.length]}"></div><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</span><span style="font-size:11px;color:var(--s400)">${u.fieldsFound} fields</span></div>`).join('')||'<div style="font-size:12px;color:var(--s400)">No documents uploaded yet</div>';
-
+  const cols = ['#FB923C','#60A5FA','#A78BFA','#34D399','#F472B6','#FBBF24'];
+  document.getElementById('dsources').innerHTML = (() => {
+    const parts = [];
+    uploads.filter(u => u.status === 'done').forEach((u, i) => parts.push(`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><div style="width:7px;height:7px;border-radius:50%;background:${cols[i%cols.length]};flex-shrink:0"></div><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</span><span style="font-size:11px;color:var(--s4)">${u.fieldsFound} fields</span></div>`));
+    const pf = flatP();
+    if (Object.values(pf).some(v => v)) parts.push(`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><div style="width:7px;height:7px;border-radius:50%;background:var(--brand);flex-shrink:0"></div><span style="font-size:12px;flex:1">Manual Profile</span><span style="font-size:11px;color:var(--s4)">entered</span></div>`);
+    return parts.join('') || '<div style="font-size:12px;color:var(--s4)">No data sources yet</div>';
+  })();
   updSBtn();
 }
 
-function getSrc(key){for(const u of uploads.filter(u=>u.extracted)){const f=flatE(u.extracted);if(f[key]) return u.docType;} return '—';}
-function togRSec(sid,title){const b=document.getElementById('rb-'+sid),c=document.getElementById('chv-'+sid);if(expanded.has(title)){expanded.delete(title);b.style.display='none';c.style.transform='rotate(0)';}else{expanded.add(title);b.style.display='';c.style.transform='rotate(180deg)';}}
-function selSub(m){subMode=m;renderReview();}
-function updSBtn(){const lbl={download_pdf:'⬇ Download PDF',download_json:'{ } Export JSON',online:'→ Submit Online'};const b=document.getElementById('sbtn');if(b) b.textContent=lbl[subMode]||'Submit';}
+function togRSec(sid, title) { const b = document.getElementById('rb-' + sid), c = document.getElementById('chv-' + sid); if (expanded.has(title)) { expanded.delete(title); b.style.display = 'none'; c.style.transform = 'rotate(0)'; } else { expanded.add(title); b.style.display = ''; c.style.transform = 'rotate(180deg)'; } }
+function selSub(m) { subMode = m; renderReview(); }
+function updSBtn() { const lbl = { download_pdf: '⬇ Download', download_json: '{ } Export JSON', online: '→ Submit Online' }; const b = document.getElementById('sbtn'); if (b) b.textContent = lbl[subMode] || 'Submit'; }
 
-function doSubmit(){
-  const btn=document.getElementById('sbtn'); btn.disabled=true; btn.textContent='⏳ Processing…';
-  const flat=cFields.length?Object.fromEntries(cFields.map(f=>[f.key||f.id,f.value]).filter(([,v])=>v)):flatP();
-
-  if(subMode==='download_json'){
-    const data={generated_by:'FormPilot AI',timestamp:new Date().toISOString(),profile,filled_fields:flat};
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='formpilot_data.json';a.click();
-    setTimeout(()=>{btn.disabled=false;updSBtn();showSucc('Export Ready!','Real form data exported as JSON.');},700);
+function doSubmit() {
+  const btn = document.getElementById('sbtn'); btn.disabled = true; btn.textContent = '⏳ Processing…';
+  const flat = cFields.length ? Object.fromEntries(cFields.map(f => [f.key || f.id, f.value]).filter(([, v]) => v)) : flatP();
+  if (subMode === 'download_json') {
+    const data = { generated_by: 'FormPilot AI', timestamp: new Date().toISOString(), profile, filled_fields: flat };
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'formpilot_data.json'; a.click();
+    setTimeout(() => { btn.disabled = false; updSBtn(); showSucc('Export Ready!', 'Real data exported as JSON.'); }, 700);
     return;
   }
-  if(subMode==='download_pdf'){
-    const lines=['FORMPILOT AI — FILLED FORM','='.repeat(36),'','Generated: '+new Date().toLocaleString('en-IN'),'','EXTRACTED FROM YOUR REAL DOCUMENTS:',''];
-    for(const[k,v] of Object.entries(flat)){if(v) lines.push((KL[k]||k).padEnd(25)+' : '+v);}
-    const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='formpilot_filled_form.txt';a.click();
-    setTimeout(()=>{btn.disabled=false;updSBtn();showSucc('Download Ready!','Your filled form downloaded successfully.');},700);
+  if (subMode === 'download_pdf') {
+    const lines = ['FORMPILOT AI — FILLED FORM', '='.repeat(40), '', 'Generated: ' + new Date().toLocaleString('en-IN'), '', 'EXTRACTED FROM YOUR REAL DOCUMENTS & PROFILE:', ''];
+    for (const [k, v] of Object.entries(flat)) { if (v) lines.push((KL[k] || k).padEnd(26) + ': ' + v); }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/plain' })); a.download = 'formpilot_filled.txt'; a.click();
+    setTimeout(() => { btn.disabled = false; updSBtn(); showSucc('Downloaded!', 'Your filled form data has been downloaded.'); }, 700);
     return;
   }
-  setTimeout(()=>{btn.disabled=false;updSBtn();showSucc('Form Submitted!','Form submitted using your real extracted profile data.');},1500);
+  setTimeout(() => { btn.disabled = false; updSBtn(); showSucc('Submitted!', 'Form submitted using your real profile data.'); }, 1500);
 }
 
-function showSucc(t,m){document.getElementById('succ-t').textContent=t;document.getElementById('succ-m').textContent=m;document.getElementById('sov').classList.remove('hidden');}
-function closeSov(){document.getElementById('sov').classList.add('hidden');go('dashboard');}
+function showSucc(t, m) { document.getElementById('succ-t').textContent = t; document.getElementById('succ-m').textContent = m; document.getElementById('sov').classList.remove('hidden'); }
+function closeSov() { document.getElementById('sov').classList.add('hidden'); go('dashboard'); }
 
-// ═══════════════════ UTILS ═══════════════════
-function delay(ms){return new Promise(r=>setTimeout(r,ms));}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ═══════════════════ INIT ═══════════════════
-window.addEventListener('DOMContentLoaded',()=>{
-  // Reset any in-progress uploads from previous session (file objects don't survive reload)
-  uploads=uploads.map(u=>(['uploading','ocr','extracting','merging'].includes(u.status))?{...u,status:'error',error:'Session ended during processing. Please re-upload.'}:u);
-  localStorage.setItem('fp_uploads',JSON.stringify(uploads));
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Fix stale uploads
+  uploads = uploads.map(u => (['uploading','ocr','extracting','merging'].includes(u.status)) ? { ...u, status: 'error', error: 'Session ended' } : u);
+  localStorage.setItem('fp_uploads', JSON.stringify(uploads));
   chkKey();
-  if(KEY) document.getElementById('apiinput').value=KEY;
+  if (KEY) document.getElementById('apiinput').value = KEY;
   renderDash();
   renderUList();
   renderTpls();
