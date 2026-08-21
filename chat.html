@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NagrikAI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="app-header">
+  <header class="app-header">
+  <!-- LOGO -->
+  <img 
+    src="nagrikailogo.png"
+    alt="NagrikAI Logo"
+    style="
+      width:72px;
+      height:72px;
+      margin-bottom:8px;
+      border-radius:18px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.3);
+    "
+  />
+
+  <h1>NagrikAI</h1>
+  <p>Digital Assistant</p>
+</header>
+
+
+
+  <main class="app-wrapper">
+   
+
+    <section class="chat-container">
+
+      <div id="chatBox" class="chat-box">
+        
+        <div class="bot-msg">
+          🤖 Namaste! Main NagrikAI hoon. Aap kaunsi service chahte ho?
+        </div>
+         <div class="bot-msg">
+         Click CLEAR for option 
+        </div>
+      </div>
+    
+<div class="chat-input-area">
+
+<button id="micBtn" onclick="startVoice()">🎤</button>
+
+
+
+  <input
+    type="text"
+    id="userInput"
+    placeholder="Click clear for option or Write....."
+  />
+
+  <button id="clearBtn" class="chat-clear-btn" onclick="clearChat()">Clear</button>
+  <button id="sendBtn" class="chat-send-btn" onclick="sendMessage()">Send</button>
+</div>
+
+
+
+
+    </section>
+
+    <aside class="side-panel">
+
+   
+      <div class="profile-box">
+        <h4>👤 Basic Details</h4>
+
+        <select id="state"> 
+           <option value="">Select State</option>
+          <option value="MP">Madhya Pradesh</option>
+          <option value="UP">Uttar Pradesh</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+
+        <select id="income">
+          <option value="">Annual Income</option>
+          <option value="below2">Below ₹2.5 Lakh</option>
+          <option value="2to5">₹2.5–5 Lakh</option>
+          <option value="above5">Above ₹5 Lakh</option>
+        </select>
+      </div> 
+
+     
+
+     
+      <div id="progressBox" class="progress-box" style="display:none;">
+        <h4>📊 Progress Tracker</h4>
+        <ul id="progressList"></ul>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    © 2025 NagrikAI 
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NagrikAI – Services</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ANDROID STICKY INSTALL HEADER -->
+<div id="androidInstallHeader">
+  <span>NagrikAI App</span>
+
+  <div class="install-actions">
+    <a
+      href="https://drive.google.com/file/d/1VxL1mPvJw42QSpM-jbpjM9jb2dN-PE0S/view?usp=sharing"
+      class="install-btn"
+    >
+      📲 Install App
+    </a>
+
+    <!-- CLOSE BUTTON -->
+    <button class="close-btn" onclick="hideInstallHeader()">✕</button>
+  </div>
+</div>
+
+
+  
+<header class="header">
+  
+
+  <div class="header-user"
+     onclick="window.location.href='profile.html'">
+
+    <div class="header-avatar" id="headerAvatar">
+        👤
+    </div>
+
+    <span class="header-user-name" id="headerUserName">
+        User
+    </span>
+
+</div>
+  <h1>NagrikAI</h1>
+
+
+ 
+
+
+
+  <p id="subtitle">Explore Government Services Easily</p>
+     <h3>Non-Governmental Organization - NGO</h3>
+  <div class="top-controls">
+    <!-- SEARCH -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search (income, aadhaar, pan, dl...)"
+      onkeyup="filterServices()"
+    />
+
+    <!-- LANGUAGE TOGGLE -->
+   <button onclick="toggleLanguage()">🌐हिंदी / English</button>
+
+  </div>
+</header>
+<!-- MAIN SECTIONS NAV -->
+<div class="section-tabs">
+  <button onclick="showSection('services')">🛠 Services</button>
+  <button onclick="showSection('schemes')">📜 Schemes</button>
+  <button onclick="showSection('startup')">🚀 Startup / Entrepreneurs</button>
+</div>
+<div class="side-btn">
+   <a href="NagrikAI_FormFill.html"> <button class="nagrik-btn">
+        <i class="fas fa-file-alt"></i> Fill the Form
+    </button></a>
+</div>
+  
+<section id="eligibilitySection" class="hidden">
+  <iframe
+    src="userDetailsForm.html"
+    style="width:100%;height:80vh;border:none;border-radius:12px;"
+  ></iframe>
+</section>
+<div class="card" onclick="openEligibility()">
+  <i class="fa-solid fa-user-check"></i>
+  <span>Check Eligibility</span>
+</div>
+  
+
+<!-- SERVICES GRID -->
+<section class="grid" id="servicesGrid">
+
+  <!-- Aadhaar -->
+  <div class="card"
+       data-keywords="aadhaar aadhar adhar uidai identity"
+       onclick="openModal(
+         'Aadhaar Card',
+         'आधार कार्ड भारत का एक विशिष्ट पहचान पत्र है। यह सरकारी योजनाओं, बैंकिंग और पहचान सत्यापन के लिए उपयोग किया जाता है।',
+         'Aadhaar Card is a unique identity document used for government schemes, banking and verification.',
+         'Identity Proof, Address Proof, Date of Birth Proof',
+         '7–14 days',
+         'https://uidai.gov.in/'
+       )">
+    <i class="fa-solid fa-id-card"></i>
+    <span>Aadhaar Card</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- PAN -->
+
+
+<div class="card"
+     data-keywords="pan income tax card nsdl financial"
+     onclick="openModal(
+       'PAN Card (Permanent Account Number)',
+       
+       'पैन कार्ड आयकर विभाग द्वारा जारी एक महत्वपूर्ण पहचान पत्र है, जिसका उपयोग टैक्स, बैंकिंग, निवेश और सरकारी सेवाओं में किया जाता है।',
+       'PAN Card is a mandatory identity document issued by the Income Tax Department, used for taxation, banking, investments, and financial transactions.',
+          '🔹 Aadhaar Card (mandatory)\n🔹 Date of Birth Proof (Birth Certificate / 10th Marksheet)\n🔹 Passport Size Photograph\n🔹 Signature (Digital / Physical)\n🔹 Address Proof (if required)',
+       
+       '⏳ Processing Time: 7–10 Working Days',
+       
+       'https://www.incometax.gov.in/iec/foportal/'
+     )">
+  
+  <i class="fa-solid fa-credit-card"></i>
+  <span>PAN Card</span>
+  <div class="hover">Click to view</div>
+
+</div>
+
+  
+  <!-- Income Certificate -->
+  <div class="card"
+       data-keywords="income aay certificate income proof"
+       onclick="openModal(  
+         'Income Certificate',
+         'आय प्रमाण पत्र छात्रवृत्ति और सरकारी योजनाओं के लिए उपयोग होता है।',
+         'Income Certificate is used for scholarships and welfare schemes.',
+         'Aadhaar Card, Income Proof, Address Proof',
+         '7–15 days',
+         'https://services.india.gov.in/'
+       )">
+    <i class="fa-solid fa-file-lines"></i>
+    <span>Income Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Caste -->
+  <div class="card"
+       data-keywords="caste jati jaati sc st obc"
+       onclick="openModal(
+         'Caste Certificate',
+         'जाति प्रमाण पत्र आरक्षण और सरकारी लाभों के लिए आवश्यक है।',
+         'Caste Certificate is required for reservation and government benefits.',
+         'Aadhaar Card, Caste Proof, Address Proof',
+         '15–30 days',
+         'https://services.india.gov.in/'
+       )">
+    <i class="fa-solid fa-users"></i>
+    <span>Caste Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Domicile -->
+  <div class="card"
+       data-keywords="domicile niwas residence"
+       onclick="openModal(
+         'Domicile Certificate',
+         'निवास प्रमाण पत्र राज्य के स्थायी निवास को दर्शाता है।',
+         'Domicile Certificate proves permanent residence of a state.',
+         'Aadhaar Card, Residence Proof',
+         '10–20 days',
+         'https://services.india.gov.in/'
+       )">
+    <i class="fa-solid fa-house"></i>
+    <span>Domicile Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Driving Licence -->
+  <div class="card"
+       data-keywords="dl driving licence license parivahan"
+       onclick="openModal(
+         'Driving Licence',
+         'ड्राइविंग लाइसेंस वाहन चलाने की कानूनी अनुमति देता है।',
+         'Driving Licence allows legal driving and works as ID.',
+         'Aadhaar Card, Address Proof, Learner Licence',
+         '15–30 days',
+         'https://parivahan.gov.in/'
+       )">
+    <i class="fa-solid fa-car"></i>
+    <span>Driving Licence</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Ration -->
+  <div class="card"
+       data-keywords="ration rashan food bpl nfsa"
+       onclick="openModal(
+         'Ration Card',
+         'राशन कार्ड सब्सिडी वाले खाद्य पदार्थ प्राप्त करने के लिए उपयोग होता है।',
+         'Ration Card is used to obtain subsidized food grains.',
+         'Family Aadhaar, Income Proof',
+         '15–30 days',
+         'https://nfsa.gov.in/'
+       )">
+    <i class="fa-solid fa-bowl-rice"></i>
+    <span>Ration Card</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Scholarship -->
+  <div class="card"
+       data-keywords="scholarship nsp student fee"
+       onclick="openModal(
+         'Scholarship',
+         'छात्रवृत्ति छात्रों को आर्थिक सहायता प्रदान करती है।',
+         'Scholarship provides financial assistance to students.',
+         'Aadhaar Card, Income Certificate, Bank Passbook',
+         '30–90 days',
+         'https://scholarships.gov.in/'
+       )">
+    <i class="fa-solid fa-graduation-cap"></i>
+    <span>Scholarship</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Pension -->
+  <div class="card"
+       data-keywords="pension old age widow"
+       onclick="openModal(
+         'Pension',
+         'पेंशन वृद्ध और विधवा व्यक्तियों को मासिक सहायता देती है।',
+         'Pension provides monthly financial support.',
+         'Aadhaar Card, Bank Details',
+         '30–60 days',
+         'https://www.india.gov.in/'
+       )">
+    <i class="fa-solid fa-person-cane"></i>
+    <span>Pension</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Passport -->
+  <div class="card"
+       data-keywords="passport travel seva"
+       onclick="openModal(
+         'Passport',
+         'पासपोर्ट अंतरराष्ट्रीय यात्रा के लिए आवश्यक दस्तावेज है।',
+         'Passport is required for international travel.',
+         'Aadhaar Card, Address Proof',
+         '30–45 days',
+         'https://www.passportindia.gov.in/'
+       )">
+    <i class="fa-solid fa-passport"></i>
+    <span>Passport</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Voter -->
+  <div class="card"
+       data-keywords="voter epic election"
+       onclick="openModal(
+         'Voter ID',
+         'वोटर आईडी मतदान और पहचान के लिए आवश्यक है।',
+         'Voter ID allows citizens to vote.',
+         'Aadhaar Card, Address Proof',
+         '15–30 days',
+         'https://voters.eci.gov.in/'
+       )">
+    <i class="fa-solid fa-check-to-slot"></i>
+    <span>Voter ID</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Birth -->
+  <div class="card"
+       data-keywords="birth janam newborn"
+       onclick="openModal(
+         'Birth Certificate',
+         'जन्म प्रमाण पत्र जन्म का कानूनी प्रमाण है।',
+         'Birth Certificate is legal proof of birth.',
+         'Hospital Slip, Parent Aadhaar',
+         '5–15 days',
+         'https://crsorgi.gov.in/'
+       )">
+    <i class="fa-solid fa-baby"></i>
+    <span>Birth Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Death -->
+  <div class="card"
+       data-keywords="death mrityu"
+       onclick="openModal(
+         'Death Certificate',
+         'मृत्यु प्रमाण पत्र मृत्यु का आधिकारिक रिकॉर्ड है।',
+         'Death Certificate is official proof of death.',
+         'Hospital Slip, Aadhaar',
+         '7–15 days',
+         'https://crsorgi.gov.in/'
+       )">
+    <i class="fa-solid fa-skull"></i>
+    <span>Death Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Marriage -->
+  <div class="card"
+       data-keywords="marriage vivah shaadi"
+       onclick="openModal(
+         'Marriage Certificate',
+         'विवाह प्रमाण पत्र कानूनी विवाह का प्रमाण है।',
+         'Marriage Certificate is legal proof of marriage.',
+         'Bride & Groom Aadhaar',
+         '7–30 days',
+         'https://www.india.gov.in/'
+       )">
+    <i class="fa-solid fa-ring"></i>
+    <span>Marriage Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+
+  <!-- Disability -->
+  <div class="card"
+       data-keywords="disability divyang udid"
+       onclick="openModal(
+         'Disability Certificate',
+         'दिव्यांग प्रमाण पत्र विशेष लाभों के लिए आवश्यक है।',
+         'Disability Certificate helps access special benefits.',
+         'Aadhaar Card, Medical Certificate',
+         '30–45 days',
+         'https://www.swavlambancard.gov.in/'
+       )">
+    <i class="fa-solid fa-wheelchair"></i>
+    <span>Disability Certificate</span>
+    <div class="hover">Click to view</div>
+  </div>
+<div id="chat-toggle" onclick="openChat()">For More Info....
+  💬</div>
+
+
+
+</section>
+
+
+<!-- ALL GOVERNMENT SCHEMES  -->
+<section class="grid hidden" id="schemesGrid">
+
+  <!-- FARMERS -->
+  <div class="card" onclick="openModal(
+    'PM Kisan Samman Nidhi',
+    'किसानों को ₹6000 सालाना सहायता।',
+    '₹6000 yearly financial support for farmers.',
+  
+    'Aadhaar, Bank Account, Land Record',
+    'Installment based',
+    'https://pmkisan.gov.in/'
+  )"><i class="fa-solid fa-tractor"></i><span>PM Kisan</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Fasal Bima Yojana',
+   ' प्रधानमंत्री फसल बीमा योजना किसानों को प्राकृतिक आपदाओं से होने वाले फसल नुकसान पर बीमा सुरक्षा देती है। अगर फसल बारिश, सूखा, बाढ़, ओलावृष्टि, कीट या बीमारी से खराब हो जाए, तो सरकार बीमा के ज़रिए मुआवज़ा देती है।👉 किसान को बहुत कम प्रीमियम देना होता है, बाकी पैसा सरकार देती है।',
+    'The Pradhan Mantri Fasal Bima Yojana provides insurance protection to farmers against crop loss caused by natural disasters. If crops are damaged due to rain, drought, floods, hailstorms, pests, or diseases, the government provides compensation through insurance. Farmers pay a very low premium, and the remaining amount is paid by the government.',
+    'Aadhaar, Land Record','bank passbook','self declaration','passport size photo',
+    'Seasonal',
+    'https://pmfby.gov.in/'
+  )"><i class="fa-solid fa-seedling"></i><span>Fasal Bima</span></div>
+
+  <div class="card" onclick="openModal(
+    'Kisan Credit Card',
+    'किसानों को सस्ता लोन।',
+    'Low-interest credit for farmers.',
+    'Aadhaar, Land Record',
+    '7–14 days',
+    'https://www.pmjay.gov.in/'
+  )"><i class="fa-solid fa-credit-card"></i><span>Kisan Credit Card</span></div>
+
+  <!-- STUDENTS -->
+  <div class="card" onclick="openModal(
+    'National Scholarship Portal',
+    'सभी छात्रवृत्तियों का पोर्टल।',
+    'Single portal for scholarships.',
+    'Aadhaar, Income Certificate',
+    '30–90 days',
+    'https://scholarships.gov.in/'
+  )"><i class="fa-solid fa-graduation-cap"></i><span>Scholarships (NSP)</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Vidya Lakshmi',
+    'शिक्षा ऋण के लिए।',
+    'Education loan support.',
+    'Admission Proof, Aadhaar',
+    '15–30 days',
+    'https://www.vidyalakshmi.co.in/'
+  )"><i class="fa-solid fa-book"></i><span>Vidya Lakshmi</span></div>
+
+  <!-- WOMEN -->
+  <div class="card" onclick="openModal(
+    'Ujjwala Yojana',
+    'महिलाओं को मुफ्त गैस।',
+    'Free LPG connection.',
+    'Aadhaar, Ration Card',
+    '15–30 days',
+    'https://pmuy.gov.in/'
+  )"><i class="fa-solid fa-fire"></i><span>Ujjwala</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Matru Vandana',
+    'गर्भवती महिलाओं को सहायता।',
+    'Financial aid for pregnant women.',
+    'Aadhaar, Bank Account',
+    'Installment based',
+    'https://pmmvy.nic.in/'
+  )"><i class="fa-solid fa-person-pregnant"></i><span>Matru Vandana</span></div>
+
+  <!-- HEALTH -->
+  <div class="card" onclick="openModal(
+    'Ayushman Bharat',
+    '₹5 लाख तक मुफ्त इलाज।',
+    'Health cover up to ₹5 lakh.',
+    'Aadhaar',
+    'Instant',
+    'https://pmjay.gov.in/'
+  )"><i class="fa-solid fa-hospital"></i><span>Ayushman Bharat</span></div>
+
+  <!-- HOUSING -->
+  <div class="card" onclick="openModal(
+    'PM Awas Yojana',
+    'घर बनाने की सहायता।',
+    'Housing assistance scheme.',
+    'Aadhaar, Income Proof',
+    'Stage based',
+    'https://pmay.gov.in/'
+  )"><i class="fa-solid fa-house"></i><span>PM Awas</span></div>
+
+  <!-- EMPLOYMENT -->
+  <div class="card" onclick="openModal(
+    'MGNREGA',
+    '100 दिन का रोजगार।',
+    '100 days guaranteed employment.',
+    'Job Card',
+    'Ongoing',
+    'https://nrega.nic.in/'
+  )"><i class="fa-solid fa-person-digging"></i><span>MGNREGA</span></div>
+
+  <div class="card" onclick="openModal(
+    'PM Kaushal Vikas',
+    'स्किल ट्रेनिंग योजना।',
+    'Skill development training.',
+    'Aadhaar',
+    '3–6 months',
+    'https://pmkvyofficial.org/'
+  )"><i class="fa-solid fa-screwdriver-wrench"></i><span>PMKVY</span></div>
+
+</section>
+ 
+
+<!-- STARTUP / ENTREPRENEURS -->
+<section class="grid hidden" id="startupGrid">
+
+  <!-- STARTUP INDIA -->
+  <div class="card" onclick="openModal(
+    'Startup India',
+    'स्टार्टअप रजिस्ट्रेशन, टैक्स छूट और DPIIT मान्यता।',
+    'Startup registration, DPIIT recognition & tax benefits.',
+    'Founders Aadhaar, PAN, Business Details',
+    '7–15 days',
+    'https://www.startupindia.gov.in/'
+  )"><i class="fa-solid fa-rocket"></i><span>Startup India</span></div>
+
+  <div class="card" onclick="openModal(
+    'DPIIT Recognition',
+    'सरकारी मान्यता और टैक्स लाभ।',
+    'Official startup recognition by DPIIT.',
+    'Incorporation Certificate',
+    '7–10 days',
+    'https://www.startupindia.gov.in/content/sih/en/startupgov/startup-recognition-page.html'
+  )"><i class="fa-solid fa-certificate"></i><span>DPIIT Recognition</span></div>
+
+  <!-- FUNDING -->
+  <div class="card" onclick="openModal(
+    'PM Mudra Yojana',
+    '₹10 लाख तक बिना गारंटी लोन।',
+    'Collateral-free business loans.',
+    'Aadhaar, Bank Details',
+    '15–30 days',
+    'https://www.mudra.org.in/'
+  )"><i class="fa-solid fa-money-bill"></i><span>Mudra Loan</span></div>
+
+  <div class="card" onclick="openModal(
+    'Stand-Up India',
+    'महिला और SC/ST उद्यमियों के लिए लोन।',
+    'Loans for women & SC/ST entrepreneurs.',
+    'Business Plan, Aadhaar',
+    '30–45 days',
+    'https://www.standupmitra.in/'
+  )"><i class="fa-solid fa-briefcase"></i><span>Stand-Up India</span></div>
+
+  <div class="card" onclick="openModal(
+    'CGTMSE',
+    'बिना गारंटी MSME लोन।',
+    'Credit guarantee for MSMEs.',
+    'Udyam Registration',
+    'Bank dependent',
+    'https://www.cgtmse.in/'
+  )"><i class="fa-solid fa-shield-halved"></i><span>CGTMSE</span></div>
+
+  <!-- MSME -->
+  <div class="card" onclick="openModal(
+    'Udyam Registration',
+    'MSME के लिए अनिवार्य रजिस्ट्रेशन।',
+    'Mandatory MSME registration.',
+    'Aadhaar, PAN',
+    'Instant',
+    'https://udyamregistration.gov.in/'
+  )"><i class="fa-solid fa-industry"></i><span>Udyam MSME</span></div>
+
+  <div class="card" onclick="openModal(
+    'MSME Subsidy',
+    'ब्याज और पूंजी सब्सिडी।',
+    'Interest & capital subsidies.',
+    'Udyam, Bank Details',
+    'Scheme based',
+    'https://msme.gov.in/'
+  )"><i class="fa-solid fa-percent"></i><span>MSME Subsidy</span></div>
+
+  <div class="card" onclick="openModal(
+    'Technology Upgradation',
+    'नई मशीनरी पर सब्सिडी।',
+    'Subsidy for modern technology.',
+    'Udyam Registration',
+    'Scheme based',
+    'https://msme.gov.in/'
+  )"><i class="fa-solid fa-microchip"></i><span>Tech Upgradation</span></div>
+
+  <!-- INNOVATION -->
+  <div class="card" onclick="openModal(
+    'Atal Innovation Mission',
+    'नवाचार और स्टार्टअप सपोर्ट।',
+    'Innovation & startup ecosystem.',
+    'Proposal Based',
+    'Program based',
+    'https://aim.gov.in/'
+  )"><i class="fa-solid fa-lightbulb"></i><span>AIM</span></div>
+
+  <div class="card" onclick="openModal(
+    'Startup Seed Fund',
+    '₹20 लाख तक सीड फंड।',
+    'Seed funding for startups.',
+    'Pitch Deck, DPIIT',
+    'Program based',
+    'https://seedfund.startupindia.gov.in/'
+  )"><i class="fa-solid fa-coins"></i><span>Seed Fund</span></div>
+
+  <div class="card" onclick="openModal(
+    'Incubation Programs',
+    'मेंटोरशिप और इंफ्रास्ट्रक्चर।',
+    'Mentorship & incubation support.',
+    'Idea / Startup Details',
+    'Program based',
+    'https://www.startupindia.gov.in/content/sih/en/incubators.html'
+  )"><i class="fa-solid fa-building"></i><span>Incubation</span></div>
+
+</section>
+
+
+  
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="mTitle"></h3>
+    <p id="mDesc"></p>
+    <p><b>Documents:</b> <span id="mDocs"></span></p>
+    <p><b>Processing Time:</b> <span id="mTime"></span></p>
+    <a id="mLink" target="_blank">Official Portal</a>
+  </div>
+</div>
+<div id="chat-panel">
+  <iframe src="chat.html"></iframe>
+</div>
+
+
+
+
+
+
+
+<div id="chat-fab" onclick="openChat()">💬</div>
+
+<div id="chat-overlay">
+  <div id="chat-popup">
+
+    <!-- CHAT HEADER -->
+    <div class="chat-header">
+      <span>🤖 NagrikAI Assistant</span>
+      <div class="chat-actions">
+        <button onclick="toggleFullScreen()">⛶</button>
+        <button onclick="closeChat()">✕</button>
+      </div>
+    </div>
+
+    <!-- CHAT IFRAME -->
+    <iframe src="chat.html" id="chat-iframe"></iframe>
+
+  </div>
+</div>
+
+
+
+<script>
+
+
+
+function openChat(){
+  const panel = document.getElementById("chat-panel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+
+let isHindi = false;
+
+function toggleLanguage() {
+  isHindi = !isHindi;
+}
+
+function openModal(title, hi, en, docs, time, link) {
+  document.getElementById("mTitle").innerText = title;
+  document.getElementById("mDesc").innerText = isHindi ? hi : en;
+  document.getElementById("mDocs").innerText = docs;
+  document.getElementById("mTime").innerText = time;
+  document.getElementById("mLink").href = link;
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+
+function filterServices() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".card");
+
+
+  cards.forEach(card => {
+    const keys = card.dataset.keywords;
+    card.style.display = keys.includes(q) ? "block" : "none";
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let isFullScreen = false;
+
+
+
+
+
+
+function openChat() {
+  document.getElementById("chat-overlay").style.display = "flex";
+}
+
+function closeChat() {
+  document.getElementById("chat-overlay").style.display = "none";
+  exitFullScreen();
+}
+
+function toggleFullScreen() {
+  const popup = document.getElementById("chat-popup");
+  isFullScreen = !isFullScreen;
+
+
+  if (isFullScreen) {
+    popup.classList.add("fullscreen");
+  } else {
+    popup.classList.remove("fullscreen");
+  }
+
+
+
+
+}
+
+function exitFullScreen() {
+  document.getElementById("chat-popup").classList.remove("fullscreen");
+  isFullScreen = false;
+}
+
+
+
+  
+
+
+
+
+(function () {
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isMobile = window.innerWidth <= 768;
+
+  if (isAndroid && isMobile) {
+    const header = document.getElementById("androidInstallHeader");
+    if (header) {
+      header.style.display = "flex";
+      document.body.classList.add("has-install-header");
+    }
+  }
+})();
+
+function hideInstallHeader() {
+  const header = document.getElementById("androidInstallHeader");
+  if (header) {
+    header.style.display = "none";
+  }
+}
+
+
+function showSection(section) {
+  document.getElementById("servicesGrid").style.display = "none";
+  document.getElementById("schemesGrid").style.display = "none";
+  document.getElementById("startupGrid").style.display = "none";
+
+  if(section === 'services')
+    document.getElementById("servicesGrid").style.display = "grid";
+  if(section === 'schemes')
+    document.getElementById("schemesGrid").style.display = "grid";
+  if(section === 'startup')
+    document.getElementById("startupGrid").style.display = "grid";
+}
+
+
+
+function openEligibility() {
+  document.getElementById("eligibilitySection").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+
+
+  
+
+// fetch("schemes.json")
+//   .then(res => res.json())
+//   .then(data => renderSchemes(data.schemes));
+
+// function renderSchemes(schemes){
+//   const grid = document.getElementById("schemesGrid");
+//   if(!grid) return;
+//   grid.innerHTML = "";
+
+//   schemes.forEach(s => {
+//     const card = document.createElement("div");
+//     card.className = "card";
+//     card.setAttribute("data-keywords", `${s.title} ${s.category}`.toLowerCase());
+//     card.innerHTML = `
+//       <i class="fa-solid ${s.icon}"></i>
+//       <span>${s.title}</span>
+//       <div class="hover">Click to view</div>
+//     `;
+//     card.onclick = () => openModal(
+//       s.title,
+//       s.description_hi,
+//       s.description_en,
+//       s.documents,
+//       s.processing_time,
+//       s.link
+//     );
+//     grid.appendChild(card);
+//   });
+// }
+
+
+  
+
+  
+  
+function openDocumentUpload() {
+    window.location.href = "DocumentUploads.html";
+}
+  
+
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+  
+    loadNagrikAIUser();
+
+});
+
+
+function loadNagrikAIUser() {
+
+    const savedProfile =
+        localStorage.getItem("nagrikaiProfile");
+
+
+    const nameElement =
+        document.getElementById("headerUserName");
+
+
+    const avatarElement =
+        document.getElementById("headerAvatar");
+
+
+    /* -----------------------------------------
+       Agar profile saved nahi hai
+    ----------------------------------------- */
+
+    if (!savedProfile) {
+
+        nameElement.textContent = "User";
+
+        avatarElement.textContent = "👤";
+
+        return;
+    }
+
+
+    let profile;
+
+
+    try {
+
+        profile =
+            JSON.parse(savedProfile);
+
+    } catch (error) {
+
+        console.error(
+            "Unable to read NagrikAI profile:",
+            error
+        );
+
+        nameElement.textContent = "User";
+
+        avatarElement.textContent = "👤";
+
+        return;
+    }
+
+
+    /* -----------------------------------------
+       USER NAME
+    ----------------------------------------- */
+
+    if (
+        profile.name &&
+        profile.name.trim() !== ""
+    ) {
+
+        nameElement.textContent =
+            profile.name.trim();
+
+    } else {
+
+        nameElement.textContent = "User";
+
+    }
+
+
+    /* -----------------------------------------
+       PROFILE PHOTO
+    ----------------------------------------- */
+
+    if (
+        profile.photo &&
+        profile.photo.trim() !== ""
+    ) {
+
+        avatarElement.innerHTML = `
+            <img
+                src="${profile.photo}"
+                alt="Profile"
+            >
+        `;
+
+    } else {
+
+        /* Name ka first letter */
+
+        if (
+            profile.name &&
+            profile.name.trim() !== ""
+        ) {
+
+            const firstLetter =
+                profile.name
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase();
+
+
+            avatarElement.textContent =
+                firstLetter;
+
+        } else {
+
+            avatarElement.textContent =
+                "👤";
+
+        }
+
+    }
+
+}
+
+</script>
+
+
+
+<div class="document-upload-btn-wrapper">
+    <button
+        class="document-upload-btn"
+        onclick="openDocumentUpload()"
+    >
+        <span class="upload-icon">📁</span>
+        <span>Preview & Upload Document</span>
+    </button>
+</div>
+
+  <footer class="app-footer">
+    © 2026 NagrikAI • Made with ❤️ by KRIsan
+  </footer>
+  <footer class="app-footer">
+    © 2026  NagrikAI 
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

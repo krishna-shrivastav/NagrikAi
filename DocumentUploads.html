@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NagrikAI - Document Storage</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: white;
+            padding: 18px 40px;
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-left: 80%;
+        }
+
+        /* CONTAINER */
+
+        .container {
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+        .title h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .title p {
+            color: #6b7280;
+        }
+
+        /* UPLOAD */
+
+        .upload-box {
+            background: white;
+            border: 2px dashed #93c5fd;
+            border-radius: 16px;
+
+            padding: 50px 20px;
+            text-align: center;
+
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-box:hover,
+        .upload-box.dragover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-box h2 {
+            font-size: 21px;
+            margin-bottom: 10px;
+        }
+
+        .upload-box p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .browse-btn {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+
+            padding: 11px 24px;
+
+            border-radius: 8px;
+
+            font-weight: 600;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* SEARCH AREA */
+
+        .toolbar {
+            margin-top: 35px;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 14px;
+
+            padding: 18px;
+
+            display: flex;
+
+            gap: 12px;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+
+            min-width: 250px;
+
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+
+            padding: 13px 15px 13px 42px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            border-color: #2563eb;
+        }
+
+        .search-icon {
+            position: absolute;
+
+            left: 14px;
+            top: 12px;
+
+            font-size: 17px;
+        }
+
+        .category-filter {
+            min-width: 220px;
+
+            padding: 13px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 9px;
+
+            background: white;
+
+            outline: none;
+        }
+
+        /* SECTION */
+
+        .files-section {
+            margin-top: 30px;
+        }
+
+        .section-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 21px;
+        }
+
+        .file-count {
+            background: #dbeafe;
+
+            color: #2563eb;
+
+            padding: 5px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+        /* FILE GRID */
+
+        .file-list {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(320px, 1fr));
+
+            gap: 15px;
+        }
+
+        .file-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        .file-icon {
+            width: 52px;
+            height: 52px;
+
+            border-radius: 10px;
+
+            background: #eff6ff;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 25px;
+
+            flex-shrink: 0;
+        }
+
+        .file-info {
+            flex: 1;
+
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            margin-bottom: 6px;
+        }
+
+        .file-category {
+            display: inline-block;
+
+            background: #f3f4f6;
+
+            color: #4b5563;
+
+            padding: 3px 8px;
+
+            border-radius: 5px;
+
+            font-size: 11px;
+
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #9ca3af;
+
+            font-size: 12px;
+        }
+
+        .actions {
+            display: flex;
+
+            gap: 7px;
+        }
+
+        .action-btn {
+            border: none;
+
+            width: 35px;
+            height: 35px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+        }
+
+        .preview-btn {
+            background: #eff6ff;
+        }
+
+        .delete-btn {
+            background: #fef2f2;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .empty {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 50px;
+
+            text-align: center;
+
+            color: #9ca3af;
+        }
+
+        /* MODAL */
+
+        .modal {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0,0,0,0.65);
+
+            z-index: 1000;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+
+            width: 90%;
+
+            max-width: 900px;
+
+            height: 90vh;
+
+            border-radius: 14px;
+
+            overflow: hidden;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .close-btn {
+            border: none;
+
+            background: #f3f4f6;
+
+            width: 35px;
+            height: 35px;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            font-size: 20px;
+        }
+
+        .preview-area {
+            flex: 1;
+
+            background: #f3f4f6;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            overflow: auto;
+        }
+
+        .preview-area img {
+            max-width: 95%;
+            max-height: 95%;
+
+            object-fit: contain;
+        }
+
+        .preview-area iframe {
+            width: 100%;
+            height: 100%;
+
+            border: none;
+        }
+
+        /* CATEGORY MODAL */
+
+        .category-modal {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0,0,0,0.55);
+
+            z-index: 900;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .category-modal.active {
+            display: flex;
+        }
+
+        .category-box {
+            background: white;
+
+            width: 100%;
+
+            max-width: 500px;
+
+            border-radius: 15px;
+
+            padding: 25px;
+        }
+
+        .category-box h2 {
+            margin-bottom: 8px;
+        }
+
+        .category-box p {
+            color: #6b7280;
+
+            font-size: 14px;
+
+            margin-bottom: 20px;
+        }
+
+        .category-box label {
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            margin-bottom: 7px;
+        }
+
+        .category-box select {
+            width: 100%;
+
+            padding: 13px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            outline: none;
+
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+        }
+
+        .cancel-btn,
+        .upload-confirm-btn {
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            border: none;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: #f3f4f6;
+        }
+
+        .upload-confirm-btn {
+            background: #2563eb;
+
+            color: white;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:600px) {
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .subtitle {
+                display: none;
+            }
+
+            .title h1 {
+                font-size: 24px;
+            }
+
+            .file-list {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .category-filter {
+                width: 100%;
+            }
+
+        }
+
+
+
+/* ================================
+   NEXT BUTTON
+================================ */
+
+.next-section {
+    width: 100%;
+    max-width: 1110px;
+
+    margin: 35px auto 25px;
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.next-btn {
+    border: none;
+
+    padding: 13px 28px;
+
+    min-width: 130px;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    box-shadow:
+        0 6px 16px
+        rgba(37, 99, 235, 0.22);
+
+    transition: all 0.2s ease;
+}
+
+.next-btn span {
+    font-size: 21px;
+
+    line-height: 1;
+
+    transition: transform 0.2s ease;
+}
+
+.next-btn:hover {
+    background: linear-gradient(
+        135deg,
+        #1d4ed8,
+        #1e40af
+    );
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 9px 20px
+        rgba(37, 99, 235, 0.28);
+}
+
+.next-btn:hover span {
+    transform: translateX(4px);
+}
+
+.next-btn:active {
+    transform: translateY(0);
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .next-section {
+        justify-content: center;
+
+        margin-top: 25px;
+    }
+
+    .next-btn {
+        width: 100%;
+
+        max-width: 300px;
+    }
+}
+
+
+
+/* =========================
+   HEADER
+========================= */
+
+.main-header {
+    width: 100%;
+    height: 68px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 30px;
+}
+
+
+/* Logo + Name */
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    text-decoration: none;
+}
+
+
+/* Main Logo */
+
+.brand-logo {
+    width: 38px;
+    height: 38px;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+
+/* NagrikAI */
+
+.brand-name {
+    font-size: 26px;
+
+    font-weight: 750;
+
+    letter-spacing: -0.5px;
+
+    color: #2563eb;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .main-header {
+        height: 62px;
+
+        padding: 0 18px;
+    }
+
+    .brand-logo {
+        width: 34px;
+        height: 34px;
+    }
+
+    .brand-name {
+        font-size: 23px;
+    }
+}
+
+
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="main-header">
+
+    <div class="brand">
+        <img
+            src="nagrikailogo.png"
+            alt="NagrikAI Logo"
+            class="brand-logo"
+        >
+
+        <span class="brand-name">
+            NagrikAI
+        </span>
+    </div>
+
+
+
+    <div class="subtitle">
+        Document & Image Storage
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- TITLE -->
+
+    <div class="title">
+
+        <h1>
+            Data Storage
+        </h1>
+
+        <p>
+            Upload, organize and manage your NagrikAI documents.
+        </p>
+
+    </div>
+
+
+    <!-- UPLOAD -->
+
+    <div
+        class="upload-box"
+        id="uploadBox"
+    >
+
+        <div class="upload-icon">
+            ☁️
+        </div>
+
+        <h2>
+            Drag & Drop your files here
+        </h2>
+
+        <p>
+            Upload PDF, JPG, PNG or WEBP files
+        </p>
+
+        <label
+            class="browse-btn"
+            for="fileInput"
+        >
+            Browse Files
+        </label>
+
+        <input
+            type="file"
+            id="fileInput"
+            accept=".pdf,image/jpeg,image/png,image/webp"
+            multiple
+        >
+
+    </div>
+
+
+    <!-- SEARCH + FILTER -->
+
+    <div class="toolbar">
+
+        <div class="search-box">
+
+            <span class="search-icon">
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search documents..."
+            >
+
+        </div>
+
+
+        <select
+            id="categoryFilter"
+            class="category-filter"
+        >
+
+            <option value="all">
+                📁 All Categories
+            </option>
+
+            <option value="aadhaar">
+                🪪 Aadhaar Card
+            </option>
+
+            <option value="pan">
+                🪪 PAN Card
+            </option>
+
+            <option value="voter">
+                🗳️ Voter ID
+            </option>
+
+            <option value="bank">
+                🏦 Bank Document
+            </option>
+
+            <option value="education">
+                🎓 Education Document
+            </option>
+
+            <option value="job">
+                💼 Job / Employment
+            </option>
+
+            <option value="address">
+                🏠 Address Proof
+            </option>
+
+            <option value="scheme">
+                📄 Government Scheme
+            </option>
+
+            <option value="other">
+                📋 Other Document
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- FILES -->
+
+    <section class="files-section">
+
+        <div class="section-header">
+
+            <h2>
+                Uploaded Files
+            </h2>
+
+            <span
+                class="file-count"
+                id="fileCount"
+            >
+                0 Files
+            </span>
+
+        </div>
+
+
+        <div
+            class="file-list"
+            id="fileList"
+        ></div>
+
+    </section>
+
+
+</main>
+
+
+<!-- CATEGORY MODAL -->
+
+<div
+    class="category-modal"
+    id="categoryModal"
+>
+
+    <div class="category-box">
+
+        <h2>
+            Select Document Category
+        </h2>
+
+        <p>
+            Please select what type of document you are uploading.
+        </p>
+
+
+        <label>
+            Document Category
+        </label>
+
+        <select id="uploadCategory">
+
+            <option value="">
+                Select Category
+            </option>
+
+            <option value="aadhaar">
+                🪪 Aadhaar Card
+            </option>
+
+            <option value="pan">
+                🪪 PAN Card
+            </option>
+
+            <option value="voter">
+                🗳️ Voter ID
+            </option>
+
+            <option value="bank">
+                🏦 Bank Document
+            </option>
+
+            <option value="education">
+                🎓 Education Document
+            </option>
+
+            <option value="job">
+                💼 Job / Employment
+            </option>
+
+            <option value="address">
+                🏠 Address Proof
+            </option>
+
+            <option value="scheme">
+                📄 Government Scheme
+            </option>
+
+            <option value="other">
+                📋 Other Document
+            </option>
+
+        </select>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="cancel-btn"
+                onclick="closeCategoryModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="upload-confirm-btn"
+                onclick="confirmUpload()"
+            >
+                Upload Files
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PREVIEW MODAL -->
+
+<div
+    class="modal"
+    id="previewModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h3 id="previewTitle">
+                Preview
+            </h3>
+
+            <button
+                class="close-btn"
+                onclick="closePreview()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div
+            class="preview-area"
+            id="previewArea"
+        ></div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<!-- Next Button -->
+<div class="next-section">
+    <button
+        type="button"
+        class="next-btn"
+        onclick="goToDashboard()"
+    >
+        Next
+        <span>→</span>
+    </button>
+</div>
+
+
+
+<script>
+
+    const uploadBox =
+        document.getElementById("uploadBox");
+
+    const fileInput =
+        document.getElementById("fileInput");
+
+    const fileList =
+        document.getElementById("fileList");
+
+    const fileCount =
+        document.getElementById("fileCount");
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const categoryFilter =
+        document.getElementById("categoryFilter");
+
+    const categoryModal =
+        document.getElementById("categoryModal");
+
+    const uploadCategory =
+        document.getElementById("uploadCategory");
+
+
+    let files = [];
+
+    let pendingFiles = [];
+
+
+    /* LOAD */
+
+    window.onload = function() {
+
+        const saved =
+            localStorage.getItem(
+                "nagrikaiFiles"
+            );
+
+        if(saved) {
+
+            files =
+                JSON.parse(saved);
+
+        }
+
+        renderFiles();
+
+    };
+
+
+    /* BROWSE */
+
+    fileInput.addEventListener(
+        "change",
+        function() {
+
+            if(this.files.length > 0) {
+
+                pendingFiles =
+                    Array.from(this.files);
+
+                openCategoryModal();
+
+            }
+
+            this.value = "";
+
+        }
+    );
+
+
+    /* DRAG */
+
+    uploadBox.addEventListener(
+        "dragover",
+        function(e) {
+
+            e.preventDefault();
+
+            uploadBox.classList.add(
+                "dragover"
+            );
+
+        }
+    );
+
+
+    uploadBox.addEventListener(
+        "dragleave",
+        function() {
+
+            uploadBox.classList.remove(
+                "dragover"
+            );
+
+        }
+    );
+
+
+    uploadBox.addEventListener(
+        "drop",
+        function(e) {
+
+            e.preventDefault();
+
+            uploadBox.classList.remove(
+                "dragover"
+            );
+
+            if(e.dataTransfer.files.length > 0) {
+
+                pendingFiles =
+                    Array.from(
+                        e.dataTransfer.files
+                    );
+
+                openCategoryModal();
+
+            }
+
+        }
+    );
+
+
+    /* CATEGORY MODAL */
+
+    function openCategoryModal() {
+
+        uploadCategory.value = "";
+
+        categoryModal.classList.add(
+            "active"
+        );
+
+    }
+
+
+    function closeCategoryModal() {
+
+        categoryModal.classList.remove(
+            "active"
+        );
+
+        pendingFiles = [];
+
+    }
+
+
+    /* CONFIRM UPLOAD */
+
+    function confirmUpload() {
+
+        const category =
+            uploadCategory.value;
+
+
+        if(!category) {
+
+            alert(
+                "Please select a document category."
+            );
+
+            return;
+
+        }
+
+
+        pendingFiles.forEach(file => {
+
+            const allowedTypes = [
+
+                "application/pdf",
+
+                "image/jpeg",
+
+                "image/png",
+
+                "image/webp"
+
+            ];
+
+
+            if(
+                !allowedTypes.includes(
+                    file.type
+                )
+            ) {
+
+                alert(
+                    file.name +
+                    " is not supported."
+                );
+
+                return;
+
+            }
+
+
+            if(
+                file.size >
+                10 * 1024 * 1024
+            ) {
+
+                alert(
+                    file.name +
+                    " is larger than 10 MB."
+                );
+
+                return;
+
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function(event) {
+
+                    const newFile = {
+
+                        id:
+                            Date.now() +
+                            Math.random(),
+
+                        name:
+                            file.name,
+
+                        type:
+                            file.type,
+
+                        size:
+                            file.size,
+
+                        category:
+                            category,
+
+                        data:
+                            event.target.result,
+
+                        uploadedAt:
+                            new Date()
+                            .toISOString()
+
+                    };
+
+
+                    files.push(
+                        newFile
+                    );
+
+
+                    saveFiles();
+
+                    renderFiles();
+
+                };
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+        });
+
+
+        closeCategoryModal();
+
+    }
+
+
+    /* SAVE */
+
+    function saveFiles() {
+
+        localStorage.setItem(
+            "nagrikaiFiles",
+            JSON.stringify(files)
+        );
+
+    }
+
+
+    /* SEARCH */
+
+    searchInput.addEventListener(
+        "input",
+        renderFiles
+    );
+
+
+    /* FILTER */
+
+    categoryFilter.addEventListener(
+        "change",
+        renderFiles
+    );
+
+
+    /* CATEGORY NAME */
+
+    function categoryName(category) {
+
+        const names = {
+
+            aadhaar:
+                "🪪 Aadhaar Card",
+
+            pan:
+                "🪪 PAN Card",
+
+            voter:
+                "🗳️ Voter ID",
+
+            bank:
+                "🏦 Bank Document",
+
+            education:
+                "🎓 Education Document",
+
+            job:
+                "💼 Job / Employment",
+
+            address:
+                "🏠 Address Proof",
+
+            scheme:
+                "📄 Government Scheme",
+
+            other:
+                "📋 Other Document"
+
+        };
+
+
+        return names[category]
+            || "📋 Document";
+
+    }
+
+
+    /* RENDER */
+
+    function renderFiles() {
+
+        const search =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+
+        const selectedCategory =
+            categoryFilter.value;
+
+
+        const filteredFiles =
+            files.filter(file => {
+
+                const matchesSearch =
+                    file.name
+                        .toLowerCase()
+                        .includes(search);
+
+
+                const matchesCategory =
+                    selectedCategory === "all"
+                    ||
+                    file.category ===
+                    selectedCategory;
+
+
+                return (
+                    matchesSearch &&
+                    matchesCategory
+                );
+
+            });
+
+
+        fileList.innerHTML = "";
+
+
+        fileCount.textContent =
+            filteredFiles.length +
+            (
+                filteredFiles.length === 1
+                ? " File"
+                : " Files"
+            );
+
+
+        if(
+            filteredFiles.length === 0
+        ) {
+
+            fileList.innerHTML = `
+
+                <div class="empty">
+
+                    <div
+                        style="
+                            font-size:40px;
+                            margin-bottom:10px;
+                        "
+                    >
+                        📂
+                    </div>
+
+                    <p>
+                        No documents found.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        filteredFiles.forEach(
+            file => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "file-card";
+
+
+                const icon =
+                    file.type ===
+                    "application/pdf"
+                    ? "📄"
+                    : "🖼️";
+
+
+                card.innerHTML = `
+
+                    <div class="file-icon">
+                        ${icon}
+                    </div>
+
+
+                    <div class="file-info">
+
+                        <div
+                            class="file-name"
+                            title="${escapeHtml(
+                                file.name
+                            )}"
+                        >
+                            ${escapeHtml(
+                                file.name
+                            )}
+                        </div>
+
+
+                        <div class="file-category">
+
+                            ${categoryName(
+                                file.category
+                            )}
+
+                        </div>
+
+
+                        <div class="file-size">
+
+                            ${formatSize(
+                                file.size
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <button
+                            class="
+                                action-btn
+                                preview-btn
+                            "
+                            title="Preview"
+                            onclick="
+                                previewFile(
+                                    '${file.id}'
+                                )
+                            "
+                        >
+                            👁️
+                        </button>
+
+
+                        <button
+                            class="
+                                action-btn
+                                delete-btn
+                            "
+                            title="Delete"
+                            onclick="
+                                deleteFile(
+                                    '${file.id}'
+                                )
+                            "
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                fileList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+
+
+    /* PREVIEW */
+
+    function previewFile(id) {
+
+        const file =
+            files.find(
+                f =>
+                    String(f.id) ===
+                    String(id)
+            );
+
+
+        if(!file) return;
+
+
+        const modal =
+            document.getElementById(
+                "previewModal"
+            );
+
+
+        const title =
+            document.getElementById(
+                "previewTitle"
+            );
+
+
+        const area =
+            document.getElementById(
+                "previewArea"
+            );
+
+
+        title.textContent =
+            file.name;
+
+
+        area.innerHTML = "";
+
+
+        if(
+            file.type ===
+            "application/pdf"
+        ) {
+
+            const iframe =
+                document.createElement(
+                    "iframe"
+                );
+
+
+            iframe.src =
+                file.data;
+
+
+            area.appendChild(
+                iframe
+            );
+
+        }
+
+        else {
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            img.src =
+                file.data;
+
+
+            img.alt =
+                file.name;
+
+
+            area.appendChild(
+                img
+            );
+
+        }
+
+
+        modal.classList.add(
+            "active"
+        );
+
+    }
+
+
+    /* CLOSE PREVIEW */
+
+    function closePreview() {
+
+        document
+            .getElementById(
+                "previewModal"
+            )
+            .classList.remove(
+                "active"
+            );
+
+
+        document
+            .getElementById(
+                "previewArea"
+            )
+            .innerHTML = "";
+
+    }
+
+
+    /* DELETE */
+
+    function deleteFile(id) {
+
+        const file =
+            files.find(
+                f =>
+                    String(f.id) ===
+                    String(id)
+            );
+
+
+        if(!file) return;
+
+
+        const confirmDelete =
+            confirm(
+                `Delete "${file.name}"?`
+            );
+
+
+        if(!confirmDelete)
+            return;
+
+
+        files =
+            files.filter(
+                f =>
+                    String(f.id) !==
+                    String(id)
+            );
+
+
+        saveFiles();
+
+        renderFiles();
+
+    }
+
+
+    /* SIZE */
+
+    function formatSize(bytes) {
+
+        if(bytes < 1024)
+            return bytes + " B";
+
+
+        if(
+            bytes <
+            1024 * 1024
+        ) {
+
+            return (
+                bytes / 1024
+            ).toFixed(1)
+            + " KB";
+
+        }
+
+
+        return (
+            bytes /
+            (1024 * 1024)
+        ).toFixed(1)
+        + " MB";
+
+    }
+
+
+    /* SECURITY */
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            text;
+
+
+        return div.innerHTML;
+
+    }
+
+
+    /* OUTSIDE MODAL */
+
+    document
+        .getElementById(
+            "previewModal"
+        )
+        .addEventListener(
+            "click",
+            function(e) {
+
+                if(
+                    e.target === this
+                ) {
+
+                    closePreview();
+
+                }
+
+            }
+        );
+
+
+        function goToDashboard() {
+    window.location.href = "home.html";
+}
+
+</script>
+
+</body>
+</html>
